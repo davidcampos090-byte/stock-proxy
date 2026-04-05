@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -348,7 +349,28 @@ async function handleLogin(){
   closeModal();window.location.href='dashboard.html';
 }
 sb.auth.getSession().then(({data:{session}})=>{if(session){const b=document.querySelector('.btn-nav');b.textContent=currentLang==='en'?'My dashboard →':'Mi dashboard →';b.href='dashboard.html';b.onclick=null;}});
-async function startCheckout(){const{data:{session}}=await sb.auth.getSession();if(!session){openModal('register');return;}window.location.href='dashboard.html';}
+async function startCheckout() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { openModal('register'); return; }
+  const btn = document.getElementById('plan2_btn');
+  const originalText = btn.textContent;
+  btn.textContent = '⏳ Processing...';
+  btn.disabled = true;
+  try {
+    const r = await fetch('https://stock-proxy-ruddy.vercel.app/api/quote?type=checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: session.user.email, userId: session.user.id })
+    });
+    const d = await r.json();
+    if (d.url) window.location.href = d.url;
+    else throw new Error(d.error || 'Payment error');
+  } catch(e) {
+    alert('Error: ' + e.message);
+    btn.textContent = originalText;
+    btn.disabled = false;
+  }
+}
 function toggleFaq(el){const a=el.nextElementSibling,isOpen=a.classList.contains('open');document.querySelectorAll('.faq-a').forEach(x=>x.classList.remove('open'));document.querySelectorAll('.faq-q span:last-child').forEach(s=>s.textContent='+');if(!isOpen){a.classList.add('open');el.querySelector('span:last-child').textContent='−';}}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 
