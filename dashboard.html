@@ -552,6 +552,28 @@ async function initAuth() {
   const email = session.user.email;
   document.getElementById('userEmail').textContent = email;
 
+  // ── MANEJAR PAGO EXITOSO ──
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('success') === 'true') {
+    const userId = params.get('userId') || session.user.id;
+    // Activar plan Pro en Supabase
+    try {
+      await fetch('https://stock-proxy-ruddy.vercel.app/api/quote?type=activate_pro', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId })
+      });
+    } catch(e) {}
+    // Limpiar URL
+    window.history.replaceState({}, '', 'dashboard.html');
+    // Mostrar mensaje de bienvenida Pro
+    showProWelcome();
+  }
+
+  if (params.get('canceled') === 'true') {
+    window.history.replaceState({}, '', 'dashboard.html');
+  }
+
   // Cargar uso del día
   const today = new Date().toISOString().slice(0,10);
   const stored = localStorage.getItem(`usage_${today}`);
@@ -562,15 +584,23 @@ async function initAuth() {
   const { data: profile } = await sb.from('profiles').select('plan').eq('id', session.user.id).single();
   if (profile?.plan === 'pro') {
     userPlan = 'pro';
-    document.getElementById('userPlan').textContent = 'Plan Pro ⭐';
+    document.getElementById('userPlan').textContent = 'Pro ⭐';
     document.getElementById('userPlan').className = 'user-plan plan-pro';
     document.getElementById('btnUpgrade').style.display = 'none';
     document.getElementById('usageWrap').style.display = 'none';
+    document.getElementById('adBanner').style.display = 'none';
   } else {
-    // Mostrar anuncio en plan gratis
     document.getElementById('adBanner').style.display = 'block';
     try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
   }
+}
+
+function showProWelcome() {
+  const div = document.createElement('div');
+  div.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;background:#00e676;color:#000;padding:16px 24px;border-radius:14px;font-weight:700;font-size:15px;box-shadow:0 8px 30px rgba(0,230,118,0.4);animation:modalIn .3s ease;';
+  div.innerHTML = '🎉 Welcome to Pro! Enjoy unlimited analyses.';
+  document.body.appendChild(div);
+  setTimeout(() => div.remove(), 5000);
 }
 
 function updateUsageBar() {
@@ -594,8 +624,26 @@ async function handleLogout() {
 }
 
 async function startCheckout() {
-  // En producción aquí llamas a tu backend para crear una sesión de Stripe
-  alert('Próximamente — integración de pago en progreso.');
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { window.location.href = 'index.html'; return; }
+  const btn = document.getElementById('btnUpgrade');
+  const originalText = btn.textContent;
+  btn.textContent = '⏳ Processing...';
+  btn.disabled = true;
+  try {
+    const r = await fetch('https://stock-proxy-ruddy.vercel.app/api/quote?type=checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: session.user.email, userId: session.user.id })
+    });
+    const d = await r.json();
+    if (d.url) window.location.href = d.url;
+    else throw new Error(d.error || 'Payment error');
+  } catch(e) {
+    alert('Error: ' + e.message);
+    btn.textContent = originalText;
+    btn.disabled = false;
+  }
 }
 
 // ── HELPERS ──
