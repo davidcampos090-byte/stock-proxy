@@ -804,9 +804,13 @@ function renderPutCall(pcData){
 function renderInds(inds){document.getElementById('indGrid').innerHTML=inds.map(i=>`<div class="ind-card"><div class="ind-lbl">${i.label}</div><div class="ind-val">${i.value}</div><div class="ind-sig ${i.sig==='compra'?'c-buy':i.sig==='venta'?'c-sell':'c-neutral'}">${i.sig==='compra'?'▲ Compra':i.sig==='venta'?'▼ Venta':'— Neutral'}</div></div>`).join('');}
 function renderScores(b,s,n,t){const bp=Math.round(b/t*100),sp=Math.round(s/t*100),np=Math.round(n/t*100);document.getElementById('barBuy').style.width=bp+'%';document.getElementById('numBuy').textContent=bp+'%';document.getElementById('barSell').style.width=sp+'%';document.getElementById('numSell').textContent=sp+'%';document.getElementById('barNeutral').style.width=np+'%';document.getElementById('numNeutral').textContent=np+'%';}
 function renderBanner(data,ticker){
-  const sig=data.signal||'MANTENER';const el=document.getElementById('banner');
-  el.className='banner '+(sig==='COMPRAR'?'buy':sig==='VENDER'?'sell':'neutral');
-  document.getElementById('bannerTitle').textContent=(sig==='COMPRAR'?'📈 COMPRAR — ':sig==='VENDER'?'📉 VENDER — ':'⏸ MANTENER — ')+ticker;
+  const sig=data.signal||'HOLD';const el=document.getElementById('banner');
+  const isBuy=sig==='BUY'||sig==='COMPRAR';
+  const isSell=sig==='SELL'||sig==='VENDER';
+  el.className='banner '+(isBuy?'buy':isSell?'sell':'neutral');
+  const t=DASH_TRANSLATIONS[currentLang];
+  const label=isBuy?(t?.buy_signal||'📈 BUY — '):isSell?(t?.sell_signal||'📉 SELL — '):(t?.hold_signal||'⏸ HOLD — ');
+  document.getElementById('bannerTitle').textContent=label+ticker;
   document.getElementById('bannerBody').textContent=data.analysis||'';document.getElementById('bannerNote').textContent='⏱ '+(data.tf_comment||'');el.style.display='block';
   const tr=document.getElementById('targetsRow');
   if(data.buy_price){document.getElementById('buyTargetPrice').textContent='$'+data.buy_price;document.getElementById('buyTargetDesc').textContent=data.buy_reason||'';document.getElementById('slTargetPrice').textContent='$'+(data.stop_loss||'—');document.getElementById('slTargetDesc').textContent=data.stop_reason||'';tr.style.display='grid';}else tr.style.display='none';
@@ -938,12 +942,12 @@ async function analyze(){
   const stopLoss=+(support*.97).toFixed(2);
 
   try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:`Analiza ${ticker} con datos reales. SOLO JSON sin texto extra.\nPrecio: $${cur.toFixed(2)} (${chg>=0?'+':''}${chgPct.toFixed(2)}%) · RSI: ${rsi}→${rsiS} · MACD: ${macd}→${macdS} · SMA: ${smaS} · BB: ${bbS} · VWAP: $${vd.vwap}→${vwapS} · Vela: ${pat.name}→${candS} · SM: ${sm.lbl} · PCR: ${pcData.pcr}→${pcSig} · Patrones: ${patterns.length?patterns[0].name:'ninguno'}→${cpSig} · ${buys}C/${sells}V/${neutrals}N\n{"signal":"COMPRAR o VENDER o MANTENER","analysis":"3 oraciones integrando todos los indicadores","tf_comment":"fiabilidad en ${tfL}","buy_price":"${support}","buy_reason":"justificación entrada","stop_loss":"${stopLoss}","stop_reason":"justificación stop"}`}]})});
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:`Analyze ${ticker} with real market data. Respond ONLY with valid JSON, no extra text.\nPrice: $${cur.toFixed(2)} (${chg>=0?'+':''}${chgPct.toFixed(2)}%) · RSI: ${rsi}→${rsiS} · MACD: ${macd}→${macdS} · SMA: ${smaS} · BB: ${bbS} · VWAP: $${vd.vwap}→${vwapS} · Candle: ${pat.name}→${candS} · Smart Money: ${sm.lbl} · PCR: ${pcData.pcr}→${pcSig} · Patterns: ${patterns.length?patterns[0].name:'none'}→${cpSig} · Signals: ${buys}Buy/${sells}Sell/${neutrals}Neutral\n{"signal":"BUY or SELL or HOLD","analysis":"3 sentences in English integrating all indicators","tf_comment":"1 sentence in English about signal reliability for ${tfL} timeframe","buy_price":"${support}","buy_reason":"1 sentence in English justifying entry price","stop_loss":"${stopLoss}","stop_reason":"1 sentence in English justifying stop loss"}`}]})});
     const data=await resp.json();
     const result=JSON.parse(data.content.map(b=>b.text||'').join('').replace(/```json|```/g,'').trim());
     renderBanner(result,ticker);
   }catch(e){
-    renderBanner({signal:buys>sells?'COMPRAR':sells>buys?'VENDER':'MANTENER',analysis:`Con ${buys} señales de compra y ${sells} de venta. ${patterns.length?'Patrón: '+patterns[0].name+'. ':''}Smart Money: ${sm.lbl}.`,tf_comment:`Basado en datos reales de ${tfL}.`,buy_price:support.toFixed(2),buy_reason:'Soporte técnico calculado.',stop_loss:stopLoss.toFixed(2),stop_reason:'3% bajo el soporte.'},ticker);
+    renderBanner({signal:buys>sells?'BUY':sells>buys?'SELL':'HOLD',analysis:`${buys} buy signals vs ${sells} sell signals. ${patterns.length?'Pattern: '+patterns[0].name+'. ':''}Smart Money: ${sm.lbl}.`,tf_comment:`Based on real ${tfL} data.`,buy_price:support.toFixed(2),buy_reason:'Technical support level calculated.',stop_loss:stopLoss.toFixed(2),stop_reason:'3% below technical support.'},ticker);
   }
 
   // Incrementar uso
@@ -995,9 +999,9 @@ const DASH_TRANSLATIONS = {
     loading_prices: 'Obteniendo precios...',
     loading_ai: 'Generando análisis con IA...',
     loading_news: 'Buscando noticias...',
-    buy_signal: '📈 COMPRAR — ',
-    sell_signal: '📉 VENDER — ',
-    hold_signal: '⏸ MANTENER — ',
+    buy_signal: '📈 BUY — ',
+    sell_signal: '📉 SELL — ',
+    hold_signal: '⏸ HOLD — ',
   },
   en: {
     dash_title: 'Analyzer',
