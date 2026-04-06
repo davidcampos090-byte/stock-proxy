@@ -349,7 +349,7 @@ button.primary:disabled{opacity:.4;cursor:not-allowed;}
     <div class="limit-icon">🚀</div>
     <h3>Límite diario alcanzado</h3>
     <p>Has usado tus 5 análisis gratuitos de hoy. Actualiza al plan Pro para análisis ilimitados, sin publicidad y con todas las funciones avanzadas.</p>
-    <button class="btn-upgrade-big" onclick="startCheckout()">Actualizar a Pro — $12/mes</button>
+    <button class="btn-upgrade-big" onclick="startCheckout()" id="limit_btn">Upgrade to Pro — $12/mo</button>
     <button class="btn-dismiss" onclick="document.getElementById('limitOverlay').classList.remove('open')">Volver mañana</button>
   </div>
 </div>
@@ -368,7 +368,7 @@ button.primary:disabled{opacity:.4;cursor:not-allowed;}
       <div class="user-info">
         <div class="user-email" id="userEmail">cargando...</div>
         <span class="user-plan plan-free" id="userPlan">Plan Gratis</span>
-        <button class="btn-upgrade" id="btnUpgrade" onclick="startCheckout()">⚡ Actualizar a Pro</button>
+        <button class="btn-upgrade" id="btnUpgrade" onclick="startCheckout()">⚡ Upgrade to Pro</button>
       </div>
       <button class="btn-logout" onclick="handleLogout()">Cerrar sesión</button>
     </div>
@@ -453,14 +453,14 @@ button.primary:disabled{opacity:.4;cursor:not-allowed;}
 
       <!-- NOTICIAS -->
       <div class="panel" id="newsPanel">
-        <div class="panel-title">Noticias del día</div>
-        <div class="news-loading" id="newsLoading" style="display:none;"><span class="spinner"></span> Buscando noticias...</div>
+        <div class="panel-title" id="panel_news">Today's news</div>
+        <div class="news-loading" id="newsLoading" style="display:none;"><span class="spinner"></span> <span id="loading_news_text">Looking for news...</span></div>
         <div id="newsGoodSection" style="display:none;">
-          <div class="news-section-title good">✅ Noticias positivas</div>
+          <div class="news-section-title good" id="news_good_title">✅ Positive news</div>
           <div id="newsGoodItems"></div>
         </div>
         <div id="newsBadSection" style="display:none;">
-          <div class="news-section-title bad" style="margin-top:1rem;">⚠️ Noticias de riesgo</div>
+          <div class="news-section-title bad" id="news_bad_title" style="margin-top:1rem;">⚠️ Risk news</div>
           <div id="newsBadItems"></div>
         </div>
       </div>
@@ -822,11 +822,11 @@ async function renderNews(ticker){
     const r=await fetch(`${PROXY}?type=news&symbol=${encodeURIComponent(ticker)}`,{signal:AbortSignal.timeout(12000)});
     let feed=[];
     if(r.ok){const j=await r.json();if(j.feed?.length)feed=j.feed;}
-    loading.innerHTML='<span class="spinner"></span> Resumiendo con IA...';
-    const txt=feed.slice(0,6).map((n,i)=>`Noticia ${i+1}: ${n.title}\nResumen: ${(n.summary||'').slice(0,200)}\nSentimiento: ${n.overall_sentiment_label||'N/A'}`).join('\n\n');
+    loading.innerHTML='<span class="spinner"></span> Summarizing with AI...';
+    const txt=feed.slice(0,6).map((n,i)=>`News ${i+1}: ${n.title}\nSummary: ${(n.summary||'').slice(0,200)}\nSentiment: ${n.overall_sentiment_label||'N/A'}`).join('\n\n');
     const prompt=feed.length
-      ?`Analiza estas noticias REALES sobre ${ticker}. Selecciona 2 positivas y 2 negativas. Titulares DIRECTOS en español (hechos concretos).\n\n${txt}\n\nSOLO JSON:\n{"good":[{"titular":"...","por_que_importa":"...","source":"..."},{"titular":"...","por_que_importa":"...","source":"..."}],"bad":[{"titular":"...","por_que_importa":"...","source":"..."},{"titular":"...","por_que_importa":"...","source":"..."}]}`
-      :`Busca las noticias más recientes de esta semana sobre la acción ${ticker}. Dame 2 noticias positivas y 2 negativas con hechos específicos y concretos. SOLO JSON:\n{"good":[{"titular":"titular directo en español","por_que_importa":"impacto en el precio","source":"fuente"},{"titular":"...","por_que_importa":"...","source":"..."}],"bad":[{"titular":"...","por_que_importa":"...","source":"..."},{"titular":"...","por_que_importa":"...","source":"..."}]}`;
+      ?`Analyze these REAL news about ${ticker}. Select 2 positive and 2 negative. DIRECT headlines in English with specific facts.\n\n${txt}\n\nONLY JSON no extra text:\n{"good":[{"titular":"direct headline max 18 words","por_que_importa":"direct price impact 1 sentence","source":"source name"},{"titular":"...","por_que_importa":"...","source":"..."}],"bad":[{"titular":"...","por_que_importa":"...","source":"..."},{"titular":"...","por_que_importa":"...","source":"..."}]}`
+      :`Search for the most recent news this week about stock ${ticker}. Give me 2 positive and 2 negative with specific concrete facts. ONLY JSON no extra text:\n{"good":[{"titular":"direct headline in English max 18 words","por_que_importa":"direct price impact","source":"source name"},{"titular":"...","por_que_importa":"...","source":"..."}],"bad":[{"titular":"...","por_que_importa":"...","source":"..."},{"titular":"...","por_que_importa":"...","source":"..."}]}`;
     const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:prompt}]})});
     const d=await resp.json();
     const txt2=d.content.filter(b=>b.type==='text').map(b=>b.text).join('');
@@ -835,8 +835,8 @@ async function renderNews(ticker){
     const renderItems=(items,type)=>items?.slice(0,2).map(n=>`<div class="news-item ${type}"><div class="news-icon">${type==='good'?'📈':'📉'}</div><div class="news-body"><div class="news-headline">${n.titular||''}</div><div class="news-why">${n.por_que_importa||''}</div><div class="news-source">${n.source||''}</div></div></div>`).join('')||'';
     if(news.good?.length){document.getElementById('newsGoodItems').innerHTML=renderItems(news.good,'good');document.getElementById('newsGoodSection').style.display='block';}
     if(news.bad?.length){document.getElementById('newsBadItems').innerHTML=renderItems(news.bad,'bad');document.getElementById('newsBadSection').style.display='block';}
-    if(!news.good?.length&&!news.bad?.length)throw new Error('sin noticias');
-  }catch(e){loading.innerHTML=`Sin noticias disponibles para ${ticker} en este momento.`;}
+    if(!news.good?.length&&!news.bad?.length)throw new Error('no news');
+  }catch(e){loading.innerHTML=`No news available for ${ticker} at this time.`;}
 }
 
 // ── MAIN ANALYZE ──
@@ -1048,47 +1048,58 @@ function applyDashLang(lang) {
     const key = el.getAttribute('data-i18n');
     if(t[key]) el.innerHTML = t[key];
   });
-  // Textos específicos del dashboard
+  // Botón de idioma
   document.getElementById('langBtn').textContent = lang === 'es' ? '🌐 EN' : '🌐 ES';
+  // Input placeholder y botón analizar
   document.getElementById('tickerInput').placeholder = t.placeholder;
   document.getElementById('analyzeBtn').textContent = t.btn_analyze;
-  // Sidebar nav items
+  // Sidebar nav
   const navItems = document.querySelectorAll('.nav-item');
   if(navItems[0]) navItems[0].innerHTML = `<span class="nav-icon">📊</span> ${t.nav_analyzer}`;
   if(navItems[1]) navItems[1].innerHTML = `<span class="nav-icon">⭐</span> ${t.nav_favorites}`;
   if(navItems[2]) navItems[2].innerHTML = `<span class="nav-icon">📰</span> ${t.nav_news}`;
   if(navItems[3]) navItems[3].innerHTML = `<span class="nav-icon">⚙️</span> ${t.nav_settings}`;
-  // Botones
+  // Botones upgrade y logout
   const upgradeBtn = document.getElementById('btnUpgrade');
   if(upgradeBtn) upgradeBtn.textContent = t.btn_upgrade;
   const logoutBtn = document.querySelector('.btn-logout');
   if(logoutBtn) logoutBtn.textContent = t.btn_logout;
-  // Panels
-  const panelTitles = document.querySelectorAll('.panel-title');
+  // Panel de noticias
+  const panelNews = document.getElementById('panel_news');
+  if(panelNews) panelNews.textContent = t.panel_news;
+  const goodTitle = document.getElementById('news_good_title');
+  const badTitle = document.getElementById('news_bad_title');
+  if(goodTitle) goodTitle.textContent = t.news_good;
+  if(badTitle) badTitle.textContent = t.news_bad;
   // Score labels
   document.querySelectorAll('.score-lbl').forEach((el,i) => {
     if(i===0) el.textContent = t.score_buy;
     if(i===1) el.textContent = t.score_neutral;
     if(i===2) el.textContent = t.score_sell;
   });
+  // Score title
+  const scoreTitle = document.querySelector('.sec-title');
+  if(scoreTitle) scoreTitle.textContent = t.score_title;
   // Limit modal
   const limitTitle = document.querySelector('.limit-modal h3');
   const limitMsg = document.querySelector('.limit-modal p');
-  const limitBtn = document.querySelector('.btn-upgrade-big');
+  const limitBtn = document.getElementById('limit_btn');
   const limitDismiss = document.querySelector('.btn-dismiss');
   if(limitTitle) limitTitle.textContent = t.limit_title;
   if(limitMsg) limitMsg.textContent = t.limit_msg;
   if(limitBtn) limitBtn.textContent = t.limit_btn;
   if(limitDismiss) limitDismiss.textContent = t.limit_dismiss;
-  // News sections
-  const goodTitle = document.querySelector('.news-section-title.good');
-  const badTitle = document.querySelector('.news-section-title.bad');
-  if(goodTitle) goodTitle.textContent = t.news_good;
-  if(badTitle) badTitle.textContent = t.news_bad;
   // Target labels
   const targetLabels = document.querySelectorAll('.target-lbl');
   if(targetLabels[0]) targetLabels[0].textContent = t.entry_price;
   if(targetLabels[1]) targetLabels[1].textContent = t.stop_loss;
+  // Usage label
+  const usageLabel = document.querySelector('.usage-label');
+  if(usageLabel) usageLabel.textContent = t.dash_usage;
+  // Smart Money bars
+  const smBars = document.querySelectorAll('.bar-lbl');
+  if(smBars[0]) smBars[0].textContent = t.sm_buy_pressure;
+  if(smBars[1]) smBars[1].textContent = t.sm_sell_pressure;
 
   localStorage.setItem('lang', lang);
   currentLang = lang;
