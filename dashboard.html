@@ -468,7 +468,7 @@ button.primary:disabled{opacity:.4;cursor:not-allowed;}
       <!-- CHART PATTERNS -->
       <div class="panel">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;">
-          <div class="panel-title" style="margin-bottom:0;">📐 Patrones de gráfico</div>
+          <div class="panel-title" style="margin-bottom:0;" id="panel_patterns">📐 Chart patterns</div>
           <span class="badge2" id="cpBadge">—</span>
         </div>
         <div id="cpContent"></div>
@@ -503,7 +503,7 @@ button.primary:disabled{opacity:.4;cursor:not-allowed;}
 
       <div class="two-col">
         <div class="inner-panel">
-          <div class="panel-title">Patrón de vela</div>
+          <div class="panel-title" id="panel_candle">Current candle</div>
           <div class="candle-row" id="candleRow"></div>
           <div class="candle-name" id="candleName"></div>
           <div class="candle-sig" id="candleSig"></div>
@@ -518,7 +518,7 @@ button.primary:disabled{opacity:.4;cursor:not-allowed;}
       <div class="panel">
         <div class="ind-grid" id="indGrid"></div>
         <hr class="divider">
-        <div class="sec-title">Puntuación total de señales</div>
+        <div class="sec-title" id="score_title">Total signal score</div>
         <div class="score-row"><span class="score-lbl c-buy">Compra</span><div class="score-bg"><div class="score-bar" id="barBuy" style="background:#00e676;width:0%"></div></div><span class="score-num" id="numBuy">0%</span></div>
         <div class="score-row"><span class="score-lbl c-neutral">Neutral</span><div class="score-bg"><div class="score-bar" id="barNeutral" style="background:#8896a7;width:0%"></div></div><span class="score-num" id="numNeutral">0%</span></div>
         <div class="score-row"><span class="score-lbl c-sell">Venta</span><div class="score-bg"><div class="score-bar" id="barSell" style="background:#ff5252;width:0%"></div></div><span class="score-num" id="numSell">0%</span></div>
@@ -752,7 +752,7 @@ function detectCandle(o,h,l,c,po,pc){const body=Math.abs(c-o),range=h-l||.001,uw
 function renderCandle(o,h,l,c,pat){
   const bull=c>=o,col=bull?'#00e676':'#ff5252',range=h-l||.001,H=58;
   const uh=Math.max(2,((h-Math.max(o,c))/range)*H),bh=Math.max(3,(Math.abs(c-o)/range)*H),lh=Math.max(2,((Math.min(o,c)-l)/range)*H);
-  document.getElementById('candleRow').innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;"><div style="width:2px;height:${uh}px;background:${col};border-radius:1px;"></div><div style="width:15px;height:${bh}px;background:${bull?col:'transparent'};border:2px solid ${col};border-radius:2px;"></div><div style="width:2px;height:${lh}px;background:${col};border-radius:1px;"></div></div><div style="font-size:11px;color:var(--muted);line-height:2.1;"><div>Apertura <b style="color:var(--text)">$${o.toFixed(2)}</b></div><div>Máximo &nbsp;<b style="color:#00e676">$${h.toFixed(2)}</b></div><div>Mínimo &nbsp;<b style="color:#ff5252">$${l.toFixed(2)}</b></div><div>Cierre &nbsp;&nbsp;<b style="color:var(--text)">$${c.toFixed(2)}</b></div></div>`;
+  document.getElementById('candleRow').innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;"><div style="width:2px;height:${uh}px;background:${col};border-radius:1px;"></div><div style="width:15px;height:${bh}px;background:${bull?col:'transparent'};border:2px solid ${col};border-radius:2px;"></div><div style="width:2px;height:${lh}px;background:${col};border-radius:1px;"></div></div><div style="font-size:11px;color:var(--muted);line-height:2.1;"><div>Open &nbsp;&nbsp;&nbsp;<b style="color:var(--text)">$${o.toFixed(2)}</b></div><div>High &nbsp;&nbsp;&nbsp;&nbsp;<b style="color:#00e676">$${h.toFixed(2)}</b></div><div>Low &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b style="color:#ff5252">$${l.toFixed(2)}</b></div><div>Close &nbsp;&nbsp;&nbsp;<b style="color:var(--text)">$${c.toFixed(2)}</b></div></div>`;
   document.getElementById('candleName').textContent=pat.name;
   const se=document.getElementById('candleSig');se.textContent=pat.sig==='compra'?'▲ Bullish signal':pat.sig==='venta'?'▼ Bearish signal':'— Neutral';se.className='candle-sig '+(pat.sig==='compra'?'c-buy':pat.sig==='venta'?'c-sell':'c-neutral');document.getElementById('candleDesc').textContent=pat.desc;
 }
@@ -1081,8 +1081,12 @@ function applyDashLang(lang) {
     if(i===1) el.textContent = t.score_neutral;
     if(i===2) el.textContent = t.score_sell;
   });
-  // Score title
-  const scoreTitle = document.querySelector('.sec-title');
+  // Panel titles
+  const panelCandle = document.getElementById('panel_candle');
+  const panelPatterns = document.getElementById('panel_patterns');
+  const scoreTitle = document.getElementById('score_title');
+  if(panelCandle) panelCandle.textContent = t.panel_candle;
+  if(panelPatterns) panelPatterns.textContent = t.panel_patterns;
   if(scoreTitle) scoreTitle.textContent = t.score_title;
   // Limit modal
   const limitTitle = document.querySelector('.limit-modal h3');
