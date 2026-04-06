@@ -52,8 +52,6 @@ export default async function handler(req, res) {
         },
         body: new URLSearchParams({
           'mode': 'subscription',
-          'payment_method_types[]': 'card',
-          'payment_method_types[1]': 'link',
           'line_items[0][price]': PRICE_ID,
           'line_items[0][quantity]': '1',
           'customer_email': email || '',
