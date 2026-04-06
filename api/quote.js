@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   const { type, symbol, outputsize, interval } = req.query;
 
   const STRIPE_SECRET = 'sk_test_51TIsOtLc2ovMZfInrIJpByq5rd26nsE9zfH8aq3cRhlG14pkNdVzT8BEX81sZQsjUQsKg6EoPt9jrTbofRUcCO7H00wKqR0ciR';
-  const PRICE_ID = 'price_1TIyF0Lc2ovMZfIn0mc9vomI';
+  const PRICE_ID = 'price_1TJ3nnLc2ovMZfInyqWlbaUv';
   const SUPABASE_URL = 'https://wnfogptzpqqugjxvwlnb.supabase.co';
   const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InduZm9ncHR6cHFxdWdqeHZ3bG5iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzOTY2MzUsImV4cCI6MjA5MDk3MjYzNX0.qLngiAY9bFvVipEAtKVqQVQAV62QcUPAlElKPkWAqRk';
 
