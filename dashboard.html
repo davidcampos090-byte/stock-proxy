@@ -655,20 +655,33 @@ function setTF(el, m) {
 
 // ── FETCH ──
 async function fetchTD(ticker) {
-  const sm = {'1M':30,'3M':65,'6M':130,'1Y':260};
+  const TD_KEY = 'cbecfbf347f74e9780b89f34b34d2431';
+  const sizeMap = {'1M':30,'3M':65,'6M':130,'1Y':260};
   const isI = tfMode === '1D';
+
+  // Twelve Data — 800 requests/día gratis
   const url = isI
-    ? `${PROXY}?type=intraday&symbol=${encodeURIComponent(ticker)}&interval=15min`
-    : `${PROXY}?type=daily&symbol=${encodeURIComponent(ticker)}&outputsize=${sm[tfMode]||30}`;
+    ? `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(ticker)}&interval=15min&outputsize=32&apikey=${TD_KEY}`
+    : `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(ticker)}&interval=1day&outputsize=${sizeMap[tfMode]||30}&apikey=${TD_KEY}`;
+
   const r = await fetch(url, {signal: AbortSignal.timeout(15000)});
   if (!r.ok) throw new Error('HTTP ' + r.status);
   const j = await r.json();
-  if (j['Note'] || j['Information']) throw new Error('Límite de Alpha Vantage alcanzado. Espera 1 minuto.');
-  if (j['Error Message']) throw new Error('Ticker no encontrado: ' + ticker);
-  const key = isI ? 'Time Series (15min)' : 'Time Series (Daily)';
-  const ts = j[key];
-  if (!ts) throw new Error('Sin datos para ' + ticker);
-  return Object.entries(ts).sort((a,b)=>a[0].localeCompare(b[0])).slice(-(sm[tfMode]||30));
+  if (j.status === 'error') throw new Error(j.message || 'Ticker no encontrado: ' + ticker);
+  if (!j.values?.length) throw new Error(isI ? 'No intraday data. Market may be closed.' : 'No data for ' + ticker);
+
+  // Convertir formato Twelve Data a formato compatible
+  const values = [...j.values].reverse();
+  return values.map(v => [
+    v.datetime,
+    {
+      '1. open': v.open,
+      '2. high': v.high,
+      '3. low': v.low,
+      '4. close': v.close,
+      '5. volume': v.volume || '0'
+    }
+  ]);
 }
 
 async function fetchPutCall() {
