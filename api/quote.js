@@ -7,8 +7,9 @@ export default async function handler(req, res) {
 
   const { type, symbol, outputsize, interval } = req.query;
 
-  const STRIPE_SECRET = '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';
-  const PRICE_ID = 'price_1TJNx4PqcW30lq4dMiOZPl3Y';
+  // ── Variables de entorno (configuradas en Vercel) ──
+  const STRIPE_SECRET = process.env.STRIPE_SECRET;
+  const PRICE_ID = process.env.STRIPE_PRICE_ID;
   const SUPABASE_URL = 'https://wnfogptzpqqugjxvwlnb.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InduZm9ncHR6cHFxdWdqeHZ3bG5iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzOTY2MzUsImV4cCI6MjA5MDk3MjYzNX0.qLngiAY9bFvVipEAtKVqQVQAV62QcUPAlElKPkWAqRk';
 
@@ -34,7 +35,7 @@ export default async function handler(req, res) {
       return res.status(200).json(await r.json());
     }
 
-    // ── STRIPE CHECKOUT (PRODUCCIÓN) ──
+    // ── STRIPE CHECKOUT ──
     if (type === 'checkout' && req.method === 'POST') {
       const body = await new Promise((resolve) => {
         let data = '';
