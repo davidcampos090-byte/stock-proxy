@@ -26,7 +26,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .app-layout{display:flex;min-height:100vh;}
 .sidebar{
 width:220px;flex-shrink:0;
-background:var(–bg2);
+background:#0d1117;
 border-right:1px solid var(–border);
 display:flex;flex-direction:column;
 padding:1.5rem 1rem;
@@ -34,7 +34,7 @@ position:fixed;top:0;left:0;bottom:0;
 z-index:50;
 }
 @media(max-width:768px){
-.sidebar{transform:translateX(-100%);transition:transform .3s;}
+.sidebar{transform:translateX(-100%);transition:transform .3s;background:#0d1117;box-shadow:4px 0 20px rgba(0,0,0,.8);}
 .sidebar.open{transform:translateX(0);}
 .main-content{margin-left:0!important;}
 }
@@ -1131,8 +1131,230 @@ function showSection(section) {
 // ══ INDICADORES — BASE DE DATOS ══
 const INDICATORS = [
   {
-    id:'rsi', category:'momentum', icon:'📈', name:'RSI (Relative Strength Index)',
-    type:'Momentum Oscillator',
+    id:'rsi', category:'momentum', icon:'📈',
+    name:{en:'RSI (Relative Strength Index)', es:'RSI (Índice de Fuerza Relativa)'},
+    type:{en:'Momentum Oscillator', es:'Oscilador de Momentum'},
+    desc:{en:'The RSI measures the speed and magnitude of price changes on a scale of 0 to 100. It tells you whether a stock is overbought (too expensive, likely to fall) or oversold (too cheap, likely to rise). Developed by J. Welles Wilder in 1978, it remains one of the most widely used indicators.',
+          es:'El RSI mide la velocidad y magnitud de los cambios de precio en una escala del 0 al 100. Indica si una acción está sobrecomprada (muy cara, probable caída) o sobrevendida (muy barata, probable subida). Creado por J. Welles Wilder en 1978, es uno de los indicadores más usados.'},
+    chart:'rsi',
+    signals:[
+      {type:'buy', title:{en:'Buy Signal',es:'Señal de Compra'}, desc:{en:'RSI below 30 = oversold. The stock has fallen too far too fast. Look for a bounce back up.', es:'RSI por debajo de 30 = sobrevendido. La acción cayó demasiado rápido. Busca un rebote al alza.'}},
+      {type:'sell', title:{en:'Sell Signal',es:'Señal de Venta'}, desc:{en:'RSI above 70 = overbought. The stock has risen too far too fast. A pullback is likely.', es:'RSI por encima de 70 = sobrecomprado. La acción subió demasiado rápido. Es probable una corrección.'}}
+    ],
+    tip:{en:'The best RSI signals happen when the indicator diverges from price — price makes new highs but RSI doesn\'t. That\'s a powerful reversal warning.',
+         es:'Las mejores señales del RSI ocurren cuando diverge del precio — el precio hace nuevos máximos pero el RSI no. Es una poderosa advertencia de reversión.'}
+  },
+  {
+    id:'macd', category:'momentum', icon:'📊',
+    name:{en:'MACD', es:'MACD'},
+    type:{en:'Momentum / Trend Indicator', es:'Indicador de Momentum / Tendencia'},
+    desc:{en:'MACD (Moving Average Convergence Divergence) shows the relationship between two moving averages of price. It consists of the MACD line (12-period EMA minus 26-period EMA) and a signal line (9-period EMA of MACD). When they cross, it signals a change in momentum.',
+          es:'El MACD muestra la relación entre dos medias móviles del precio. Consiste en la línea MACD (EMA 12 menos EMA 26) y una línea de señal (EMA 9 del MACD). Cuando se cruzan, indica un cambio de momentum.'},
+    chart:'macd',
+    signals:[
+      {type:'buy', title:{en:'Buy Signal',es:'Señal de Compra'}, desc:{en:'MACD line crosses above the signal line = bullish momentum building. Strong buy when this happens below the zero line.', es:'La línea MACD cruza por encima de la señal = momentum alcista creciente. Señal de compra fuerte cuando ocurre bajo la línea cero.'}},
+      {type:'sell', title:{en:'Sell Signal',es:'Señal de Venta'}, desc:{en:'MACD line crosses below the signal line = bearish momentum. Stronger signal when this happens above the zero line.', es:'La línea MACD cruza por debajo de la señal = momentum bajista. Señal más fuerte cuando ocurre sobre la línea cero.'}}
+    ],
+    tip:{en:'MACD works best in trending markets. In sideways (ranging) markets it generates many false signals. Combine with RSI for confirmation.',
+         es:'El MACD funciona mejor en mercados con tendencia. En mercados laterales genera muchas señales falsas. Combínalo con RSI para confirmar.'}
+  },
+  {
+    id:'sma', category:'trend', icon:'📉',
+    name:{en:'SMA 20 / SMA 50', es:'SMA 20 / SMA 50'},
+    type:{en:'Trend Indicator', es:'Indicador de Tendencia'},
+    desc:{en:'Simple Moving Averages smooth out price data to reveal the underlying trend. The SMA 20 (20-day average) reflects short-term trend, while SMA 50 reflects medium-term trend. When price is above both, the trend is bullish. When below both, bearish.',
+          es:'Las Medias Móviles Simples suavizan el precio para revelar la tendencia. La SMA 20 refleja la tendencia a corto plazo y la SMA 50 la de mediano plazo. Si el precio está sobre ambas, la tendencia es alcista. Si está debajo, bajista.'},
+    chart:'sma',
+    signals:[
+      {type:'buy', title:{en:'Buy Signal',es:'Señal de Compra'}, desc:{en:'Price above SMA 20 AND SMA 50 = strong uptrend. SMA 20 crossing above SMA 50 = "Golden Cross" — major bullish signal.', es:'Precio sobre SMA 20 Y SMA 50 = tendencia alcista fuerte. SMA 20 cruza sobre SMA 50 = "Cruz Dorada" — señal alcista mayor.'}},
+      {type:'sell', title:{en:'Sell Signal',es:'Señal de Venta'}, desc:{en:'Price below SMA 20 AND SMA 50 = downtrend. SMA 20 crossing below SMA 50 = "Death Cross" — major bearish signal.', es:'Precio bajo SMA 20 Y SMA 50 = tendencia bajista. SMA 20 cruza bajo SMA 50 = "Cruz de la Muerte" — señal bajista mayor.'}}
+    ],
+    tip:{en:'The Golden Cross (SMA 20 crosses above SMA 50) and Death Cross are closely watched by institutional investors and often trigger large price moves.',
+         es:'La Cruz Dorada y la Cruz de la Muerte son muy vigiladas por inversores institucionales y suelen desencadenar grandes movimientos de precio.'}
+  },
+  {
+    id:'bb', category:'momentum', icon:'🎯',
+    name:{en:'Bollinger Bands', es:'Bandas de Bollinger'},
+    type:{en:'Volatility Indicator', es:'Indicador de Volatilidad'},
+    desc:{en:'Bollinger Bands consist of a middle band (20-day SMA) with upper and lower bands placed 2 standard deviations away. When price is near the upper band the stock may be overbought; near the lower band it may be oversold. Bands widen during high volatility and narrow during low volatility.',
+          es:'Las Bandas de Bollinger consisten en una banda media (SMA 20) con bandas superior e inferior a 2 desviaciones estándar. Cuando el precio toca la banda superior puede estar sobrecomprado; cerca de la inferior, sobrevendido. Se ensanchan con alta volatilidad y se estrechan con baja.'},
+    chart:'bb',
+    signals:[
+      {type:'buy', title:{en:'Buy Signal',es:'Señal de Compra'}, desc:{en:'Price touches or breaks below the lower band = potential oversold condition. Watch for price to bounce back into the bands.', es:'El precio toca o rompe la banda inferior = posible condición de sobrevendido. Espera un rebote de vuelta dentro de las bandas.'}},
+      {type:'sell', title:{en:'Sell Signal',es:'Señal de Venta'}, desc:{en:'Price touches or breaks above the upper band = potential overbought condition. Watch for price to pull back toward the middle band.', es:'El precio toca o rompe la banda superior = posible sobrecompra. Espera una corrección hacia la banda media.'}}
+    ],
+    tip:{en:'The "Bollinger Squeeze" — when bands are very narrow — signals low volatility. A big price breakout is usually coming. Watch which direction it breaks for the trade direction.',
+         es:'El "Squeeze de Bollinger" — cuando las bandas están muy juntas — señala baja volatilidad. Suele preceder una ruptura fuerte. La dirección de la ruptura indica la dirección del trade.'}
+  },
+  {
+    id:'vwap', category:'trend', icon:'⚖️',
+    name:{en:'VWAP', es:'VWAP'},
+    type:{en:'Volume-Weighted Price Level', es:'Nivel de Precio Ponderado por Volumen'},
+    desc:{en:'VWAP (Volume-Weighted Average Price) is the average price a stock has traded at during the day, weighted by volume. It\'s the most important intraday indicator for institutional traders. Institutions buy below VWAP and sell above VWAP. It acts as a magnet for price.',
+          es:'El VWAP (Precio Promedio Ponderado por Volumen) es el precio promedio al que cotizó una acción durante el día, ponderado por volumen. Es el indicador intradía más importante para traders institucionales. Las instituciones compran bajo el VWAP y venden sobre él.'},
+    chart:'vwap',
+    signals:[
+      {type:'buy', title:{en:'Buy Signal',es:'Señal de Compra'}, desc:{en:'Price above VWAP = bulls are in control. The stock is trading at a premium — institutions are willing to pay up. Bullish bias for the day.', es:'Precio sobre VWAP = los alcistas controlan. La acción cotiza con prima — las instituciones están dispuestas a pagar más. Sesgo alcista en el día.'}},
+      {type:'sell', title:{en:'Sell Signal',es:'Señal de Venta'}, desc:{en:'Price below VWAP = bears in control. The stock is at a discount — sellers are dominant. Bearish bias for the day.', es:'Precio bajo VWAP = los bajistas controlan. La acción cotiza con descuento — los vendedores dominan. Sesgo bajista en el día.'}}
+    ],
+    tip:{en:'VWAP is most powerful for intraday trading. When price breaks above VWAP with high volume, it often leads to a strong bullish move.',
+         es:'El VWAP es más poderoso para trading intradía. Cuando el precio rompe sobre el VWAP con alto volumen, suele generar un fuerte movimiento alcista.'}
+  },
+  {
+    id:'obv', category:'volume', icon:'📦',
+    name:{en:'OBV (On-Balance Volume)', es:'OBV (Volumen en Balance)'},
+    type:{en:'Volume Indicator', es:'Indicador de Volumen'},
+    desc:{en:'OBV adds volume on up days and subtracts it on down days, creating a running total. It measures buying and selling pressure. If OBV is rising while price is flat or falling, institutions are quietly accumulating — a bullish sign.',
+          es:'El OBV suma el volumen en días alcistas y lo resta en días bajistas. Mide la presión compradora y vendedora. Si el OBV sube mientras el precio está plano, las instituciones están acumulando en silencio — señal alcista.'},
+    chart:'obv',
+    signals:[
+      {type:'buy', title:{en:'Buy Signal',es:'Señal de Compra'}, desc:{en:'OBV rising while price is flat or lagging = accumulation. Big money is buying before the price move.', es:'OBV subiendo mientras el precio está plano = acumulación. El dinero grande compra antes del movimiento.'}},
+      {type:'sell', title:{en:'Sell Signal',es:'Señal de Venta'}, desc:{en:'OBV falling while price is still rising = distribution. Institutions are selling into strength.', es:'OBV bajando mientras el precio sube = distribución. Las instituciones venden mientras el precio está alto.'}}
+    ],
+    tip:{en:'OBV divergence is one of the most powerful signals. When OBV makes new highs but price doesn\'t, a major price move is coming.',
+         es:'La divergencia del OBV es una de las señales más poderosas. Cuando el OBV marca nuevos máximos pero el precio no, se acerca un gran movimiento.'}
+  },
+  {
+    id:'mfi', category:'volume', icon:'💰',
+    name:{en:'MFI (Money Flow Index)', es:'MFI (Índice de Flujo de Dinero)'},
+    type:{en:'Volume + Price Oscillator', es:'Oscilador de Volumen + Precio'},
+    desc:{en:'MFI is like RSI but includes volume data, making it a more complete indicator. It ranges from 0 to 100 and measures the flow of money in and out of a stock.',
+          es:'El MFI es como el RSI pero incluye datos de volumen, haciéndolo más completo. Va de 0 a 100 y mide el flujo de dinero entrando y saliendo de una acción.'},
+    chart:'mfi',
+    signals:[
+      {type:'buy', title:{en:'Buy Signal',es:'Señal de Compra'}, desc:{en:'MFI below 20 = oversold with volume confirmation. Strong potential reversal.', es:'MFI por debajo de 20 = sobrevendido con confirmación de volumen. Fuerte potencial de reversión.'}},
+      {type:'sell', title:{en:'Sell Signal',es:'Señal de Venta'}, desc:{en:'MFI above 80 = overbought with volume confirmation. Selling pressure may be building.', es:'MFI por encima de 80 = sobrecomprado con confirmación de volumen. La presión vendedora puede estar creciendo.'}}
+    ],
+    tip:{en:'MFI is especially useful for spotting divergences. When price makes new highs but MFI fails to confirm, the rally lacks volume support.',
+         es:'El MFI es especialmente útil para detectar divergencias. Cuando el precio marca nuevos máximos pero el MFI no confirma, el rally carece de soporte de volumen.'}
+  },
+  {
+    id:'cmf', category:'volume', icon:'🌊',
+    name:{en:'CMF (Chaikin Money Flow)', es:'CMF (Flujo de Dinero Chaikin)'},
+    type:{en:'Volume Flow Indicator', es:'Indicador de Flujo de Volumen'},
+    desc:{en:'CMF measures the amount of money flowing in and out of a stock over a period. Positive CMF means buying pressure dominates; negative CMF means selling pressure dominates. It ranges from -1 to +1.',
+          es:'El CMF mide el flujo de dinero entrando y saliendo de una acción durante un período. CMF positivo significa que domina la presión compradora; negativo, la vendedora. Va de -1 a +1.'},
+    chart:'cmf',
+    signals:[
+      {type:'buy', title:{en:'Buy Signal',es:'Señal de Compra'}, desc:{en:'CMF above +0.10 = significant buying pressure. Money is consistently flowing in.', es:'CMF sobre +0.10 = presión compradora significativa. El dinero fluye consistentemente hacia adentro.'}},
+      {type:'sell', title:{en:'Sell Signal',es:'Señal de Venta'}, desc:{en:'CMF below -0.10 = significant selling pressure. Money is flowing out.', es:'CMF bajo -0.10 = presión vendedora significativa. El dinero está saliendo de la acción.'}}
+    ],
+    tip:{en:'CMF crossing from negative to positive often precedes a significant price move by a few days. It\'s a leading indicator.',
+         es:'El CMF cruzando de negativo a positivo suele preceder un movimiento importante de precio en días. Es un indicador adelantado.'}
+  },
+  {
+    id:'pcr', category:'sentiment', icon:'😱',
+    name:{en:'Put/Call Ratio', es:'Ratio Put/Call'},
+    type:{en:'Market Sentiment Indicator', es:'Indicador de Sentimiento de Mercado'},
+    desc:{en:'The Put/Call Ratio measures how many put options (bets that price will fall) are being bought versus call options (bets that price will rise). It\'s a contrarian indicator: extreme fear (high PCR) often marks market bottoms, while extreme greed (low PCR) often marks market tops.',
+          es:'El Ratio Put/Call mide cuántas opciones put (apuestas a la baja) se compran versus opciones call (apuestas al alza). Es un indicador contrario: el miedo extremo (PCR alto) suele marcar suelos, mientras que la codicia extrema (PCR bajo) suele marcar techos.'},
+    chart:'pcr',
+    signals:[
+      {type:'buy', title:{en:'Contrarian Buy',es:'Compra Contraria'}, desc:{en:'PCR above 1.0 = extreme fear. Everyone is buying puts. Historically, this marks market bottoms.', es:'PCR sobre 1.0 = miedo extremo. Todos compran puts. Históricamente marca suelos de mercado. Señal contraria de COMPRA.'}},
+      {type:'sell', title:{en:'Contrarian Sell',es:'Venta Contraria'}, desc:{en:'PCR below 0.6 = extreme greed. Everyone is buying calls. Historically, this marks market tops.', es:'PCR bajo 0.6 = codicia extrema. Todos compran calls. Históricamente marca techos de mercado. Señal contraria de reducir exposición.'}}
+    ],
+    tip:{en:'The Put/Call Ratio works best as a contrarian signal — when everyone is fearful, be greedy. When everyone is greedy, be cautious.',
+         es:'El Ratio Put/Call funciona mejor como señal contraria — cuando todos tienen miedo, sé codicioso. Cuando todos son codiciosos, sé cauteloso.'}
+  },
+  {
+    id:'bull_flag', category:'pattern', icon:'🚩',
+    name:{en:'Bull Flag', es:'Bandera Alcista'},
+    type:{en:'Chart Pattern — Bullish Continuation', es:'Patrón de Gráfico — Continuación Alcista'},
+    desc:{en:'A Bull Flag forms after a sharp price increase (the "pole"), followed by a brief consolidation where price moves sideways or slightly lower (the "flag"). It signals that buyers are taking a short rest before continuing the upward move.',
+          es:'Una Bandera Alcista se forma después de una subida fuerte (el "asta"), seguida de una consolidación breve donde el precio se mueve lateral o ligeramente hacia abajo (la "bandera"). Señala que los compradores descansan antes de continuar al alza.'},
+    chart:'flag_bull',
+    signals:[
+      {type:'buy', title:{en:'Entry Point',es:'Punto de Entrada'}, desc:{en:'Buy when price breaks above the upper boundary of the flag on high volume.', es:'Compra cuando el precio rompe por encima del límite superior de la bandera con alto volumen.'}},
+      {type:'sell', title:{en:'Stop Loss',es:'Stop Loss'}, desc:{en:'Place stop loss below the lower boundary of the flag. If price breaks down, the pattern has failed.', es:'Coloca el stop loss bajo el límite inferior de la bandera. Si el precio cae, el patrón ha fallado.'}}
+    ],
+    tip:{en:'The best Bull Flags form over 5-15 days with decreasing volume during the consolidation. Volume spike on breakout confirms the pattern.',
+         es:'Las mejores Banderas Alcistas se forman en 5-15 días con volumen decreciente durante la consolidación. Un pico de volumen en la ruptura confirma el patrón.'}
+  },
+  {
+    id:'bear_flag', category:'pattern', icon:'🏴',
+    name:{en:'Bear Flag', es:'Bandera Bajista'},
+    type:{en:'Chart Pattern — Bearish Continuation', es:'Patrón de Gráfico — Continuación Bajista'},
+    desc:{en:'The Bear Flag is the opposite of the Bull Flag. After a sharp decline, price bounces slightly before continuing lower. Sellers are resting before the next leg down.',
+          es:'La Bandera Bajista es lo opuesto a la alcista. Después de una caída fuerte, el precio rebota ligeramente antes de continuar bajando. Los vendedores descansan antes del siguiente tramo bajista.'},
+    chart:'flag_bear',
+    signals:[
+      {type:'buy', title:{en:'Cover/Exit',es:'Cubrir/Salir'}, desc:{en:'Exit short positions when price breaks below the lower boundary of the flag.', es:'Cierra posiciones cortas cuando el precio rompe bajo el límite inferior de la bandera.'}},
+      {type:'sell', title:{en:'Short Entry',es:'Entrada Corta'}, desc:{en:'Enter short when price breaks below the flag support on increased volume.', es:'Entra corto cuando el precio rompe el soporte de la bandera con volumen creciente.'}}
+    ],
+    tip:{en:'Bear Flags often form during bear markets or after major negative news. They represent a brief relief rally before selling resumes.',
+         es:'Las Banderas Bajistas suelen aparecer en mercados bajistas o tras noticias negativas importantes. Representan un rebote breve antes de que las ventas continúen.'}
+  },
+  {
+    id:'hns', category:'pattern', icon:'👤',
+    name:{en:'Head & Shoulders', es:'Hombro-Cabeza-Hombro'},
+    type:{en:'Chart Pattern — Bearish Reversal', es:'Patrón de Gráfico — Reversión Bajista'},
+    desc:{en:'One of the most famous reversal patterns. Three peaks: left shoulder, a higher head, and a right shoulder roughly equal to the left. When price breaks below the neckline, a major trend reversal from bullish to bearish is confirmed.',
+          es:'Uno de los patrones de reversión más famosos. Tres picos: hombro izquierdo, cabeza más alta, y hombro derecho similar al izquierdo. Cuando el precio rompe el neckline, se confirma una reversión mayor de alcista a bajista.'},
+    chart:'hns',
+    signals:[
+      {type:'sell', title:{en:'Sell Signal',es:'Señal de Venta'}, desc:{en:'Sell when price breaks below the neckline with high volume. Target: height of head projected below neckline.', es:'Vende cuando el precio rompe bajo el neckline con alto volumen. Objetivo: altura de la cabeza proyectada bajo el neckline.'}},
+      {type:'buy', title:{en:'Stop Loss',es:'Stop Loss'}, desc:{en:'Stop loss above the right shoulder. If price recovers above it, the pattern has failed.', es:'Stop loss sobre el hombro derecho. Si el precio recupera ese nivel, el patrón ha fallado.'}}
+    ],
+    tip:{en:'The right shoulder often retests the neckline after the breakdown. This retest can be an excellent entry point for late sellers.',
+         es:'El hombro derecho suele retestear el neckline después de la ruptura. Este retest puede ser un excelente punto de entrada para los que se perdieron la ruptura inicial.'}
+  },
+  {
+    id:'double_top', category:'pattern', icon:'⛰️',
+    name:{en:'Double Top', es:'Doble Techo'},
+    type:{en:'Chart Pattern — Bearish Reversal', es:'Patrón de Gráfico — Reversión Bajista'},
+    desc:{en:'A Double Top forms when price makes two peaks at roughly the same level. It looks like the letter "M". Buyers tried twice to push through a resistance level and failed — sellers are winning.',
+          es:'El Doble Techo se forma cuando el precio hace dos picos a un nivel similar. Parece la letra "M". Los compradores intentaron dos veces superar una resistencia y fallaron — los vendedores están ganando.'},
+    chart:'double_top',
+    signals:[
+      {type:'sell', title:{en:'Sell Signal',es:'Señal de Venta'}, desc:{en:'Sell when price breaks below the valley (neckline) between the two tops.', es:'Vende cuando el precio rompe bajo el valle (neckline) entre los dos techos.'}},
+      {type:'buy', title:{en:'Stop Loss',es:'Stop Loss'}, desc:{en:'Stop loss just above the double top resistance level.', es:'Stop loss justo sobre el nivel de resistencia del doble techo.'}}
+    ],
+    tip:{en:'The more time between the two tops, the more significant the pattern. Double tops on weekly charts are much more powerful than those on hourly charts.',
+         es:'Cuanto más tiempo entre los dos techos, más significativo es el patrón. Los dobles techos en gráficos semanales son mucho más poderosos que en gráficos de horas.'}
+  },
+  {
+    id:'double_bottom', category:'pattern', icon:'🏔️',
+    name:{en:'Double Bottom', es:'Doble Suelo'},
+    type:{en:'Chart Pattern — Bullish Reversal', es:'Patrón de Gráfico — Reversión Alcista'},
+    desc:{en:'The Double Bottom is the bullish counterpart to the Double Top. Price makes two lows at roughly the same level — like the letter "W". Sellers tried twice to push price lower and failed.',
+          es:'El Doble Suelo es la contraparte alcista del Doble Techo. El precio forma dos mínimos similares — como la letra "W". Los vendedores intentaron empujar el precio dos veces y fallaron.'},
+    chart:'double_bottom',
+    signals:[
+      {type:'buy', title:{en:'Buy Signal',es:'Señal de Compra'}, desc:{en:'Buy when price breaks above the peak (neckline) between the two bottoms with increasing volume.', es:'Compra cuando el precio rompe sobre el pico (neckline) entre los dos suelos con volumen creciente.'}},
+      {type:'sell', title:{en:'Stop Loss',es:'Stop Loss'}, desc:{en:'Stop loss just below the double bottom support level.', es:'Stop loss justo bajo el nivel de soporte del doble suelo.'}}
+    ],
+    tip:{en:'Double Bottoms are most powerful after extended downtrends. The longer the prior downtrend, the more significant the reversal.',
+         es:'Los Dobles Suelos son más poderosos después de tendencias bajistas prolongadas. Cuanto más larga la tendencia previa, más significativa la reversión.'}
+  },
+  {
+    id:'triangle_asc', category:'pattern', icon:'📐',
+    name:{en:'Ascending Triangle', es:'Triángulo Ascendente'},
+    type:{en:'Chart Pattern — Bullish Continuation', es:'Patrón de Gráfico — Continuación Alcista'},
+    desc:{en:'An Ascending Triangle has a flat horizontal resistance at the top and rising support at the bottom. Buyers are increasingly aggressive — each dip is bought at higher levels — while sellers defend a price level. Eventually buyers win and price breaks upward.',
+          es:'El Triángulo Ascendente tiene una resistencia horizontal plana arriba y un soporte ascendente abajo. Los compradores son cada vez más agresivos — cada caída es comprada a niveles más altos — mientras los vendedores defienden un precio específico. Finalmente los compradores ganan.'},
+    chart:'triangle',
+    signals:[
+      {type:'buy', title:{en:'Buy Signal',es:'Señal de Compra'}, desc:{en:'Buy on the breakout above the flat resistance, confirmed by high volume.', es:'Compra en la ruptura sobre la resistencia plana, confirmada por alto volumen.'}},
+      {type:'sell', title:{en:'Stop Loss',es:'Stop Loss'}, desc:{en:'Stop loss below the last higher low within the triangle.', es:'Stop loss bajo el último mínimo creciente dentro del triángulo.'}}
+    ],
+    tip:{en:'The more times price tests the flat resistance without breaking through, the more explosive the eventual breakout will be.',
+         es:'Cuantas más veces el precio prueba la resistencia plana sin romperla, más explosiva será la ruptura eventual — la presión se acumula como un resorte.'}
+  },
+  {
+    id:'smart_money', category:'volume', icon:'💼',
+    name:{en:'Smart Money (Order Flow)', es:'Smart Money (Flujo de Órdenes)'},
+    type:{en:'Institutional Flow Analysis', es:'Análisis de Flujo Institucional'},
+    desc:{en:'Smart Money analysis tracks where large institutional investors (hedge funds, banks, pension funds) are putting their money. It uses OBV, CMF, and MFI together to detect accumulation or distribution by institutions before it shows up in the price.',
+          es:'El análisis de Smart Money rastrea dónde ponen su dinero los grandes inversores institucionales (fondos hedge, bancos, fondos de pensiones). Usa OBV, CMF y MFI juntos para detectar acumulación o distribución institucional antes de que aparezca en el precio.'},
+    chart:'smart_money',
+    signals:[
+      {type:'buy', title:{en:'Accumulating',es:'Acumulando'}, desc:{en:'OBV rising + CMF positive + more institutional bullish candles = big money quietly buying. Price will follow upward.', es:'OBV subiendo + CMF positivo + más velas institucionales alcistas = el dinero grande compra en silencio. El precio seguirá al alza.'}},
+      {type:'sell', title:{en:'Distributing',es:'Distribuyendo'}, desc:{en:'OBV falling + CMF negative + more institutional bearish candles = big money quietly selling. Price will follow downward.', es:'OBV bajando + CMF negativo + más velas institucionales bajistas = el dinero grande vende en silencio. El precio seguirá a la baja.'}}
+    ],
+    tip:{en:'Institutional investors move slowly because their positions are huge. When Smart Money signals accumulation, the price move may not happen immediately — but it\'s coming.',
+         es:'Los inversores institucionales se mueven despacio porque sus posiciones son enormes. Cuando el Smart Money señala acumulación, el movimiento puede no ocurrir de inmediato — pero está por venir.'}
+  },
+];
     desc:'The RSI measures the speed and magnitude of price changes on a scale of 0 to 100. It tells you whether a stock is overbought (too expensive, likely to fall) or oversold (too cheap, likely to rise). Developed by J. Welles Wilder in 1978, it remains one of the most widely used indicators.',
     chart:'rsi',
     signals:[
@@ -1317,27 +1539,37 @@ function filterLearn(cat) {
 
 function renderLearn(cat) {
   const filtered = cat === 'all' ? INDICATORS : INDICATORS.filter(i => i.category === cat);
+  const lang = currentLang || 'en';
   const el = document.getElementById('learnGrid');
-  el.innerHTML = filtered.map(ind => `
+  el.innerHTML = filtered.map(ind => {
+    const name = typeof ind.name === 'object' ? (ind.name[lang]||ind.name.en) : ind.name;
+    const type = typeof ind.type === 'object' ? (ind.type[lang]||ind.type.en) : ind.type;
+    const desc = typeof ind.desc === 'object' ? (ind.desc[lang]||ind.desc.en) : ind.desc;
+    const tip = typeof ind.tip === 'object' ? (ind.tip[lang]||ind.tip.en) : ind.tip;
+    return `
     <div class="learn-card">
       <div class="learn-card-header">
         <div class="learn-icon">${ind.icon}</div>
         <div>
-          <div class="learn-name">${ind.name}</div>
-          <div class="learn-type">${ind.type}</div>
+          <div class="learn-name">${name}</div>
+          <div class="learn-type">${type}</div>
         </div>
       </div>
-      <div class="learn-desc">${ind.desc}</div>
+      <div class="learn-desc">${desc}</div>
       <div class="learn-chart">${generateMiniChart(ind.chart)}</div>
       <div class="learn-signals">
-        ${ind.signals.map(s => `
-          <div class="learn-signal ${s.type}">
-            <div class="learn-signal-title">${s.type === 'buy' ? '▲' : '▼'} ${s.title}</div>
-            <div class="learn-signal-desc">${s.desc}</div>
-          </div>`).join('')}
+        ${ind.signals.map(s => {
+          const stitle = typeof s.title === 'object' ? (s.title[lang]||s.title.en) : s.title;
+          const sdesc = typeof s.desc === 'object' ? (s.desc[lang]||s.desc.en) : s.desc;
+          return `<div class="learn-signal ${s.type}">
+            <div class="learn-signal-title">${s.type==='buy'?'▲':'▼'} ${stitle}</div>
+            <div class="learn-signal-desc">${sdesc}</div>
+          </div>`;
+        }).join('')}
       </div>
-      <div class="learn-tip">${ind.tip}</div>
-    </div>`).join('');
+      <div class="learn-tip">${tip}</div>
+    </div>`;
+  }).join('');
 }
 
 function generateMiniChart(type) {
@@ -1861,6 +2093,12 @@ function applyDashLang(lang) {
 
 function toggleLang() {
   applyDashLang(currentLang === 'es' ? 'en' : 'es');
+  // Si está en Learn, re-renderizar con nuevo idioma
+  if(document.getElementById('learnPanel').style.display !== 'none') {
+    const activeTab = document.querySelector('.learn-tab.active');
+    const cat = activeTab ? activeTab.id.replace('tab_','') : 'all';
+    renderLearn(cat);
+  }
 }
 
 // Aplicar idioma al cargar
