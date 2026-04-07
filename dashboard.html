@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -24,65 +25,65 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 /* LAYOUT */
 .app-layout{display:flex;min-height:100vh;}
 .sidebar{
-  width:220px;flex-shrink:0;
-  background:var(--bg2);
-  border-right:1px solid var(--border);
-  display:flex;flex-direction:column;
-  padding:1.5rem 1rem;
-  position:fixed;top:0;left:0;bottom:0;
-  z-index:50;
+width:220px;flex-shrink:0;
+background:var(–bg2);
+border-right:1px solid var(–border);
+display:flex;flex-direction:column;
+padding:1.5rem 1rem;
+position:fixed;top:0;left:0;bottom:0;
+z-index:50;
 }
 @media(max-width:768px){
-  .sidebar{transform:translateX(-100%);transition:transform .3s;}
-  .sidebar.open{transform:translateX(0);}
-  .main-content{margin-left:0!important;}
+.sidebar{transform:translateX(-100%);transition:transform .3s;}
+.sidebar.open{transform:translateX(0);}
+.main-content{margin-left:0!important;}
 }
 .sidebar-logo{
-  font-family:'Syne',sans-serif;font-weight:800;font-size:15px;
-  color:var(--text);text-decoration:none;
-  display:flex;align-items:center;gap:8px;
-  margin-bottom:2rem;
+font-family:‘Syne’,sans-serif;font-weight:800;font-size:15px;
+color:var(–text);text-decoration:none;
+display:flex;align-items:center;gap:8px;
+margin-bottom:2rem;
 }
-.logo-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:blink 1.5s infinite;}
+.logo-dot{width:7px;height:7px;border-radius:50%;background:var(–green);animation:blink 1.5s infinite;}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 .nav-item{
-  display:flex;align-items:center;gap:10px;
-  padding:10px 12px;border-radius:10px;
-  font-size:13px;color:var(--muted);
-  text-decoration:none;cursor:pointer;
-  transition:all .15s;margin-bottom:2px;
+display:flex;align-items:center;gap:10px;
+padding:10px 12px;border-radius:10px;
+font-size:13px;color:var(–muted);
+text-decoration:none;cursor:pointer;
+transition:all .15s;margin-bottom:2px;
 }
-.nav-item:hover{background:var(--card);color:var(--text);}
-.nav-item.active{background:var(--green-dim);color:var(--green);}
+.nav-item:hover{background:var(–card);color:var(–text);}
+.nav-item.active{background:var(–green-dim);color:var(–green);}
 .nav-icon{font-size:16px;width:20px;text-align:center;}
 .sidebar-bottom{margin-top:auto;}
 .user-info{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:10px;padding:12px;
-  margin-bottom:10px;
+background:var(–card);border:1px solid var(–border);
+border-radius:10px;padding:12px;
+margin-bottom:10px;
 }
-.user-email{font-size:11px;color:var(--muted);margin-bottom:4px;word-break:break-all;}
+.user-email{font-size:11px;color:var(–muted);margin-bottom:4px;word-break:break-all;}
 .user-plan{
-  font-size:10px;font-weight:600;text-transform:uppercase;
-  letter-spacing:.08em;padding:2px 8px;border-radius:99px;
-  display:inline-block;
+font-size:10px;font-weight:600;text-transform:uppercase;
+letter-spacing:.08em;padding:2px 8px;border-radius:99px;
+display:inline-block;
 }
-.plan-free{background:var(--card);color:var(--muted);border:1px solid var(--border);}
-.plan-pro{background:var(--green-dim);color:var(--green);}
+.plan-free{background:var(–card);color:var(–muted);border:1px solid var(–border);}
+.plan-pro{background:var(–green-dim);color:var(–green);}
 .btn-upgrade{
-  width:100%;padding:9px;border-radius:8px;
-  background:var(--green);color:#000;
-  border:none;font-size:12px;font-weight:600;
-  cursor:pointer;margin-top:8px;transition:all .2s;
+width:100%;padding:9px;border-radius:8px;
+background:var(–green);color:#000;
+border:none;font-size:12px;font-weight:600;
+cursor:pointer;margin-top:8px;transition:all .2s;
 }
-.btn-upgrade:hover{background:var(--green-dark);}
+.btn-upgrade:hover{background:var(–green-dark);}
 .btn-logout{
-  width:100%;padding:9px;border-radius:8px;
-  background:transparent;color:var(--muted);
-  border:1px solid var(--border);font-size:12px;
-  cursor:pointer;transition:all .2s;margin-top:6px;
+width:100%;padding:9px;border-radius:8px;
+background:transparent;color:var(–muted);
+border:1px solid var(–border);font-size:12px;
+cursor:pointer;transition:all .2s;margin-top:6px;
 }
-.btn-logout:hover{border-color:rgba(255,255,255,.2);color:var(--text);}
+.btn-logout:hover{border-color:rgba(255,255,255,.2);color:var(–text);}
 
 /* MAIN */
 .main-content{margin-left:220px;flex:1;padding:1.5rem;}
@@ -90,101 +91,101 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 
 /* TOPBAR */
 .topbar{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:1.5rem;flex-wrap:wrap;gap:10px;
+display:flex;align-items:center;justify-content:space-between;
+margin-bottom:1.5rem;flex-wrap:wrap;gap:10px;
 }
-.topbar-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;}
+.topbar-title{font-family:‘Syne’,sans-serif;font-size:20px;font-weight:700;}
 .usage-bar-wrap{
-  display:flex;align-items:center;gap:10px;
-  background:var(--card);border:1px solid var(--border);
-  border-radius:10px;padding:8px 14px;
+display:flex;align-items:center;gap:10px;
+background:var(–card);border:1px solid var(–border);
+border-radius:10px;padding:8px 14px;
 }
-.usage-label{font-size:12px;color:var(--muted);}
-.usage-bar{width:100px;height:6px;background:var(--border);border-radius:99px;overflow:hidden;}
-.usage-fill{height:100%;border-radius:99px;transition:width .5s;background:var(--green);}
+.usage-label{font-size:12px;color:var(–muted);}
+.usage-bar{width:100px;height:6px;background:var(–border);border-radius:99px;overflow:hidden;}
+.usage-fill{height:100%;border-radius:99px;transition:width .5s;background:var(–green);}
 .usage-fill.warning{background:#f59e0b;}
-.usage-fill.danger{background:var(--red);}
+.usage-fill.danger{background:var(–red);}
 .usage-count{font-size:12px;font-weight:600;}
 
 /* AD BANNER — solo plan gratis */
 .ad-banner{
-  background:var(--bg2);border:1px solid var(--border);
-  border-radius:12px;padding:1rem;
-  text-align:center;margin-bottom:1.5rem;
-  font-size:11px;color:var(--muted);
+background:var(–bg2);border:1px solid var(–border);
+border-radius:12px;padding:1rem;
+text-align:center;margin-bottom:1.5rem;
+font-size:11px;color:var(–muted);
 }
 .ad-label{font-size:10px;color:#444;margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em;}
 
 /* ANALYZER CARD */
 .analyzer-card{
-  background:var(--bg2);border:1px solid var(--border);
-  border-radius:14px;padding:1.5rem;margin-bottom:1rem;
+background:var(–bg2);border:1px solid var(–border);
+border-radius:14px;padding:1.5rem;margin-bottom:1rem;
 }
 .input-row{display:flex;gap:10px;margin-bottom:1rem;flex-wrap:wrap;}
 input[type=text]{
-  flex:1;min-width:150px;padding:10px 14px;
-  background:var(--bg3);border:1px solid var(--border);
-  border-radius:10px;color:var(--text);font-size:15px;
-  text-transform:uppercase;outline:none;transition:border .2s;
+flex:1;min-width:150px;padding:10px 14px;
+background:var(–bg3);border:1px solid var(–border);
+border-radius:10px;color:var(–text);font-size:15px;
+text-transform:uppercase;outline:none;transition:border .2s;
 }
-input[type=text]:focus{border-color:var(--green);}
+input[type=text]:focus{border-color:var(–green);}
 button.primary{
-  background:var(--green);color:#000;border:none;
-  border-radius:10px;padding:10px 24px;
-  font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;
+background:var(–green);color:#000;border:none;
+border-radius:10px;padding:10px 24px;
+font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;
 }
-button.primary:hover{background:var(--green-dark);}
+button.primary:hover{background:var(–green-dark);}
 button.primary:disabled{opacity:.4;cursor:not-allowed;}
 .tf-row{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap;}
 .tf-btn{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:99px;padding:5px 14px;
-  font-size:12px;color:var(--muted);cursor:pointer;transition:all .15s;
+background:var(–card);border:1px solid var(–border);
+border-radius:99px;padding:5px 14px;
+font-size:12px;color:var(–muted);cursor:pointer;transition:all .15s;
 }
-.tf-btn.active{background:var(--green);color:#000;border-color:var(--green);}
+.tf-btn.active{background:var(–green);color:#000;border-color:var(–green);}
 .tf-btn.intraday{background:rgba(74,90,205,0.15);color:#818cf8;border-color:rgba(74,90,205,0.3);}
 .tf-btn.intraday.active{background:#4a5acd;color:#fff;border-color:#4a5acd;}
 .chips{display:flex;gap:6px;flex-wrap:wrap;}
 .chip{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:99px;padding:5px 12px;
-  font-size:12px;color:var(--muted);cursor:pointer;transition:all .15s;
+background:var(–card);border:1px solid var(–border);
+border-radius:99px;padding:5px 12px;
+font-size:12px;color:var(–muted);cursor:pointer;transition:all .15s;
 }
-.chip:hover{border-color:var(--green);color:var(--green);}
+.chip:hover{border-color:var(–green);color:var(–green);}
 
 /* LIMIT MODAL */
 .limit-overlay{
-  position:fixed;inset:0;z-index:200;
-  background:rgba(0,0,0,.8);backdrop-filter:blur(8px);
-  display:none;align-items:center;justify-content:center;padding:1rem;
+position:fixed;inset:0;z-index:200;
+background:rgba(0,0,0,.8);backdrop-filter:blur(8px);
+display:none;align-items:center;justify-content:center;padding:1rem;
 }
 .limit-overlay.open{display:flex;}
 .limit-modal{
-  background:var(--bg2);border:1px solid var(--border);
-  border-radius:20px;padding:2.5rem;
-  width:100%;max-width:400px;text-align:center;
-  animation:modalIn .3s ease;
+background:var(–bg2);border:1px solid var(–border);
+border-radius:20px;padding:2.5rem;
+width:100%;max-width:400px;text-align:center;
+animation:modalIn .3s ease;
 }
 @keyframes modalIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 .limit-icon{font-size:48px;margin-bottom:1rem;}
-.limit-modal h3{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;margin-bottom:.75rem;}
-.limit-modal p{font-size:14px;color:var(--muted);margin-bottom:1.5rem;line-height:1.6;}
+.limit-modal h3{font-family:‘Syne’,sans-serif;font-size:22px;font-weight:700;margin-bottom:.75rem;}
+.limit-modal p{font-size:14px;color:var(–muted);margin-bottom:1.5rem;line-height:1.6;}
 .btn-upgrade-big{
-  width:100%;padding:14px;border-radius:10px;
-  background:var(--green);color:#000;
-  border:none;font-size:15px;font-weight:600;
-  cursor:pointer;transition:all .2s;margin-bottom:10px;
+width:100%;padding:14px;border-radius:10px;
+background:var(–green);color:#000;
+border:none;font-size:15px;font-weight:600;
+cursor:pointer;transition:all .2s;margin-bottom:10px;
 }
-.btn-upgrade-big:hover{background:var(--green-dark);}
+.btn-upgrade-big:hover{background:var(–green-dark);}
 .btn-dismiss{
-  background:none;border:none;color:var(--muted);
-  font-size:13px;cursor:pointer;
+background:none;border:none;color:var(–muted);
+font-size:13px;cursor:pointer;
 }
-.btn-dismiss:hover{color:var(--text);}
+.btn-dismiss:hover{color:var(–text);}
 
 /* LOADING */
-.loading-state{text-align:center;padding:3rem;color:var(--muted);display:none;}
-.spinner{display:inline-block;width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;margin-right:10px;vertical-align:middle;}
+.loading-state{text-align:center;padding:3rem;color:var(–muted);display:none;}
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid var(–border);border-top-color:var(–green);border-radius:50%;animation:spin .7s linear infinite;margin-right:10px;vertical-align:middle;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
 /* ERROR */
@@ -193,19 +194,19 @@ button.primary:disabled{opacity:.4;cursor:not-allowed;}
 /* RESULTS */
 .results{display:none;}
 .price-header{display:flex;align-items:baseline;gap:14px;margin-bottom:1.25rem;flex-wrap:wrap;}
-.price-big{font-size:34px;font-weight:700;letter-spacing:-.5px;font-family:'Syne',sans-serif;}
+.price-big{font-size:34px;font-weight:700;letter-spacing:-.5px;font-family:‘Syne’,sans-serif;}
 .price-chg{font-size:15px;font-weight:600;}
-.price-chg.up{color:var(--green)}.price-chg.down{color:var(--red)}
-.price-meta{font-size:12px;color:var(--muted);align-self:center;}
+.price-chg.up{color:var(–green)}.price-chg.down{color:var(–red)}
+.price-meta{font-size:12px;color:var(–muted);align-self:center;}
 .banner{border-radius:12px;padding:1.2rem 1.5rem;margin-bottom:1rem;display:none;}
 .banner.buy{background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.3);}
 .banner.sell{background:rgba(255,82,82,.08);border:1px solid rgba(255,82,82,.3);}
-.banner.neutral{background:var(--card);border:1px solid var(--border);}
-.banner-title{font-size:16px;font-weight:700;margin-bottom:6px;font-family:'Syne',sans-serif;}
+.banner.neutral{background:var(–card);border:1px solid var(–border);}
+.banner-title{font-size:16px;font-weight:700;margin-bottom:6px;font-family:‘Syne’,sans-serif;}
 .banner.buy .banner-title,.banner.buy .banner-body,.banner.buy .banner-note{color:#69f0ae;}
 .banner.sell .banner-title,.banner.sell .banner-body,.banner.sell .banner-note{color:#ff8a80;}
-.banner.neutral .banner-title{color:var(--text);}
-.banner.neutral .banner-body,.banner.neutral .banner-note{color:var(--muted);}
+.banner.neutral .banner-title{color:var(–text);}
+.banner.neutral .banner-body,.banner.neutral .banner-note{color:var(–muted);}
 .banner-body{font-size:13px;line-height:1.7;}
 .banner-note{font-size:11px;margin-top:6px;opacity:.8;}
 .targets-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;}
@@ -217,69 +218,69 @@ button.primary:disabled{opacity:.4;cursor:not-allowed;}
 .target-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:2px;}
 .target-box.buy-t .target-lbl{color:#69f0ae;}
 .target-box.sell-t .target-lbl{color:#ff8a80;}
-.target-price{font-size:22px;font-weight:700;letter-spacing:-.5px;font-family:'Syne',sans-serif;}
+.target-price{font-size:22px;font-weight:700;letter-spacing:-.5px;font-family:‘Syne’,sans-serif;}
 .target-box.buy-t .target-price{color:#00e676;}
-.target-box.sell-t .target-price{color:var(--red);}
+.target-box.sell-t .target-price{color:var(–red);}
 .target-desc{font-size:11px;line-height:1.5;margin-top:3px;}
 .target-box.buy-t .target-desc{color:#69f0ae;}
 .target-box.sell-t .target-desc{color:#ff8a80;}
 .chart-wrap{position:relative;height:220px;margin-bottom:1rem;}
 
 /* PANELS */
-.panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:1.4rem;margin-bottom:1rem;}
-.panel-title{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:1rem;font-weight:600;}
+.panel{background:var(–bg2);border:1px solid var(–border);border-radius:14px;padding:1.4rem;margin-bottom:1rem;}
+.panel-title{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(–muted);margin-bottom:1rem;font-weight:600;}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;}
 @media(max-width:560px){.two-col{grid-template-columns:1fr;}}
-.inner-panel{background:var(--bg3);border-radius:12px;padding:14px 16px;}
+.inner-panel{background:var(–bg3);border-radius:12px;padding:14px 16px;}
 
 /* CHART PATTERNS */
 .cp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin-bottom:1rem;}
 .cp-card{border-radius:12px;padding:14px 16px;border:1px solid;}
 .cp-card.bull{background:rgba(0,230,118,.06);border-color:rgba(0,230,118,.2);}
 .cp-card.bear{background:rgba(255,82,82,.06);border-color:rgba(255,82,82,.2);}
-.cp-card.neut{background:var(--card);border-color:var(--border);}
+.cp-card.neut{background:var(–card);border-color:var(–border);}
 .cp-card-head{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
 .cp-card-icon{font-size:20px;}
 .cp-card-name{font-size:13px;font-weight:700;}
 .cp-card.bull .cp-card-name{color:#69f0ae;}
 .cp-card.bear .cp-card-name{color:#ff8a80;}
-.cp-card.neut .cp-card-name{color:var(--text);}
+.cp-card.neut .cp-card-name{color:var(–text);}
 .cp-card-type{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-top:1px;}
 .cp-card.bull .cp-card-type{color:rgba(0,230,118,.6);}
 .cp-card.bear .cp-card-type{color:rgba(255,82,82,.6);}
-.cp-card-desc{font-size:12px;line-height:1.6;margin-bottom:8px;color:var(--muted);}
+.cp-card-desc{font-size:12px;line-height:1.6;margin-bottom:8px;color:var(–muted);}
 .cp-card-target{font-size:11px;font-weight:600;padding:5px 10px;border-radius:8px;margin-bottom:6px;}
 .cp-card.bull .cp-card-target{background:rgba(0,230,118,.1);color:#69f0ae;}
 .cp-card.bear .cp-card-target{background:rgba(255,82,82,.1);color:#ff8a80;}
-.cp-card.neut .cp-card-target{background:var(--card);color:var(--muted);}
+.cp-card.neut .cp-card-target{background:var(–card);color:var(–muted);}
 .cp-conf-row{display:flex;align-items:center;gap:8px;}
-.cp-conf-bg{flex:1;height:5px;background:var(--border);border-radius:99px;overflow:hidden;}
+.cp-conf-bg{flex:1;height:5px;background:var(–border);border-radius:99px;overflow:hidden;}
 .cp-conf-fill{height:100%;border-radius:99px;transition:width .5s;}
-.cp-conf-pct{font-size:11px;font-weight:700;min-width:32px;text-align:right;color:var(--muted);}
+.cp-conf-pct{font-size:11px;font-weight:700;min-width:32px;text-align:right;color:var(–muted);}
 
 /* SMART MONEY */
 .sm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:1rem;}
-.sm-card{background:var(--bg3);border-radius:10px;padding:10px 12px;}
-.sm-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:3px;}
+.sm-card{background:var(–bg3);border-radius:10px;padding:10px 12px;}
+.sm-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(–muted);margin-bottom:3px;}
 .sm-val{font-size:15px;font-weight:700;}
-.sm-sub{font-size:10px;color:var(--muted);margin-top:2px;}
+.sm-sub{font-size:10px;color:var(–muted);margin-top:2px;}
 .bar-row{display:flex;align-items:center;gap:10px;margin-bottom:7px;}
-.bar-lbl{font-size:12px;color:var(--muted);min-width:130px;}
-.bar-bg{flex:1;height:7px;background:var(--border);border-radius:99px;overflow:hidden;}
+.bar-lbl{font-size:12px;color:var(–muted);min-width:130px;}
+.bar-bg{flex:1;height:7px;background:var(–border);border-radius:99px;overflow:hidden;}
 .bar-fill{height:100%;border-radius:99px;transition:width .6s;}
 .bar-val{font-size:11px;font-weight:600;min-width:38px;text-align:right;}
-.sm-desc{font-size:12px;color:var(--muted);line-height:1.65;background:var(--bg3);border-radius:10px;padding:10px 14px;margin-top:8px;}
+.sm-desc{font-size:12px;color:var(–muted);line-height:1.65;background:var(–bg3);border-radius:10px;padding:10px 14px;margin-top:8px;}
 
 /* CANDLE */
 .candle-row{display:flex;align-items:center;gap:14px;height:66px;margin-bottom:10px;}
-.candle-name{font-size:14px;font-weight:700;margin-bottom:3px;font-family:'Syne',sans-serif;}
+.candle-name{font-size:14px;font-weight:700;margin-bottom:3px;font-family:‘Syne’,sans-serif;}
 .candle-sig{font-size:12px;font-weight:600;}
-.candle-desc{font-size:12px;color:var(--muted);line-height:1.55;margin-top:6px;}
+.candle-desc{font-size:12px;color:var(–muted);line-height:1.55;margin-top:6px;}
 
 /* VWAP */
 .vwap-rows{display:flex;flex-direction:column;gap:5px;}
 .vr{display:flex;justify-content:space-between;align-items:center;}
-.vrl{font-size:12px;color:var(--muted);}
+.vrl{font-size:12px;color:var(–muted);}
 .vrv{font-size:13px;font-weight:600;}
 .badge{font-size:11px;font-weight:600;padding:2px 9px;border-radius:99px;}
 .badge-buy{background:rgba(0,230,118,.15);color:#69f0ae;}
@@ -287,17 +288,17 @@ button.primary:disabled{opacity:.4;cursor:not-allowed;}
 
 /* INDICATORS */
 .ind-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(85px,1fr));gap:7px;margin-bottom:1rem;}
-.ind-card{background:var(--bg3);border-radius:10px;padding:10px 12px;}
-.ind-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;}
+.ind-card{background:var(–bg3);border-radius:10px;padding:10px 12px;}
+.ind-lbl{font-size:10px;color:var(–muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;}
 .ind-val{font-size:13px;font-weight:700;}
 .ind-sig{font-size:10px;margin-top:2px;font-weight:600;}
-.c-buy{color:#00e676;}.c-sell{color:var(--red);}.c-neutral{color:var(--muted);}
+.c-buy{color:#00e676;}.c-sell{color:var(–red);}.c-neutral{color:var(–muted);}
 
 /* SCORES */
 .score-row{display:flex;align-items:center;gap:10px;margin-bottom:7px;}
-.score-bg{flex:1;height:5px;background:var(--border);border-radius:99px;overflow:hidden;}
+.score-bg{flex:1;height:5px;background:var(–border);border-radius:99px;overflow:hidden;}
 .score-bar{height:100%;border-radius:99px;transition:width .5s;}
-.score-lbl{font-size:12px;color:var(--muted);min-width:58px;}
+.score-lbl{font-size:12px;color:var(–muted);min-width:58px;}
 .score-num{font-size:12px;font-weight:700;min-width:32px;text-align:right;}
 
 /* NEWS */
@@ -309,44 +310,44 @@ button.primary:disabled{opacity:.4;cursor:not-allowed;}
 .news-headline{font-size:13px;font-weight:600;line-height:1.4;margin-bottom:4px;}
 .news-item.good .news-headline{color:#69f0ae;}
 .news-item.bad .news-headline{color:#ff8a80;}
-.news-why{font-size:12px;line-height:1.55;color:var(--muted);}
+.news-why{font-size:12px;line-height:1.55;color:var(–muted);}
 .news-source{font-size:10px;color:#444;margin-top:4px;}
-.news-loading{font-size:13px;color:var(--muted);padding:1.5rem;text-align:center;background:var(--bg3);border-radius:10px;margin-bottom:8px;}
+.news-loading{font-size:13px;color:var(–muted);padding:1.5rem;text-align:center;background:var(–bg3);border-radius:10px;margin-bottom:8px;}
 .news-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
 .news-section-title.good{color:#00e676;}
-.news-section-title.bad{color:var(--red);}
+.news-section-title.bad{color:var(–red);}
 
 /* PUT/CALL */
 .pc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:1rem;}
-.pc-card{background:var(--bg3);border-radius:10px;padding:10px 12px;}
-.pc-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:3px;}
+.pc-card{background:var(–bg3);border-radius:10px;padding:10px 12px;}
+.pc-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(–muted);margin-bottom:3px;}
 .pc-val{font-size:18px;font-weight:700;}
-.pc-sub{font-size:10px;color:var(--muted);margin-top:2px;}
+.pc-sub{font-size:10px;color:var(–muted);margin-top:2px;}
 .pc-gauge-wrap{margin:.5rem 0 1rem;}
 .pc-gauge-label{display:flex;justify-content:space-between;font-size:10px;color:#444;margin-bottom:5px;}
 .pc-gauge-bg{height:12px;border-radius:99px;background:linear-gradient(to right,#00e676 0%,#f5c518 45%,#ff5252 100%);position:relative;}
-.pc-needle{position:absolute;top:-4px;width:4px;height:20px;background:var(--text);border-radius:2px;transform:translateX(-50%);transition:left .8s ease;}
+.pc-needle{position:absolute;top:-4px;width:4px;height:20px;background:var(–text);border-radius:2px;transform:translateX(-50%);transition:left .8s ease;}
 .pc-hist{position:relative;height:110px;margin-bottom:1rem;}
-.pc-interp{font-size:12px;color:var(--muted);line-height:1.65;background:var(--bg3);border-radius:10px;padding:10px 14px;}
+.pc-interp{font-size:12px;color:var(–muted);line-height:1.65;background:var(–bg3);border-radius:10px;padding:10px 14px;}
 .badge2{font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;}
 .badge2.g{background:rgba(0,230,118,.15);color:#00e676;}
-.badge2.f{background:rgba(255,82,82,.15);color:var(--red);}
-.badge2.n{background:var(--card);color:var(--muted);}
+.badge2.f{background:rgba(255,82,82,.15);color:var(–red);}
+.badge2.n{background:var(–card);color:var(–muted);}
 .badge2.eg{background:rgba(0,200,80,.2);color:#00e676;border:1px solid rgba(0,230,118,.3);}
-.badge2.ef{background:rgba(255,50,50,.2);color:var(--red);border:1px solid rgba(255,82,82,.3);}
+.badge2.ef{background:rgba(255,50,50,.2);color:var(–red);border:1px solid rgba(255,82,82,.3);}
 
-.sec-title{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;font-weight:600;}
-.divider{border:none;border-top:1px solid var(--border);margin:1rem 0;}
-.learn-tab{background:var(--card);border:1px solid var(--border);border-radius:99px;padding:6px 16px;font-size:12px;color:var(--muted);cursor:pointer;transition:all .15s;}
-.learn-tab.active{background:var(--green);color:#000;border-color:var(--green);}
-.learn-card{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1rem;transition:border .2s;}
+.sec-title{font-size:11px;color:var(–muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;font-weight:600;}
+.divider{border:none;border-top:1px solid var(–border);margin:1rem 0;}
+.learn-tab{background:var(–card);border:1px solid var(–border);border-radius:99px;padding:6px 16px;font-size:12px;color:var(–muted);cursor:pointer;transition:all .15s;}
+.learn-tab.active{background:var(–green);color:#000;border-color:var(–green);}
+.learn-card{background:var(–bg3);border:1px solid var(–border);border-radius:14px;padding:1.5rem;margin-bottom:1rem;transition:border .2s;}
 .learn-card:hover{border-color:rgba(255,255,255,.15);}
 .learn-card-header{display:flex;align-items:center;gap:12px;margin-bottom:1rem;}
 .learn-icon{font-size:32px;flex-shrink:0;}
-.learn-name{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;}
-.learn-type{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-top:2px;}
-.learn-desc{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:1rem;}
-.learn-chart{background:var(--bg2);border-radius:10px;padding:1rem;margin-bottom:1rem;}
+.learn-name{font-family:‘Syne’,sans-serif;font-size:17px;font-weight:700;}
+.learn-type{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(–muted);margin-top:2px;}
+.learn-desc{font-size:13px;color:var(–muted);line-height:1.7;margin-bottom:1rem;}
+.learn-chart{background:var(–bg2);border-radius:10px;padding:1rem;margin-bottom:1rem;}
 .learn-signals{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem;}
 @media(max-width:500px){.learn-signals{grid-template-columns:1fr;}}
 .learn-signal{border-radius:10px;padding:10px 12px;}
@@ -355,15 +356,17 @@ button.primary:disabled{opacity:.4;cursor:not-allowed;}
 .learn-signal-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
 .learn-signal.buy .learn-signal-title{color:#00e676;}
 .learn-signal.sell .learn-signal-title{color:#ff5252;}
-.learn-signal-desc{font-size:12px;color:var(--muted);line-height:1.5;}
+.learn-signal-desc{font-size:12px;color:var(–muted);line-height:1.5;}
 .learn-tip{background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.15);border-radius:10px;padding:10px 14px;font-size:12px;color:#69f0ae;line-height:1.6;}
-.hamburger{display:none;background:none;border:none;color:var(--text);font-size:22px;cursor:pointer;padding:4px;}
+.hamburger{display:none;background:none;border:none;color:var(–text);font-size:22px;cursor:pointer;padding:4px;}
 @media(max-width:768px){.hamburger{display:block;}}
 </style>
+
 </head>
 <body>
 
 <!-- LIMIT MODAL -->
+
 <div class="limit-overlay" id="limitOverlay">
   <div class="limit-modal">
     <div class="limit-icon">🚀</div>
@@ -373,6 +376,8 @@ button.primary:disabled{opacity:.4;cursor:not-allowed;}
     <button class="btn-dismiss" onclick="document.getElementById('limitOverlay').classList.remove('open')">Volver mañana</button>
   </div>
 </div>
+
+<div id="sidebarOverlay" onclick="document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').style.display='none';" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:49;"></div>
 
 <div class="app-layout">
   <!-- SIDEBAR -->
@@ -396,10 +401,11 @@ button.primary:disabled{opacity:.4;cursor:not-allowed;}
   </aside>
 
   <!-- MAIN -->
+
   <main class="main-content">
     <div class="topbar">
       <div style="display:flex;align-items:center;gap:12px;">
-        <button class="hamburger" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+        <button class="hamburger" onclick="document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').style.display=document.getElementById('sidebar').classList.contains('open')?'block':'none';">☰</button>
         <div class="topbar-title" data-i18n="dash_title">Analizador</div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
@@ -412,230 +418,230 @@ button.primary:disabled{opacity:.4;cursor:not-allowed;}
       </div>
     </div>
 
-    <!-- AD BANNER — solo plan gratis -->
-    <div class="ad-banner" id="adBanner" style="display:none;">
-      <div class="ad-label">Advertising</div>
-      <ins class="adsbygoogle"
-        style="display:block"
-        data-ad-client="ca-pub-8509604172341454"
-        data-ad-slot="auto"
-        data-ad-format="auto"
-        data-full-width-responsive="true"></ins>
+```
+<!-- AD BANNER — solo plan gratis -->
+<div class="ad-banner" id="adBanner" style="display:none;">
+  <div class="ad-label">Advertising</div>
+  <ins class="adsbygoogle"
+    style="display:block"
+    data-ad-client="ca-pub-8509604172341454"
+    data-ad-slot="auto"
+    data-ad-format="auto"
+    data-full-width-responsive="true"></ins>
+</div>
+
+<!-- ══ FAVORITES PANEL ══ -->
+<div id="favoritesPanel" style="display:none;">
+  <div class="panel" style="margin-bottom:1rem;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+      <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;">⭐ Favorites</div>
+      <div style="font-size:12px;color:var(--muted);">Click ⭐ on any analysis to save</div>
     </div>
+    <div id="favoritesList"></div>
+  </div>
+</div>
 
-    <!-- ══ FAVORITES PANEL ══ -->
-    <div id="favoritesPanel" style="display:none;">
-      <div class="panel" style="margin-bottom:1rem;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
-          <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;">⭐ Favorites</div>
-          <div style="font-size:12px;color:var(--muted);">Click ⭐ on any analysis to save</div>
-        </div>
-        <div id="favoritesList"></div>
-      </div>
+<!-- ══ NEWS PANEL ══ -->
+<div id="newsMarketPanel" style="display:none;">
+  <div class="panel" style="margin-bottom:1rem;">
+    <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:1.5rem;">📰 Market News</div>
+    <div class="chips" style="margin-bottom:1rem;">
+      <button class="chip" onclick="loadMarketNews('AAPL')">AAPL</button>
+      <button class="chip" onclick="loadMarketNews('TSLA')">TSLA</button>
+      <button class="chip" onclick="loadMarketNews('NVDA')">NVDA</button>
+      <button class="chip" onclick="loadMarketNews('MSFT')">MSFT</button>
+      <button class="chip" onclick="loadMarketNews('SPY')">SPY</button>
+      <button class="chip" onclick="loadMarketNews('AMZN')">AMZN</button>
     </div>
-
-    <!-- ══ NEWS PANEL ══ -->
-    <div id="newsMarketPanel" style="display:none;">
-      <div class="panel" style="margin-bottom:1rem;">
-        <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:1.5rem;">📰 Market News</div>
-        <div class="chips" style="margin-bottom:1rem;">
-          <button class="chip" onclick="loadMarketNews('AAPL')">AAPL</button>
-          <button class="chip" onclick="loadMarketNews('TSLA')">TSLA</button>
-          <button class="chip" onclick="loadMarketNews('NVDA')">NVDA</button>
-          <button class="chip" onclick="loadMarketNews('MSFT')">MSFT</button>
-          <button class="chip" onclick="loadMarketNews('SPY')">SPY</button>
-          <button class="chip" onclick="loadMarketNews('AMZN')">AMZN</button>
-        </div>
-        <div id="marketNewsContent">
-          <div style="text-align:center;padding:2rem;color:var(--muted);font-size:14px;">Select a ticker above to load news</div>
-        </div>
-      </div>
+    <div id="marketNewsContent">
+      <div style="text-align:center;padding:2rem;color:var(--muted);font-size:14px;">Select a ticker above to load news</div>
     </div>
+  </div>
+</div>
 
-    <!-- ══ SETTINGS PANEL ══ -->
-    <div id="settingsPanel" style="display:none;">
-      <div class="panel" style="margin-bottom:1rem;">
-        <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:1.5rem;">⚙️ Settings</div>
+<!-- ══ SETTINGS PANEL ══ -->
+<div id="settingsPanel" style="display:none;">
+  <div class="panel" style="margin-bottom:1rem;">
+    <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:1.5rem;">⚙️ Settings</div>
 
-        <!-- Idioma -->
-        <div style="background:var(--bg3);border-radius:12px;padding:1.25rem;margin-bottom:1rem;">
-          <div style="font-size:13px;font-weight:600;margin-bottom:.5rem;">🌐 Language</div>
-          <div style="display:flex;gap:10px;margin-top:.75rem;">
-            <button onclick="applyDashLang('en');document.getElementById('langBtn').textContent='🌐 ES';" style="flex:1;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:13px;transition:all .2s;" id="btnLangEn">🇺🇸 English</button>
-            <button onclick="applyDashLang('es');document.getElementById('langBtn').textContent='🌐 EN';" style="flex:1;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:13px;transition:all .2s;" id="btnLangEs">🇪🇸 Español</button>
-          </div>
-        </div>
-
-        <!-- Plan -->
-        <div style="background:var(--bg3);border-radius:12px;padding:1.25rem;margin-bottom:1rem;">
-          <div style="font-size:13px;font-weight:600;margin-bottom:.5rem;">💳 Subscription</div>
-          <div style="font-size:13px;color:var(--muted);margin-bottom:.75rem;" id="settingsPlanText">Loading...</div>
-          <button id="settingsUpgradeBtn" onclick="startCheckout()" style="width:100%;padding:10px;border-radius:8px;background:var(--green);color:#000;border:none;font-size:13px;font-weight:600;cursor:pointer;">⚡ Upgrade to Pro — $12/mo</button>
-        </div>
-
-        <!-- Cuenta -->
-        <div style="background:var(--bg3);border-radius:12px;padding:1.25rem;margin-bottom:1rem;">
-          <div style="font-size:13px;font-weight:600;margin-bottom:.5rem;">👤 Account</div>
-          <div style="font-size:13px;color:var(--muted);margin-bottom:.75rem;" id="settingsEmail">—</div>
-          <button onclick="handleLogout()" style="width:100%;padding:10px;border-radius:8px;background:transparent;color:var(--muted);border:1px solid var(--border);font-size:13px;cursor:pointer;">Sign out</button>
-        </div>
-
-        <!-- Links -->
-        <div style="background:var(--bg3);border-radius:12px;padding:1.25rem;">
-          <div style="font-size:13px;font-weight:600;margin-bottom:.75rem;">📄 Legal</div>
-          <div style="display:flex;gap:1rem;">
-            <a href="terms.html" style="font-size:13px;color:var(--green);text-decoration:none;">Terms of Service</a>
-            <a href="privacy.html" style="font-size:13px;color:var(--green);text-decoration:none;">Privacy Policy</a>
-          </div>
-        </div>
+    <!-- Idioma -->
+    <div style="background:var(--bg3);border-radius:12px;padding:1.25rem;margin-bottom:1rem;">
+      <div style="font-size:13px;font-weight:600;margin-bottom:.5rem;">🌐 Language</div>
+      <div style="display:flex;gap:10px;margin-top:.75rem;">
+        <button onclick="applyDashLang('en');document.getElementById('langBtn').textContent='🌐 ES';" style="flex:1;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:13px;transition:all .2s;" id="btnLangEn">🇺🇸 English</button>
+        <button onclick="applyDashLang('es');document.getElementById('langBtn').textContent='🌐 EN';" style="flex:1;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:13px;transition:all .2s;" id="btnLangEs">🇪🇸 Español</button>
       </div>
     </div>
 
-    <!-- ══ LEARN PANEL ══ -->
-    <div id="learnPanel" style="display:none;">
-      <div class="panel" style="margin-bottom:1rem;">
-        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:.5rem;">📚 Indicator Guide</div>
-        <div style="font-size:13px;color:var(--muted);margin-bottom:2rem;">Learn how every indicator works and how to use it to make better trading decisions.</div>
-
-        <!-- FILTER TABS -->
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.5rem;">
-          <button onclick="filterLearn('all')" class="learn-tab active" id="tab_all">All</button>
-          <button onclick="filterLearn('momentum')" class="learn-tab" id="tab_momentum">Momentum</button>
-          <button onclick="filterLearn('trend')" class="learn-tab" id="tab_trend">Trend</button>
-          <button onclick="filterLearn('volume')" class="learn-tab" id="tab_volume">Volume</button>
-          <button onclick="filterLearn('pattern')" class="learn-tab" id="tab_pattern">Patterns</button>
-          <button onclick="filterLearn('sentiment')" class="learn-tab" id="tab_sentiment">Sentiment</button>
-        </div>
-
-        <div id="learnGrid"></div>
-      </div>
+    <!-- Plan -->
+    <div style="background:var(--bg3);border-radius:12px;padding:1.25rem;margin-bottom:1rem;">
+      <div style="font-size:13px;font-weight:600;margin-bottom:.5rem;">💳 Subscription</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:.75rem;" id="settingsPlanText">Loading...</div>
+      <button id="settingsUpgradeBtn" onclick="startCheckout()" style="width:100%;padding:10px;border-radius:8px;background:var(--green);color:#000;border:none;font-size:13px;font-weight:600;cursor:pointer;">⚡ Upgrade to Pro — $12/mo</button>
     </div>
 
-    <!-- ANALYZER -->
-    <div class="analyzer-card">
-      <div class="input-row">
-        <input type="text" id="tickerInput" placeholder="Ej: AAPL, TSLA, NVDA..." maxlength="10"/>
-        <button class="primary" id="analyzeBtn" onclick="analyze()">Analizar</button>
-      </div>
-      <div class="tf-row">
-        <button class="tf-btn intraday active" onclick="setTF(this,'1D')">1D</button>
-        <button class="tf-btn" onclick="setTF(this,'1M')">1M</button>
-        <button class="tf-btn" onclick="setTF(this,'3M')">3M</button>
-        <button class="tf-btn" onclick="setTF(this,'6M')">6M</button>
-        <button class="tf-btn" onclick="setTF(this,'1Y')">1A</button>
-      </div>
-      <div class="chips">
-        <button class="chip" onclick="setTicker('AAPL')">AAPL</button>
-        <button class="chip" onclick="setTicker('TSLA')">TSLA</button>
-        <button class="chip" onclick="setTicker('MSFT')">MSFT</button>
-        <button class="chip" onclick="setTicker('NVDA')">NVDA</button>
-        <button class="chip" onclick="setTicker('AMZN')">AMZN</button>
-        <button class="chip" onclick="setTicker('GOOGL')">GOOGL</button>
-        <button class="chip" onclick="setTicker('META')">META</button>
-        <button class="chip" onclick="setTicker('SPY')">SPY</button>
-      </div>
+    <!-- Cuenta -->
+    <div style="background:var(--bg3);border-radius:12px;padding:1.25rem;margin-bottom:1rem;">
+      <div style="font-size:13px;font-weight:600;margin-bottom:.5rem;">👤 Account</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:.75rem;" id="settingsEmail">—</div>
+      <button onclick="handleLogout()" style="width:100%;padding:10px;border-radius:8px;background:transparent;color:var(--muted);border:1px solid var(--border);font-size:13px;cursor:pointer;">Sign out</button>
     </div>
 
-    <div class="error-msg" id="errorMsg"></div>
-    <div class="loading-state" id="loadingMsg"><span class="spinner"></span><span id="loadingText">Analizando...</span></div>
-
-    <div class="results" id="results">
-      <div class="analyzer-card">
-        <div class="price-header">
-          <div class="price-big" id="priceBig"></div>
-          <div class="price-chg" id="priceChg"></div>
-          <div class="price-meta" id="priceMeta"></div>
-          <button id="favBtn" onclick="toggleFavorite()" style="background:none;border:none;font-size:22px;cursor:pointer;margin-left:auto;opacity:.5;transition:all .2s;" title="Add to favorites">⭐</button>
-        </div>
-        <div class="banner" id="banner">
-          <div class="banner-title" id="bannerTitle"></div>
-          <div class="banner-body" id="bannerBody"></div>
-          <div class="banner-note" id="bannerNote"></div>
-        </div>
-        <div class="targets-row" id="targetsRow" style="display:none;">
-          <div class="target-box buy-t"><div class="target-icon">🎯</div>
-            <div><div class="target-lbl">Precio de entrada</div><div class="target-price" id="buyTargetPrice"></div><div class="target-desc" id="buyTargetDesc"></div></div></div>
-          <div class="target-box sell-t"><div class="target-icon">🛑</div>
-            <div><div class="target-lbl">Stop Loss</div><div class="target-price" id="slTargetPrice"></div><div class="target-desc" id="slTargetDesc"></div></div></div>
-        </div>
-        <div class="chart-wrap"><canvas id="priceChart"></canvas></div>
+    <!-- Links -->
+    <div style="background:var(--bg3);border-radius:12px;padding:1.25rem;">
+      <div style="font-size:13px;font-weight:600;margin-bottom:.75rem;">📄 Legal</div>
+      <div style="display:flex;gap:1rem;">
+        <a href="terms.html" style="font-size:13px;color:var(--green);text-decoration:none;">Terms of Service</a>
+        <a href="privacy.html" style="font-size:13px;color:var(--green);text-decoration:none;">Privacy Policy</a>
       </div>
-
-      <!-- NOTICIAS -->
-      <div class="panel" id="newsPanel">
-        <div class="panel-title" id="panel_news">Today's news</div>
-        <div class="news-loading" id="newsLoading" style="display:none;"><span class="spinner"></span> <span id="loading_news_text">Looking for news...</span></div>
-        <div id="newsGoodSection" style="display:none;">
-          <div class="news-section-title good" id="news_good_title">✅ Positive news</div>
-          <div id="newsGoodItems"></div>
-        </div>
-        <div id="newsBadSection" style="display:none;">
-          <div class="news-section-title bad" id="news_bad_title" style="margin-top:1rem;">⚠️ Risk news</div>
-          <div id="newsBadItems"></div>
-        </div>
-      </div>
-
-      <!-- CHART PATTERNS -->
-      <div class="panel">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;">
-          <div class="panel-title" style="margin-bottom:0;" id="panel_patterns">📐 Chart patterns</div>
-          <span class="badge2" id="cpBadge">—</span>
-        </div>
-        <div id="cpContent"></div>
-      </div>
-
-      <!-- PUT/CALL -->
-      <div class="panel">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;">
-          <div class="panel-title" style="margin-bottom:0;">📊 Put/Call Ratio</div>
-          <span class="badge2" id="pcBadge">—</span>
-        </div>
-        <div class="pc-grid" id="pcGrid"></div>
-        <div class="pc-gauge-wrap">
-          <div class="pc-gauge-label"><span>Greed (CALL)</span><span>Neutral</span><span>Fear (PUT)</span></div>
-          <div class="pc-gauge-bg"><div class="pc-needle" id="pcNeedle" style="left:50%"></div></div>
-        </div>
-        <div class="pc-hist"><canvas id="pcHistChart"></canvas></div>
-        <div class="pc-interp" id="pcInterp"></div>
-      </div>
-
-      <!-- SMART MONEY -->
-      <div class="panel">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;">
-          <div class="panel-title" style="margin-bottom:0;">💼 Smart Money</div>
-          <span class="badge2" id="smBadge">—</span>
-        </div>
-        <div class="sm-grid" id="smGrid"></div>
-        <div class="sec-title">Flow distribution</div>
-        <div id="smBars"></div>
-        <div class="sm-desc" id="smDesc"></div>
-      </div>
-
-      <div class="two-col">
-        <div class="inner-panel">
-          <div class="panel-title" id="panel_candle">Current candle</div>
-          <div class="candle-row" id="candleRow"></div>
-          <div class="candle-name" id="candleName"></div>
-          <div class="candle-sig" id="candleSig"></div>
-          <div class="candle-desc" id="candleDesc"></div>
-        </div>
-        <div class="inner-panel">
-          <div class="panel-title">VWAP</div>
-          <div class="vwap-rows" id="vwapRows"></div>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="ind-grid" id="indGrid"></div>
-        <hr class="divider">
-        <div class="sec-title" id="score_title">Total signal score</div>
-        <div class="score-row"><span class="score-lbl c-buy">Compra</span><div class="score-bg"><div class="score-bar" id="barBuy" style="background:#00e676;width:0%"></div></div><span class="score-num" id="numBuy">0%</span></div>
-        <div class="score-row"><span class="score-lbl c-neutral">Neutral</span><div class="score-bg"><div class="score-bar" id="barNeutral" style="background:#8896a7;width:0%"></div></div><span class="score-num" id="numNeutral">0%</span></div>
-        <div class="score-row"><span class="score-lbl c-sell">Venta</span><div class="score-bg"><div class="score-bar" id="barSell" style="background:#ff5252;width:0%"></div></div><span class="score-num" id="numSell">0%</span></div>
-      </div>
-
-      <p style="font-size:11px;color:#333;margin-top:1rem;line-height:1.6;">⚡ Precios: Twelve Data · Noticias: Alpha Vantage + IA · Put/Call: CBOE · No constituye asesoramiento financiero.</p>
     </div>
+  </div>
+</div>
+
+<!-- ══ LEARN PANEL ══ -->
+<div id="learnPanel" style="display:none;">
+  <div class="panel" style="margin-bottom:1rem;">
+    <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:.5rem;" id="learn_title_h">📚 Indicator Guide</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:2rem;" id="learn_sub_h">Learn how every indicator works and how to use it to make better trading decisions.</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.5rem;">
+      <button onclick="filterLearn('all')" class="learn-tab active" id="tab_all">All</button>
+      <button onclick="filterLearn('momentum')" class="learn-tab" id="tab_momentum">Momentum</button>
+      <button onclick="filterLearn('trend')" class="learn-tab" id="tab_trend">Trend</button>
+      <button onclick="filterLearn('volume')" class="learn-tab" id="tab_volume">Volume</button>
+      <button onclick="filterLearn('pattern')" class="learn-tab" id="tab_pattern">Patterns</button>
+      <button onclick="filterLearn('sentiment')" class="learn-tab" id="tab_sentiment">Sentiment</button>
+    </div>
+    <div id="learnGrid"></div>
+  </div>
+</div>
+
+<!-- ANALYZER -->
+<div class="analyzer-card">
+  <div class="input-row">
+    <input type="text" id="tickerInput" placeholder="Ej: AAPL, TSLA, NVDA..." maxlength="10"/>
+    <button class="primary" id="analyzeBtn" onclick="analyze()">Analizar</button>
+  </div>
+  <div class="tf-row">
+    <button class="tf-btn intraday active" onclick="setTF(this,'1D')">1D</button>
+    <button class="tf-btn" onclick="setTF(this,'1M')">1M</button>
+    <button class="tf-btn" onclick="setTF(this,'3M')">3M</button>
+    <button class="tf-btn" onclick="setTF(this,'6M')">6M</button>
+    <button class="tf-btn" onclick="setTF(this,'1Y')">1A</button>
+  </div>
+  <div class="chips">
+    <button class="chip" onclick="setTicker('AAPL')">AAPL</button>
+    <button class="chip" onclick="setTicker('TSLA')">TSLA</button>
+    <button class="chip" onclick="setTicker('MSFT')">MSFT</button>
+    <button class="chip" onclick="setTicker('NVDA')">NVDA</button>
+    <button class="chip" onclick="setTicker('AMZN')">AMZN</button>
+    <button class="chip" onclick="setTicker('GOOGL')">GOOGL</button>
+    <button class="chip" onclick="setTicker('META')">META</button>
+    <button class="chip" onclick="setTicker('SPY')">SPY</button>
+  </div>
+</div>
+
+<div class="error-msg" id="errorMsg"></div>
+<div class="loading-state" id="loadingMsg"><span class="spinner"></span><span id="loadingText">Analizando...</span></div>
+
+<div class="results" id="results">
+  <div class="analyzer-card">
+    <div class="price-header">
+      <div class="price-big" id="priceBig"></div>
+      <div class="price-chg" id="priceChg"></div>
+      <div class="price-meta" id="priceMeta"></div>
+      <button id="favBtn" onclick="toggleFavorite()" style="background:none;border:none;font-size:22px;cursor:pointer;margin-left:auto;opacity:.5;transition:all .2s;" title="Add to favorites">⭐</button>
+    </div>
+    <div class="banner" id="banner">
+      <div class="banner-title" id="bannerTitle"></div>
+      <div class="banner-body" id="bannerBody"></div>
+      <div class="banner-note" id="bannerNote"></div>
+    </div>
+    <div class="targets-row" id="targetsRow" style="display:none;">
+      <div class="target-box buy-t"><div class="target-icon">🎯</div>
+        <div><div class="target-lbl">Precio de entrada</div><div class="target-price" id="buyTargetPrice"></div><div class="target-desc" id="buyTargetDesc"></div></div></div>
+      <div class="target-box sell-t"><div class="target-icon">🛑</div>
+        <div><div class="target-lbl">Stop Loss</div><div class="target-price" id="slTargetPrice"></div><div class="target-desc" id="slTargetDesc"></div></div></div>
+    </div>
+    <div class="chart-wrap"><canvas id="priceChart"></canvas></div>
+  </div>
+
+  <!-- NOTICIAS -->
+  <div class="panel" id="newsPanel">
+    <div class="panel-title" id="panel_news">Today's news</div>
+    <div class="news-loading" id="newsLoading" style="display:none;"><span class="spinner"></span> <span id="loading_news_text">Looking for news...</span></div>
+    <div id="newsGoodSection" style="display:none;">
+      <div class="news-section-title good" id="news_good_title">✅ Positive news</div>
+      <div id="newsGoodItems"></div>
+    </div>
+    <div id="newsBadSection" style="display:none;">
+      <div class="news-section-title bad" id="news_bad_title" style="margin-top:1rem;">⚠️ Risk news</div>
+      <div id="newsBadItems"></div>
+    </div>
+  </div>
+
+  <!-- CHART PATTERNS -->
+  <div class="panel">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;">
+      <div class="panel-title" style="margin-bottom:0;" id="panel_patterns">📐 Chart patterns</div>
+      <span class="badge2" id="cpBadge">—</span>
+    </div>
+    <div id="cpContent"></div>
+  </div>
+
+  <!-- PUT/CALL -->
+  <div class="panel">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;">
+      <div class="panel-title" style="margin-bottom:0;">📊 Put/Call Ratio</div>
+      <span class="badge2" id="pcBadge">—</span>
+    </div>
+    <div class="pc-grid" id="pcGrid"></div>
+    <div class="pc-gauge-wrap">
+      <div class="pc-gauge-label"><span>Greed (CALL)</span><span>Neutral</span><span>Fear (PUT)</span></div>
+      <div class="pc-gauge-bg"><div class="pc-needle" id="pcNeedle" style="left:50%"></div></div>
+    </div>
+    <div class="pc-hist"><canvas id="pcHistChart"></canvas></div>
+    <div class="pc-interp" id="pcInterp"></div>
+  </div>
+
+  <!-- SMART MONEY -->
+  <div class="panel">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;">
+      <div class="panel-title" style="margin-bottom:0;">💼 Smart Money</div>
+      <span class="badge2" id="smBadge">—</span>
+    </div>
+    <div class="sm-grid" id="smGrid"></div>
+    <div class="sec-title">Flow distribution</div>
+    <div id="smBars"></div>
+    <div class="sm-desc" id="smDesc"></div>
+  </div>
+
+  <div class="two-col">
+    <div class="inner-panel">
+      <div class="panel-title" id="panel_candle">Current candle</div>
+      <div class="candle-row" id="candleRow"></div>
+      <div class="candle-name" id="candleName"></div>
+      <div class="candle-sig" id="candleSig"></div>
+      <div class="candle-desc" id="candleDesc"></div>
+    </div>
+    <div class="inner-panel">
+      <div class="panel-title">VWAP</div>
+      <div class="vwap-rows" id="vwapRows"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="ind-grid" id="indGrid"></div>
+    <hr class="divider">
+    <div class="sec-title" id="score_title">Total signal score</div>
+    <div class="score-row"><span class="score-lbl c-buy">Compra</span><div class="score-bg"><div class="score-bar" id="barBuy" style="background:#00e676;width:0%"></div></div><span class="score-num" id="numBuy">0%</span></div>
+    <div class="score-row"><span class="score-lbl c-neutral">Neutral</span><div class="score-bg"><div class="score-bar" id="barNeutral" style="background:#8896a7;width:0%"></div></div><span class="score-num" id="numNeutral">0%</span></div>
+    <div class="score-row"><span class="score-lbl c-sell">Venta</span><div class="score-bg"><div class="score-bar" id="barSell" style="background:#ff5252;width:0%"></div></div><span class="score-num" id="numSell">0%</span></div>
+  </div>
+
+  <p style="font-size:11px;color:#333;margin-top:1rem;line-height:1.6;">⚡ Precios: Twelve Data · Noticias: Alpha Vantage + IA · Put/Call: CBOE · No constituye asesoramiento financiero.</p>
+</div>
+```
+
   </main>
 </div>
 
@@ -1082,6 +1088,10 @@ initAuth();
 
 // ══ NAVEGACIÓN DE SECCIONES ══
 function showSection(section) {
+  // Cerrar sidebar en móvil
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').style.display = 'none';
+
   document.getElementById('favoritesPanel').style.display = 'none';
   document.getElementById('newsMarketPanel').style.display = 'none';
   document.getElementById('settingsPanel').style.display = 'none';
@@ -1673,6 +1683,7 @@ const DASH_TRANSLATIONS = {
     nav_favorites: 'Favoritos',
     nav_news: 'Noticias',
     nav_settings: 'Configuración',
+    nav_learn: 'Aprender',
     btn_upgrade: '⚡ Actualizar a Pro',
     btn_logout: 'Cerrar sesión',
     btn_analyze: 'Analizar',
@@ -1680,6 +1691,14 @@ const DASH_TRANSLATIONS = {
     limit_msg: 'Has usado tus 5 análisis gratuitos de hoy. Actualiza al plan Pro para análisis ilimitados, sin publicidad y con todas las funciones avanzadas.',
     limit_btn: 'Actualizar a Pro — $12/mes',
     limit_dismiss: 'Volver mañana',
+    learn_title: 'Guía de Indicadores',
+    learn_sub: 'Aprende cómo funciona cada indicador y cómo usarlo para tomar mejores decisiones de trading.',
+    learn_all: 'Todos',
+    learn_momentum: 'Momentum',
+    learn_trend: 'Tendencia',
+    learn_volume: 'Volumen',
+    learn_pattern: 'Patrones',
+    learn_sentiment: 'Sentimiento',
     panel_news: 'Noticias del día',
     panel_patterns: '📐 Patrones de gráfico',
     panel_pcr: '📊 Put/Call Ratio',
@@ -1711,6 +1730,7 @@ const DASH_TRANSLATIONS = {
     nav_favorites: 'Favorites',
     nav_news: 'News',
     nav_settings: 'Settings',
+    nav_learn: 'Learn',
     btn_upgrade: '⚡ Upgrade to Pro',
     btn_logout: 'Sign out',
     btn_analyze: 'Analyze',
@@ -1718,6 +1738,14 @@ const DASH_TRANSLATIONS = {
     limit_msg: "You've used your 5 free daily analyses. Upgrade to Pro for unlimited analyses, no ads and all advanced features.",
     limit_btn: 'Upgrade to Pro — $12/mo',
     limit_dismiss: 'Come back tomorrow',
+    learn_title: 'Indicator Guide',
+    learn_sub: 'Learn how every indicator works and how to use it to make better trading decisions.',
+    learn_all: 'All',
+    learn_momentum: 'Momentum',
+    learn_trend: 'Trend',
+    learn_volume: 'Volume',
+    learn_pattern: 'Patterns',
+    learn_sentiment: 'Sentiment',
     panel_news: "Today's news",
     panel_patterns: '📐 Chart patterns',
     panel_pcr: '📊 Put/Call Ratio',
@@ -1763,7 +1791,8 @@ function applyDashLang(lang) {
   if(navItems[0]) navItems[0].innerHTML = `<span class="nav-icon">📊</span> ${t.nav_analyzer}`;
   if(navItems[1]) navItems[1].innerHTML = `<span class="nav-icon">⭐</span> ${t.nav_favorites}`;
   if(navItems[2]) navItems[2].innerHTML = `<span class="nav-icon">📰</span> ${t.nav_news}`;
-  if(navItems[3]) navItems[3].innerHTML = `<span class="nav-icon">⚙️</span> ${t.nav_settings}`;
+  if(navItems[3]) navItems[3].innerHTML = `<span class="nav-icon">📚</span> ${t.nav_learn}`;
+  if(navItems[4]) navItems[4].innerHTML = `<span class="nav-icon">⚙️</span> ${t.nav_settings}`;
   // Botones upgrade y logout
   const upgradeBtn = document.getElementById('btnUpgrade');
   if(upgradeBtn) upgradeBtn.textContent = t.btn_upgrade;
@@ -1782,8 +1811,23 @@ function applyDashLang(lang) {
     if(i===1) el.textContent = t.score_neutral;
     if(i===2) el.textContent = t.score_sell;
   });
-  // Panel titles
-  const panelCandle = document.getElementById('panel_candle');
+  // Learn section
+  const learnTitle = document.getElementById('learn_title_h');
+  const learnSub = document.getElementById('learn_sub_h');
+  if(learnTitle) learnTitle.textContent = '📚 ' + (t.learn_title || 'Indicator Guide');
+  if(learnSub) learnSub.textContent = t.learn_sub || '';
+  const tabAll = document.getElementById('tab_all');
+  const tabMom = document.getElementById('tab_momentum');
+  const tabTrend = document.getElementById('tab_trend');
+  const tabVol = document.getElementById('tab_volume');
+  const tabPat = document.getElementById('tab_pattern');
+  const tabSent = document.getElementById('tab_sentiment');
+  if(tabAll) tabAll.textContent = t.learn_all || 'All';
+  if(tabMom) tabMom.textContent = t.learn_momentum || 'Momentum';
+  if(tabTrend) tabTrend.textContent = t.learn_trend || 'Trend';
+  if(tabVol) tabVol.textContent = t.learn_volume || 'Volume';
+  if(tabPat) tabPat.textContent = t.learn_pattern || 'Patterns';
+  if(tabSent) tabSent.textContent = t.learn_sentiment || 'Sentiment';
   const panelPatterns = document.getElementById('panel_patterns');
   const scoreTitle = document.getElementById('score_title');
   if(panelCandle) panelCandle.textContent = t.panel_candle;
@@ -1822,5 +1866,6 @@ function toggleLang() {
 // Aplicar idioma al cargar
 applyDashLang(currentLang);
 </script>
+
 </body>
 </html>
