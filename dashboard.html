@@ -822,25 +822,68 @@ async function renderNews(ticker){
   document.getElementById('newsGoodSection').style.display='none';
   document.getElementById('newsBadSection').style.display='none';
   loading.style.display='block';
+  loading.innerHTML='<span class="spinner"></span> Searching for latest news...';
+
   try{
-    const r=await fetch(`${PROXY}?type=news&symbol=${encodeURIComponent(ticker)}`,{signal:AbortSignal.timeout(12000)});
+    // Intentar Alpha Vantage via proxy primero
     let feed=[];
-    if(r.ok){const j=await r.json();if(j.feed?.length)feed=j.feed;}
-    loading.innerHTML='<span class="spinner"></span> Summarizing with AI...';
-    const txt=feed.slice(0,6).map((n,i)=>`News ${i+1}: ${n.title}\nSummary: ${(n.summary||'').slice(0,200)}\nSentiment: ${n.overall_sentiment_label||'N/A'}`).join('\n\n');
-    const prompt=feed.length
-      ?`Analyze these REAL news about ${ticker}. Select 2 positive and 2 negative. DIRECT headlines in English with specific facts.\n\n${txt}\n\nONLY JSON no extra text:\n{"good":[{"titular":"direct headline max 18 words","por_que_importa":"direct price impact 1 sentence","source":"source name"},{"titular":"...","por_que_importa":"...","source":"..."}],"bad":[{"titular":"...","por_que_importa":"...","source":"..."},{"titular":"...","por_que_importa":"...","source":"..."}]}`
-      :`Search for the most recent news this week about stock ${ticker}. Give me 2 positive and 2 negative with specific concrete facts. ONLY JSON no extra text:\n{"good":[{"titular":"direct headline in English max 18 words","por_que_importa":"direct price impact","source":"source name"},{"titular":"...","por_que_importa":"...","source":"..."}],"bad":[{"titular":"...","por_que_importa":"...","source":"..."},{"titular":"...","por_que_importa":"...","source":"..."}]}`;
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:prompt}]})});
+    try{
+      const r=await fetch(`${PROXY}?type=news&symbol=${encodeURIComponent(ticker)}`,{signal:AbortSignal.timeout(8000)});
+      if(r.ok){
+        const j=await r.json();
+        if(j.feed?.length&&!j['Note']&&!j['Information']) feed=j.feed;
+      }
+    }catch(e){}
+
+    // Siempre usar IA con web search — con o sin noticias de AV
+    loading.innerHTML='<span class="spinner"></span> Analyzing news with AI...';
+
+    const avContext = feed.length
+      ? `Use these recent news as context:\n${feed.slice(0,5).map((n,i)=>`${i+1}. ${n.title} — ${(n.summary||'').slice(0,150)}`).join('\n')}\n\n`
+      : '';
+
+    const prompt = `${avContext}Search the web RIGHT NOW for the most recent news about ${ticker} stock from this week. Find 2 POSITIVE and 2 NEGATIVE news with SPECIFIC facts and numbers.\n\nGood headline examples:\n✅ "Apple reports record $124B revenue in Q1 2025, beating estimates"\n✅ "NVIDIA wins $10B Microsoft AI chip contract"\n❌ "Apple has good prospects" (too vague)\n\nONLY return this JSON, no extra text:\n{"good":[{"titular":"specific direct headline max 18 words","por_que_importa":"concrete price impact 1 sentence","source":"media name"},{"titular":"...","por_que_importa":"...","source":"..."}],"bad":[{"titular":"specific negative headline","por_que_importa":"concrete risk to price 1 sentence","source":"..."},{"titular":"...","por_que_importa":"...","source":"..."}]}`;
+
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1200,
+        tools:[{type:'web_search_20250305',name:'web_search'}],
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+
     const d=await resp.json();
-    const txt2=d.content.filter(b=>b.type==='text').map(b=>b.text).join('');
-    const news=JSON.parse(txt2.replace(/```json|```/g,'').trim());
+    const txt=d.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+    const news=JSON.parse(txt.replace(/```json|```/g,'').trim());
+
     loading.style.display='none';
-    const renderItems=(items,type)=>items?.slice(0,2).map(n=>`<div class="news-item ${type}"><div class="news-icon">${type==='good'?'📈':'📉'}</div><div class="news-body"><div class="news-headline">${n.titular||''}</div><div class="news-why">${n.por_que_importa||''}</div><div class="news-source">${n.source||''}</div></div></div>`).join('')||'';
-    if(news.good?.length){document.getElementById('newsGoodItems').innerHTML=renderItems(news.good,'good');document.getElementById('newsGoodSection').style.display='block';}
-    if(news.bad?.length){document.getElementById('newsBadItems').innerHTML=renderItems(news.bad,'bad');document.getElementById('newsBadSection').style.display='block';}
-    if(!news.good?.length&&!news.bad?.length)throw new Error('no news');
-  }catch(e){loading.innerHTML=`No news available for ${ticker} at this time.`;}
+
+    const renderItems=(items,type)=>items?.slice(0,2).map(n=>`
+      <div class="news-item ${type}">
+        <div class="news-icon">${type==='good'?'📈':'📉'}</div>
+        <div class="news-body">
+          <div class="news-headline">${n.titular||''}</div>
+          <div class="news-why">${n.por_que_importa||''}</div>
+          <div class="news-source">${n.source||''}</div>
+        </div>
+      </div>`).join('')||'';
+
+    if(news.good?.length){
+      document.getElementById('newsGoodItems').innerHTML=renderItems(news.good,'good');
+      document.getElementById('newsGoodSection').style.display='block';
+    }
+    if(news.bad?.length){
+      document.getElementById('newsBadItems').innerHTML=renderItems(news.bad,'bad');
+      document.getElementById('newsBadSection').style.display='block';
+    }
+    if(!news.good?.length&&!news.bad?.length) throw new Error('no news');
+
+  }catch(e){
+    loading.innerHTML=`⚠️ Could not load news for ${ticker}. Try again later.`;
+  }
 }
 
 // ── MAIN ANALYZE ──
