@@ -516,7 +516,7 @@ font-size:13px;cursor:pointer;
 </div>
 
 <!-- ANALYZER -->
-<div class="analyzer-card">
+<div class="analyzer-card" id="analyzerSection">
   <div class="input-row">
     <input type="text" id="tickerInput" placeholder="Ej: AAPL, TSLA, NVDA..." maxlength="10"/>
     <button class="primary" id="analyzeBtn" onclick="analyze()">Analizar</button>
@@ -1101,38 +1101,64 @@ initAuth();
 function showSection(section) {
   closeSidebar();
 
-  document.getElementById('favoritesPanel').style.display = 'none';
-  document.getElementById('newsMarketPanel').style.display = 'none';
-  document.getElementById('settingsPanel').style.display = 'none';
-  document.getElementById('learnPanel').style.display = 'none';
-  document.querySelector('.analyzer-card').style.display = 'none';
-  document.getElementById('results').style.display = 'none';
-  document.getElementById('errorMsg').style.display = 'none';
+  // Ocultar todos los paneles
+  ['favoritesPanel','newsMarketPanel','settingsPanel','learnPanel'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.style.display = 'none';
+  });
+
+  // El analyzerSection siempre visible excepto cuando estamos en otra sección
+  const analyzerSection = document.getElementById('analyzerSection');
+  const results = document.getElementById('results');
+  const errorMsg = document.getElementById('errorMsg');
+  const loadingMsg = document.getElementById('loadingMsg');
+
+  if(analyzerSection) analyzerSection.style.display = 'none';
+  if(results) results.style.display = 'none';
+  if(errorMsg) errorMsg.style.display = 'none';
+
+  // Quitar active de nav
   document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
 
+  const titleEl = document.querySelector('.topbar-title');
+  const t = DASH_TRANSLATIONS[currentLang] || DASH_TRANSLATIONS['en'];
+
   if(section === 'analyzer') {
-    document.querySelector('.analyzer-card').style.display = 'block';
-    document.getElementById('results').style.display = currentTicker ? 'block' : 'none';
-    document.getElementById('nav_btn_analyzer').classList.add('active');
-    document.querySelector('.topbar-title').textContent = DASH_TRANSLATIONS[currentLang]?.dash_title || 'Analyzer';
+    if(analyzerSection) analyzerSection.style.display = 'block';
+    if(currentTicker && results) results.style.display = 'block';
+    const btn = document.getElementById('nav_btn_analyzer');
+    if(btn) btn.classList.add('active');
+    if(titleEl) titleEl.textContent = t.dash_title || 'Analyzer';
+
   } else if(section === 'favorites') {
-    document.getElementById('favoritesPanel').style.display = 'block';
-    document.getElementById('nav_btn_favorites').classList.add('active');
-    document.querySelector('.topbar-title').textContent = '⭐ Favorites';
+    const panel = document.getElementById('favoritesPanel');
+    if(panel) panel.style.display = 'block';
+    const btn = document.getElementById('nav_btn_favorites');
+    if(btn) btn.classList.add('active');
+    if(titleEl) titleEl.textContent = '⭐ ' + (t.nav_favorites || 'Favorites');
     renderFavorites();
+
   } else if(section === 'news') {
-    document.getElementById('newsMarketPanel').style.display = 'block';
-    document.getElementById('nav_btn_news').classList.add('active');
-    document.querySelector('.topbar-title').textContent = '📰 Market News';
+    const panel = document.getElementById('newsMarketPanel');
+    if(panel) panel.style.display = 'block';
+    const btn = document.getElementById('nav_btn_news');
+    if(btn) btn.classList.add('active');
+    if(titleEl) titleEl.textContent = '📰 ' + (t.nav_news || 'News');
+
   } else if(section === 'learn') {
-    document.getElementById('learnPanel').style.display = 'block';
-    document.getElementById('nav_btn_learn').classList.add('active');
-    document.querySelector('.topbar-title').textContent = '📚 Indicator Guide';
+    const panel = document.getElementById('learnPanel');
+    if(panel) panel.style.display = 'block';
+    const btn = document.getElementById('nav_btn_learn');
+    if(btn) btn.classList.add('active');
+    if(titleEl) titleEl.textContent = '📚 ' + (t.nav_learn || 'Learn');
     renderLearn('all');
+
   } else if(section === 'settings') {
-    document.getElementById('settingsPanel').style.display = 'block';
-    document.getElementById('nav_btn_settings').classList.add('active');
-    document.querySelector('.topbar-title').textContent = '⚙️ Settings';
+    const panel = document.getElementById('settingsPanel');
+    if(panel) panel.style.display = 'block';
+    const btn = document.getElementById('nav_btn_settings');
+    if(btn) btn.classList.add('active');
+    if(titleEl) titleEl.textContent = '⚙️ ' + (t.nav_settings || 'Settings');
     loadSettings();
   }
 }
@@ -2112,6 +2138,8 @@ function toggleLang() {
 
 // Aplicar idioma al cargar
 applyDashLang(currentLang);
+// Mostrar analyzer por defecto al cargar
+showSection('analyzer');
 </script>
 
 </body>
