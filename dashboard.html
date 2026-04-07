@@ -377,7 +377,7 @@ font-size:13px;cursor:pointer;
   </div>
 </div>
 
-<div id="sidebarOverlay" onclick="document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').style.display='none';" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:49;"></div>
+<div id="sidebarOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:49;" onclick="closeSidebar()"></div>
 
 <div class="app-layout">
   <!-- SIDEBAR -->
@@ -405,7 +405,7 @@ font-size:13px;cursor:pointer;
   <main class="main-content">
     <div class="topbar">
       <div style="display:flex;align-items:center;gap:12px;">
-        <button class="hamburger" onclick="document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').style.display=document.getElementById('sidebar').classList.contains('open')?'block':'none';">☰</button>
+        <button class="hamburger" onclick="toggleSidebar()">☰</button>
         <div class="topbar-title" data-i18n="dash_title">Analizador</div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
@@ -662,6 +662,17 @@ let userPlan = 'free'; // 'free' | 'pro'
 let usageToday = 0;
 
 // ── AUTH CHECK ──
+function toggleSidebar() {
+  const s = document.getElementById('sidebar');
+  const o = document.getElementById('sidebarOverlay');
+  const open = s.classList.toggle('open');
+  o.style.display = open ? 'block' : 'none';
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').style.display = 'none';
+}
+
 async function initAuth() {
   const { data: { session } } = await sb.auth.getSession();
   if (!session) { window.location.href = 'index.html'; return; }
@@ -1088,9 +1099,7 @@ initAuth();
 
 // ══ NAVEGACIÓN DE SECCIONES ══
 function showSection(section) {
-  // Cerrar sidebar en móvil
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('sidebarOverlay').style.display = 'none';
+  closeSidebar();
 
   document.getElementById('favoritesPanel').style.display = 'none';
   document.getElementById('newsMarketPanel').style.display = 'none';
