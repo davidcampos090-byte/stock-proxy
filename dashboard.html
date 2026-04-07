@@ -360,17 +360,17 @@ button.primary:disabled{opacity:.4;cursor:not-allowed;}
     <a href="index.html" class="sidebar-logo">
       <span class="logo-dot"></span>SmartStockSignal
     </a>
-    <a class="nav-item active" href="dashboard.html"><span class="nav-icon">📊</span> Analizador</a>
-    <a class="nav-item" href="#"><span class="nav-icon">⭐</span> Favoritos</a>
-    <a class="nav-item" href="#"><span class="nav-icon">📰</span> Noticias</a>
-    <a class="nav-item" href="#"><span class="nav-icon">⚙️</span> Configuración</a>
+    <a class="nav-item active" id="nav_btn_analyzer" onclick="showSection('analyzer')" href="#"><span class="nav-icon">📊</span> <span id="nav_analyzer">Analyzer</span></a>
+    <a class="nav-item" id="nav_btn_favorites" onclick="showSection('favorites')" href="#"><span class="nav-icon">⭐</span> <span id="nav_favorites_label">Favorites</span></a>
+    <a class="nav-item" id="nav_btn_news" onclick="showSection('news')" href="#"><span class="nav-icon">📰</span> <span id="nav_news_label">News</span></a>
+    <a class="nav-item" id="nav_btn_settings" onclick="showSection('settings')" href="#"><span class="nav-icon">⚙️</span> <span id="nav_settings_label">Settings</span></a>
     <div class="sidebar-bottom">
       <div class="user-info">
-        <div class="user-email" id="userEmail">cargando...</div>
-        <span class="user-plan plan-free" id="userPlan">Plan Gratis</span>
+        <div class="user-email" id="userEmail">loading...</div>
+        <span class="user-plan plan-free" id="userPlan">Free Plan</span>
         <button class="btn-upgrade" id="btnUpgrade" onclick="startCheckout()">⚡ Upgrade to Pro</button>
       </div>
-      <button class="btn-logout" onclick="handleLogout()">Cerrar sesión</button>
+      <button class="btn-logout" onclick="handleLogout()" id="btn_logout_text">Sign out</button>
     </div>
   </aside>
 
@@ -393,13 +393,81 @@ button.primary:disabled{opacity:.4;cursor:not-allowed;}
 
     <!-- AD BANNER — solo plan gratis -->
     <div class="ad-banner" id="adBanner" style="display:none;">
-      <div class="ad-label">Publicidad</div>
+      <div class="ad-label">Advertising</div>
       <ins class="adsbygoogle"
         style="display:block"
         data-ad-client="ca-pub-8509604172341454"
         data-ad-slot="auto"
         data-ad-format="auto"
         data-full-width-responsive="true"></ins>
+    </div>
+
+    <!-- ══ FAVORITES PANEL ══ -->
+    <div id="favoritesPanel" style="display:none;">
+      <div class="panel" style="margin-bottom:1rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+          <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;">⭐ Favorites</div>
+          <div style="font-size:12px;color:var(--muted);">Click ⭐ on any analysis to save</div>
+        </div>
+        <div id="favoritesList"></div>
+      </div>
+    </div>
+
+    <!-- ══ NEWS PANEL ══ -->
+    <div id="newsMarketPanel" style="display:none;">
+      <div class="panel" style="margin-bottom:1rem;">
+        <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:1.5rem;">📰 Market News</div>
+        <div class="chips" style="margin-bottom:1rem;">
+          <button class="chip" onclick="loadMarketNews('AAPL')">AAPL</button>
+          <button class="chip" onclick="loadMarketNews('TSLA')">TSLA</button>
+          <button class="chip" onclick="loadMarketNews('NVDA')">NVDA</button>
+          <button class="chip" onclick="loadMarketNews('MSFT')">MSFT</button>
+          <button class="chip" onclick="loadMarketNews('SPY')">SPY</button>
+          <button class="chip" onclick="loadMarketNews('AMZN')">AMZN</button>
+        </div>
+        <div id="marketNewsContent">
+          <div style="text-align:center;padding:2rem;color:var(--muted);font-size:14px;">Select a ticker above to load news</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SETTINGS PANEL ══ -->
+    <div id="settingsPanel" style="display:none;">
+      <div class="panel" style="margin-bottom:1rem;">
+        <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:1.5rem;">⚙️ Settings</div>
+
+        <!-- Idioma -->
+        <div style="background:var(--bg3);border-radius:12px;padding:1.25rem;margin-bottom:1rem;">
+          <div style="font-size:13px;font-weight:600;margin-bottom:.5rem;">🌐 Language</div>
+          <div style="display:flex;gap:10px;margin-top:.75rem;">
+            <button onclick="applyDashLang('en');document.getElementById('langBtn').textContent='🌐 ES';" style="flex:1;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:13px;transition:all .2s;" id="btnLangEn">🇺🇸 English</button>
+            <button onclick="applyDashLang('es');document.getElementById('langBtn').textContent='🌐 EN';" style="flex:1;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:13px;transition:all .2s;" id="btnLangEs">🇪🇸 Español</button>
+          </div>
+        </div>
+
+        <!-- Plan -->
+        <div style="background:var(--bg3);border-radius:12px;padding:1.25rem;margin-bottom:1rem;">
+          <div style="font-size:13px;font-weight:600;margin-bottom:.5rem;">💳 Subscription</div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:.75rem;" id="settingsPlanText">Loading...</div>
+          <button id="settingsUpgradeBtn" onclick="startCheckout()" style="width:100%;padding:10px;border-radius:8px;background:var(--green);color:#000;border:none;font-size:13px;font-weight:600;cursor:pointer;">⚡ Upgrade to Pro — $12/mo</button>
+        </div>
+
+        <!-- Cuenta -->
+        <div style="background:var(--bg3);border-radius:12px;padding:1.25rem;margin-bottom:1rem;">
+          <div style="font-size:13px;font-weight:600;margin-bottom:.5rem;">👤 Account</div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:.75rem;" id="settingsEmail">—</div>
+          <button onclick="handleLogout()" style="width:100%;padding:10px;border-radius:8px;background:transparent;color:var(--muted);border:1px solid var(--border);font-size:13px;cursor:pointer;">Sign out</button>
+        </div>
+
+        <!-- Links -->
+        <div style="background:var(--bg3);border-radius:12px;padding:1.25rem;">
+          <div style="font-size:13px;font-weight:600;margin-bottom:.75rem;">📄 Legal</div>
+          <div style="display:flex;gap:1rem;">
+            <a href="terms.html" style="font-size:13px;color:var(--green);text-decoration:none;">Terms of Service</a>
+            <a href="privacy.html" style="font-size:13px;color:var(--green);text-decoration:none;">Privacy Policy</a>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- ANALYZER -->
@@ -436,6 +504,7 @@ button.primary:disabled{opacity:.4;cursor:not-allowed;}
           <div class="price-big" id="priceBig"></div>
           <div class="price-chg" id="priceChg"></div>
           <div class="price-meta" id="priceMeta"></div>
+          <button id="favBtn" onclick="toggleFavorite()" style="background:none;border:none;font-size:22px;cursor:pointer;margin-left:auto;opacity:.5;transition:all .2s;" title="Add to favorites">⭐</button>
         </div>
         <div class="banner" id="banner">
           <div class="banner-title" id="bannerTitle"></div>
@@ -890,6 +959,7 @@ async function renderNews(ticker){
 async function analyze(){
   const ticker=document.getElementById('tickerInput').value.trim().toUpperCase();
   if(!ticker)return;
+  currentTicker = ticker;
 
   // Verificar límite plan gratis
   if(userPlan==='free'&&usageToday>=FREE_LIMIT){
@@ -999,10 +1069,174 @@ async function analyze(){
   document.getElementById('loadingMsg').style.display='none';
   document.getElementById('results').style.display='block';
   document.getElementById('analyzeBtn').disabled=false;
+  updateFavBtn(ticker);
 }
 
 document.getElementById('tickerInput').addEventListener('keydown',e=>{if(e.key==='Enter')analyze();});
 initAuth();
+
+// ══ NAVEGACIÓN DE SECCIONES ══
+function showSection(section) {
+  // Ocultar todo
+  document.getElementById('favoritesPanel').style.display = 'none';
+  document.getElementById('newsMarketPanel').style.display = 'none';
+  document.getElementById('settingsPanel').style.display = 'none';
+  document.querySelector('.analyzer-card').style.display = 'none';
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('errorMsg').style.display = 'none';
+
+  // Quitar active de todos
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+
+  if(section === 'analyzer') {
+    document.querySelector('.analyzer-card').style.display = 'block';
+    document.getElementById('results').style.display = currentTicker ? 'block' : 'none';
+    document.getElementById('nav_btn_analyzer').classList.add('active');
+    document.querySelector('.topbar-title').textContent = DASH_TRANSLATIONS[currentLang].dash_title || 'Analyzer';
+  } else if(section === 'favorites') {
+    document.getElementById('favoritesPanel').style.display = 'block';
+    document.getElementById('nav_btn_favorites').classList.add('active');
+    document.querySelector('.topbar-title').textContent = '⭐ Favorites';
+    renderFavorites();
+  } else if(section === 'news') {
+    document.getElementById('newsMarketPanel').style.display = 'block';
+    document.getElementById('nav_btn_news').classList.add('active');
+    document.querySelector('.topbar-title').textContent = '📰 Market News';
+  } else if(section === 'settings') {
+    document.getElementById('settingsPanel').style.display = 'block';
+    document.getElementById('nav_btn_settings').classList.add('active');
+    document.querySelector('.topbar-title').textContent = '⚙️ Settings';
+    loadSettings();
+  }
+}
+
+let currentTicker = '';
+
+// ══ FAVORITOS ══
+function getFavorites() {
+  try { return JSON.parse(localStorage.getItem('favorites') || '[]'); } catch(e) { return []; }
+}
+function saveFavorites(favs) {
+  localStorage.setItem('favorites', JSON.stringify(favs));
+}
+function toggleFavorite() {
+  if(!currentTicker) return;
+  const favs = getFavorites();
+  const idx = favs.indexOf(currentTicker);
+  const btn = document.getElementById('favBtn');
+  if(idx === -1) {
+    favs.unshift(currentTicker);
+    btn.style.opacity = '1';
+    btn.style.filter = 'none';
+    showToast(`${currentTicker} added to favorites ⭐`);
+  } else {
+    favs.splice(idx, 1);
+    btn.style.opacity = '.5';
+    showToast(`${currentTicker} removed from favorites`);
+  }
+  saveFavorites(favs);
+}
+function updateFavBtn(ticker) {
+  const favs = getFavorites();
+  const btn = document.getElementById('favBtn');
+  if(favs.includes(ticker)) {
+    btn.style.opacity = '1';
+  } else {
+    btn.style.opacity = '.5';
+  }
+}
+function renderFavorites() {
+  const favs = getFavorites();
+  const el = document.getElementById('favoritesList');
+  if(!favs.length) {
+    el.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--muted);">
+      <div style="font-size:40px;margin-bottom:1rem;">⭐</div>
+      <div style="font-size:15px;font-weight:600;margin-bottom:.5rem;">No favorites yet</div>
+      <div style="font-size:13px;">Analyze a stock and click ⭐ to save it here</div>
+    </div>`;
+    return;
+  }
+  el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;">
+    ${favs.map(sym => `
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <button onclick="analyzeFavorite('${sym}')" style="background:none;border:none;color:var(--green);font-family:'Syne',sans-serif;font-size:15px;font-weight:700;cursor:pointer;padding:0;">${sym}</button>
+        <button onclick="removeFavorite('${sym}')" style="background:none;border:none;color:#444;font-size:16px;cursor:pointer;padding:0;" title="Remove">×</button>
+      </div>`).join('')}
+  </div>`;
+}
+function removeFavorite(sym) {
+  const favs = getFavorites().filter(f => f !== sym);
+  saveFavorites(favs);
+  renderFavorites();
+}
+function analyzeFavorite(sym) {
+  document.getElementById('tickerInput').value = sym;
+  showSection('analyzer');
+  analyze();
+}
+
+// ══ NOTICIAS DE MERCADO ══
+async function loadMarketNews(ticker) {
+  const el = document.getElementById('marketNewsContent');
+  el.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--muted);"><span class="spinner"></span> Loading news for ${ticker}...</div>`;
+
+  try {
+    const prompt = `Search the web for the most recent news this week about ${ticker} stock. Find 2 POSITIVE and 2 NEGATIVE news with specific facts.\n\nONLY JSON:\n{"good":[{"titular":"headline max 18 words","por_que_importa":"price impact","source":"source"},{"titular":"...","por_que_importa":"...","source":"..."}],"bad":[{"titular":"...","por_que_importa":"...","source":"..."},{"titular":"...","por_que_importa":"...","source":"..."}]}`;
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:prompt}]})
+    });
+    const d = await resp.json();
+    const txt = d.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+    const news = JSON.parse(txt.replace(/```json|```/g,'').trim());
+
+    const renderItems = (items, type) => items?.slice(0,2).map(n => `
+      <div class="news-item ${type}" style="margin-bottom:8px;">
+        <div class="news-icon">${type==='good'?'📈':'📉'}</div>
+        <div class="news-body">
+          <div class="news-headline">${n.titular||''}</div>
+          <div class="news-why">${n.por_que_importa||''}</div>
+          <div class="news-source">${n.source||''}</div>
+        </div>
+      </div>`).join('') || '';
+
+    el.innerHTML = `
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#00e676;margin-bottom:8px;">✅ Positive news — ${ticker}</div>
+      ${renderItems(news.good,'good')}
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#ff5252;margin:1rem 0 8px;">⚠️ Risk news — ${ticker}</div>
+      ${renderItems(news.bad,'bad')}`;
+  } catch(e) {
+    el.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--muted);">Could not load news for ${ticker}.</div>`;
+  }
+}
+
+// ══ SETTINGS ══
+function loadSettings() {
+  sb.auth.getSession().then(({data:{session}}) => {
+    if(!session) return;
+    document.getElementById('settingsEmail').textContent = session.user.email;
+    document.getElementById('settingsPlanText').textContent = userPlan === 'pro' ? '⭐ Pro Plan — Active' : '🆓 Free Plan — 5 analyses/day';
+    if(userPlan === 'pro') {
+      const btn = document.getElementById('settingsUpgradeBtn');
+      btn.textContent = '✅ Pro Plan Active';
+      btn.style.background = 'var(--bg2)';
+      btn.style.color = 'var(--green)';
+      btn.style.border = '1px solid var(--green)';
+      btn.onclick = null;
+      btn.style.cursor = 'default';
+    }
+  });
+}
+
+// ══ TOAST NOTIFICATION ══
+function showToast(msg) {
+  const toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:9999;background:#00e676;color:#000;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;box-shadow:0 4px 20px rgba(0,230,118,.3);animation:modalIn .3s ease;';
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
 
 // ══════════════════════════════════
 // SISTEMA DE IDIOMAS — DASHBOARD
