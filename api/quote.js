@@ -7,10 +7,10 @@ export default async function handler(req, res) {
 
   const { type, symbol, outputsize, interval } = req.query;
 
-  const STRIPE_SECRET = 'sk_test_51TIsOtLc2ovMZfInrIJpByq5rd26nsE9zfH8aq3cRhlG14pkNdVzT8BEX81sZQsjUQsKg6EoPt9jrTbofRUcCO7H00wKqR0ciR';
-  const PRICE_ID = 'price_1TJ3nnLc2ovMZfInyqWlbaUv';
+  const STRIPE_SECRET = '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';
+  const PRICE_ID = 'price_1TJNx4PqcW30lq4dMiOZPl3Y';
   const SUPABASE_URL = 'https://wnfogptzpqqugjxvwlnb.supabase.co';
-  const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InduZm9ncHR6cHFxdWdqeHZ3bG5iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzOTY2MzUsImV4cCI6MjA5MDk3MjYzNX0.qLngiAY9bFvVipEAtKVqQVQAV62QcUPAlElKPkWAqRk';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InduZm9ncHR6cHFxdWdqeHZ3bG5iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzOTY2MzUsImV4cCI6MjA5MDk3MjYzNX0.qLngiAY9bFvVipEAtKVqQVQAV62QcUPAlElKPkWAqRk';
 
   try {
     // ── PRECIOS DIARIOS ──
@@ -34,7 +34,7 @@ export default async function handler(req, res) {
       return res.status(200).json(await r.json());
     }
 
-    // ── STRIPE CHECKOUT SESSION ──
+    // ── STRIPE CHECKOUT (PRODUCCIÓN) ──
     if (type === 'checkout' && req.method === 'POST') {
       const body = await new Promise((resolve) => {
         let data = '';
@@ -68,7 +68,7 @@ export default async function handler(req, res) {
       return res.status(200).json({ url: session.url, sessionId: session.id });
     }
 
-    // ── ACTIVAR PLAN PRO (webhook tras pago exitoso) ──
+    // ── ACTIVAR PLAN PRO ──
     if (type === 'activate_pro' && req.method === 'POST') {
       const body = await new Promise((resolve) => {
         let data = '';
@@ -77,28 +77,27 @@ export default async function handler(req, res) {
       });
 
       const { userId } = body;
-      if (!userId) return res.status(400).json({ error: 'userId requerido' });
+      if (!userId) return res.status(400).json({ error: 'userId required' });
 
-      // Actualizar plan en Supabase
       const sbRes = await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${userId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'apikey': SUPABASE_SERVICE_KEY,
-          'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
           'Prefer': 'return=minimal',
         },
         body: JSON.stringify({ plan: 'pro' })
       });
 
-      if (!sbRes.ok) return res.status(500).json({ error: 'Error actualizando plan' });
+      if (!sbRes.ok) return res.status(500).json({ error: 'Error updating plan' });
       return res.status(200).json({ success: true });
     }
 
-    // ── VERIFICAR SESIÓN DE STRIPE ──
+    // ── VERIFICAR SESIÓN ──
     if (type === 'verify_session') {
       const sessionId = req.query.session_id;
-      if (!sessionId) return res.status(400).json({ error: 'session_id requerido' });
+      if (!sessionId) return res.status(400).json({ error: 'session_id required' });
 
       const stripeRes = await fetch(`https://api.stripe.com/v1/checkout/sessions/${sessionId}`, {
         headers: { 'Authorization': `Bearer ${STRIPE_SECRET}` }
@@ -113,7 +112,7 @@ export default async function handler(req, res) {
       });
     }
 
-    return res.status(400).json({ error: 'Tipo no válido' });
+    return res.status(400).json({ error: 'Invalid type' });
 
   } catch (error) {
     return res.status(500).json({ error: error.message });
