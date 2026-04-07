@@ -156,23 +156,8 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:3rem 2re
     <a href="#features" class="btn-secondary" id="hero_cta2">See features</a>
   </div>
   <div class="ticker-wrap">
-    <div class="ticker-track">
-      <div class="ticker-item"><span class="sym">AAPL</span><span>$213.18</span><span class="up">+1.2%</span></div>
-      <div class="ticker-item"><span class="sym">TSLA</span><span>$248.42</span><span class="down">-0.8%</span></div>
-      <div class="ticker-item"><span class="sym">NVDA</span><span>$875.39</span><span class="up">+2.4%</span></div>
-      <div class="ticker-item"><span class="sym">MSFT</span><span>$418.25</span><span class="up">+0.6%</span></div>
-      <div class="ticker-item"><span class="sym">AMZN</span><span>$192.78</span><span class="up">+1.1%</span></div>
-      <div class="ticker-item"><span class="sym">GOOGL</span><span>$172.63</span><span class="down">-0.3%</span></div>
-      <div class="ticker-item"><span class="sym">META</span><span>$524.11</span><span class="up">+1.8%</span></div>
-      <div class="ticker-item"><span class="sym">SPY</span><span>$524.89</span><span class="up">+0.5%</span></div>
-      <div class="ticker-item"><span class="sym">AAPL</span><span>$213.18</span><span class="up">+1.2%</span></div>
-      <div class="ticker-item"><span class="sym">TSLA</span><span>$248.42</span><span class="down">-0.8%</span></div>
-      <div class="ticker-item"><span class="sym">NVDA</span><span>$875.39</span><span class="up">+2.4%</span></div>
-      <div class="ticker-item"><span class="sym">MSFT</span><span>$418.25</span><span class="up">+0.6%</span></div>
-      <div class="ticker-item"><span class="sym">AMZN</span><span>$192.78</span><span class="up">+1.1%</span></div>
-      <div class="ticker-item"><span class="sym">GOOGL</span><span>$172.63</span><span class="down">-0.3%</span></div>
-      <div class="ticker-item"><span class="sym">META</span><span>$524.11</span><span class="up">+1.8%</span></div>
-      <div class="ticker-item"><span class="sym">SPY</span><span>$524.89</span><span class="up">+0.5%</span></div>
+    <div class="ticker-track" id="tickerTrack">
+      <!-- Cargando precios reales... -->
     </div>
   </div>
 </section>
@@ -508,6 +493,60 @@ function toggleLang() {
 }
 
 applyLang(currentLang);
+
+// ── TICKER TAPE CON PRECIOS REALES ──
+const TICKER_SYMBOLS = ['AAPL','TSLA','NVDA','MSFT','AMZN','GOOGL','META','SPY'];
+const TD_KEY = 'cbecfbf347f74e9780b89f34b34d2431';
+
+async function loadTicker() {
+  try {
+    const symbols = TICKER_SYMBOLS.join(',');
+    const url = `https://api.twelvedata.com/quote?symbol=${symbols}&apikey=${TD_KEY}`;
+    const r = await fetch(url, {signal: AbortSignal.timeout(8000)});
+    if (!r.ok) throw new Error('API error');
+    const data = await r.json();
+
+    const items = TICKER_SYMBOLS.map(sym => {
+      const q = data[sym] || data;
+      if (!q || q.status === 'error') return null;
+      const price = parseFloat(q.close || q.price || 0);
+      const change = parseFloat(q.percent_change || 0);
+      if (!price) return null;
+      const isUp = change >= 0;
+      return `<div class="ticker-item">
+        <span class="sym">${sym}</span>
+        <span>$${price.toFixed(2)}</span>
+        <span class="${isUp ? 'up' : 'down'}">${isUp ? '+' : ''}${change.toFixed(2)}%</span>
+      </div>`;
+    }).filter(Boolean);
+
+    if (!items.length) throw new Error('No data');
+
+    // Duplicar para loop infinito
+    const html = [...items, ...items].join('');
+    document.getElementById('tickerTrack').innerHTML = html;
+
+  } catch(e) {
+    // Fallback con precios aproximados si falla la API
+    const fallback = [
+      {sym:'AAPL',p:213,c:0.8},{sym:'TSLA',p:248,c:-0.5},
+      {sym:'NVDA',p:875,c:2.1},{sym:'MSFT',p:418,c:0.4},
+      {sym:'AMZN',p:192,c:1.0},{sym:'GOOGL',p:172,c:-0.2},
+      {sym:'META',p:524,c:1.5},{sym:'SPY',p:524,c:0.3},
+    ];
+    const html = [...fallback,...fallback].map(f=>`
+      <div class="ticker-item">
+        <span class="sym">${f.sym}</span>
+        <span>$${f.p.toFixed(2)}</span>
+        <span class="${f.c>=0?'up':'down'}">${f.c>=0?'+':''}${f.c}%</span>
+      </div>`).join('');
+    document.getElementById('tickerTrack').innerHTML = html;
+  }
+}
+
+loadTicker();
+// Actualizar cada 5 minutos
+setInterval(loadTicker, 5 * 60 * 1000);
 </script>
 </body>
 </html>
