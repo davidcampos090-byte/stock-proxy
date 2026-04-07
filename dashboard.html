@@ -1101,27 +1101,26 @@ initAuth();
 function showSection(section) {
   closeSidebar();
 
-  // Ocultar todos los paneles
-  ['favoritesPanel','newsMarketPanel','settingsPanel','learnPanel'].forEach(id => {
+  const panels = ['favoritesPanel','newsMarketPanel','settingsPanel','learnPanel'];
+  const analyzerSection = document.getElementById('analyzerSection');
+  const results = document.getElementById('results');
+  const t = DASH_TRANSLATIONS[currentLang] || DASH_TRANSLATIONS['en'];
+  const titleEl = document.querySelector('.topbar-title');
+
+  // Si vamos a una sección alternativa — ocultar analyzer
+  if(section !== 'analyzer') {
+    if(analyzerSection) analyzerSection.style.display = 'none';
+    if(results) results.style.display = 'none';
+  }
+
+  // Ocultar todos los paneles alternativos
+  panels.forEach(id => {
     const el = document.getElementById(id);
     if(el) el.style.display = 'none';
   });
 
-  // El analyzerSection siempre visible excepto cuando estamos en otra sección
-  const analyzerSection = document.getElementById('analyzerSection');
-  const results = document.getElementById('results');
-  const errorMsg = document.getElementById('errorMsg');
-  const loadingMsg = document.getElementById('loadingMsg');
-
-  if(analyzerSection) analyzerSection.style.display = 'none';
-  if(results) results.style.display = 'none';
-  if(errorMsg) errorMsg.style.display = 'none';
-
   // Quitar active de nav
   document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-
-  const titleEl = document.querySelector('.topbar-title');
-  const t = DASH_TRANSLATIONS[currentLang] || DASH_TRANSLATIONS['en'];
 
   if(section === 'analyzer') {
     if(analyzerSection) analyzerSection.style.display = 'block';
@@ -1131,31 +1130,31 @@ function showSection(section) {
     if(titleEl) titleEl.textContent = t.dash_title || 'Analyzer';
 
   } else if(section === 'favorites') {
-    const panel = document.getElementById('favoritesPanel');
-    if(panel) panel.style.display = 'block';
+    const el = document.getElementById('favoritesPanel');
+    if(el) el.style.display = 'block';
     const btn = document.getElementById('nav_btn_favorites');
     if(btn) btn.classList.add('active');
     if(titleEl) titleEl.textContent = '⭐ ' + (t.nav_favorites || 'Favorites');
     renderFavorites();
 
   } else if(section === 'news') {
-    const panel = document.getElementById('newsMarketPanel');
-    if(panel) panel.style.display = 'block';
+    const el = document.getElementById('newsMarketPanel');
+    if(el) el.style.display = 'block';
     const btn = document.getElementById('nav_btn_news');
     if(btn) btn.classList.add('active');
     if(titleEl) titleEl.textContent = '📰 ' + (t.nav_news || 'News');
 
   } else if(section === 'learn') {
-    const panel = document.getElementById('learnPanel');
-    if(panel) panel.style.display = 'block';
+    const el = document.getElementById('learnPanel');
+    if(el) el.style.display = 'block';
     const btn = document.getElementById('nav_btn_learn');
     if(btn) btn.classList.add('active');
     if(titleEl) titleEl.textContent = '📚 ' + (t.nav_learn || 'Learn');
     renderLearn('all');
 
   } else if(section === 'settings') {
-    const panel = document.getElementById('settingsPanel');
-    if(panel) panel.style.display = 'block';
+    const el = document.getElementById('settingsPanel');
+    if(el) el.style.display = 'block';
     const btn = document.getElementById('nav_btn_settings');
     if(btn) btn.classList.add('active');
     if(titleEl) titleEl.textContent = '⚙️ ' + (t.nav_settings || 'Settings');
