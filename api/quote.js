@@ -7,9 +7,9 @@ export default async function handler(req, res) {
 
   const { type, symbol, outputsize, interval } = req.query;
 
-  // ── Variables de entorno (configuradas en Vercel) ──
   const STRIPE_SECRET = process.env.STRIPE_SECRET;
   const PRICE_ID = process.env.STRIPE_PRICE_ID;
+  const ANTHROPIC_KEY = process.env.ANTHROPIC_KEY;
   const SUPABASE_URL = 'https://wnfogptzpqqugjxvwlnb.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InduZm9ncHR6cHFxdWdqeHZ3bG5iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzOTY2MzUsImV4cCI6MjA5MDk3MjYzNX0.qLngiAY9bFvVipEAtKVqQVQAV62QcUPAlElKPkWAqRk';
 
@@ -28,8 +28,43 @@ export default async function handler(req, res) {
       return res.status(200).json(await r.json());
     }
 
-    // ── NOTICIAS ──
-    if (type === 'news') {
+    // ── NOTICIAS CON IA + WEB SEARCH ──
+    if (type === 'news' && req.method === 'POST') {
+      const body = await new Promise((resolve) => {
+        let data = '';
+        req.on('data', chunk => data += chunk);
+        req.on('end', () => { try { resolve(JSON.parse(data)); } catch(e) { resolve({}); } });
+      });
+
+      const { ticker } = body;
+      if (!ticker) return res.status(400).json({ error: 'ticker required' });
+
+      const prompt = `Search the web RIGHT NOW for the most recent news this week about ${ticker} stock. Find exactly 2 POSITIVE and 2 NEGATIVE news with SPECIFIC facts, numbers, and dates.\n\nGood examples:\n✅ "Apple reports record $124B revenue in Q1 2025, beating analyst estimates by 8%"\n✅ "NVIDIA wins $10B Microsoft contract for next-gen AI chips"\n❌ "Apple has good prospects" (too vague — rejected)\n\nONLY return this JSON, no extra text, no markdown:\n{"good":[{"titular":"specific headline max 18 words","impact":"concrete price impact 1 sentence","source":"media name"},{"titular":"...","impact":"...","source":"..."}],"bad":[{"titular":"specific negative headline","impact":"concrete risk 1 sentence","source":"..."},{"titular":"...","impact":"...","source":"..."}]}`;
+
+      const aiRes = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': ANTHROPIC_KEY,
+          'anthropic-version': '2023-06-01',
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1200,
+          tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+
+      const aiData = await aiRes.json();
+      const text = aiData.content.filter(b => b.type === 'text').map(b => b.text).join('');
+      const clean = text.replace(/```json|```/g, '').trim();
+      const news = JSON.parse(clean);
+      return res.status(200).json(news);
+    }
+
+    // ── NOTICIAS GET (Alpha Vantage) ──
+    if (type === 'news' && req.method === 'GET') {
       const url = `https://www.alphavantage.co/query?function=NEWS_SENTIMENT&tickers=${symbol}&limit=8&apikey=1X417BA6SKUHENY1`;
       const r = await fetch(url);
       return res.status(200).json(await r.json());
@@ -44,7 +79,6 @@ export default async function handler(req, res) {
       });
 
       const { email, userId } = body;
-
       const stripeRes = await fetch('https://api.stripe.com/v1/checkout/sessions', {
         method: 'POST',
         headers: {
