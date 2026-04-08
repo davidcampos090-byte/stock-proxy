@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -151,14 +152,29 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:3rem 2re
   <div class="badge"><span class="logo-dot"></span><span id="hero_badge">Real-time AI analysis</span></div>
   <h1 id="hero_h1">Smarter<br><span>trading signals</span></h1>
   <p id="hero_p">RSI, MACD, VWAP, Smart Money, chart patterns and daily news — all in one place, analyzed by artificial intelligence.</p>
-  <div class="hero-btns">
+
+  <!-- Botones para usuarios NO logueados -->
+
+  <div class="hero-btns" id="heroBtnsGuest">
     <a href="#" class="btn-primary" onclick="openModal('register')" id="hero_cta1">Start for free →</a>
-    <a href="#features" class="btn-secondary" id="hero_cta2">See features</a>
+    <a href="#" class="btn-secondary" onclick="openModal('login')" id="hero_login_btn">Sign in</a>
   </div>
+
+  <!-- Botones para usuarios logueados (oculto por defecto) -->
+
+  <div class="hero-btns" id="heroBtnsUser" style="display:none;">
+    <a href="dashboard.html" class="btn-primary" id="hero_dashboard_btn">Go to Dashboard →</a>
+    <a href="#pricing" class="btn-secondary" id="hero_upgrade_btn">Upgrade to Pro</a>
+  </div>
+
+  <!-- Bienvenida personalizada (oculto por defecto) -->
+
+  <div id="heroWelcome" style="display:none;margin-bottom:1.5rem;font-size:14px;color:var(--muted);">
+    Welcome back, <span id="heroUserEmail" style="color:var(--green);font-weight:600;"></span>
+  </div>
+
   <div class="ticker-wrap">
-    <div class="ticker-track" id="tickerTrack">
-      <!-- Cargando precios reales... -->
-    </div>
+    <div class="ticker-track" id="tickerTrack"></div>
   </div>
 </section>
 
@@ -280,6 +296,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:3rem 2re
 </footer>
 
 <!-- MODAL -->
+
 <div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
   <div class="modal">
     <button class="modal-close" onclick="closeModal()">×</button>
@@ -333,7 +350,45 @@ async function handleLogin(){
   if(error){err.textContent=currentLang==='en'?'Incorrect email or password.':'Email o contraseña incorrectos.';err.style.display='block';return;}
   closeModal();window.location.href='dashboard.html';
 }
-sb.auth.getSession().then(({data:{session}})=>{if(session){const b=document.querySelector('.btn-nav');b.textContent=currentLang==='en'?'My dashboard →':'Mi dashboard →';b.href='dashboard.html';b.onclick=null;}});
+// ── DETECCIÓN DE SESIÓN AL CARGAR ──
+sb.auth.getSession().then(async ({data:{session}}) => {
+  if(session) {
+    const email = session.user.email;
+    const shortEmail = email.length > 20 ? email.slice(0,18)+'…' : email;
+
+    // NAVBAR — ocultar Sign in, cambiar botón a Dashboard
+    const navLogin = document.getElementById('nav_login');
+    const navCta = document.getElementById('nav_cta');
+    if(navLogin) navLogin.style.display = 'none';
+    if(navCta) {
+      navCta.textContent = currentLang === 'en' ? 'My Dashboard →' : 'Mi Dashboard →';
+      navCta.href = 'dashboard.html';
+      navCta.onclick = null;
+      navCta.style.background = 'var(--green)';
+    }
+
+    // HERO — mostrar botones de usuario logueado
+    const heroBtnsGuest = document.getElementById('heroBtnsGuest');
+    const heroBtnsUser = document.getElementById('heroBtnsUser');
+    const heroWelcome = document.getElementById('heroWelcome');
+    const heroUserEmail = document.getElementById('heroUserEmail');
+    if(heroBtnsGuest) heroBtnsGuest.style.display = 'none';
+    if(heroBtnsUser) heroBtnsUser.style.display = 'flex';
+    if(heroWelcome) heroWelcome.style.display = 'block';
+    if(heroUserEmail) heroUserEmail.textContent = shortEmail;
+
+    // Verificar plan para personalizar botón upgrade
+    try {
+      const { data: profile } = await sb.from('profiles').select('plan').eq('id', session.user.id).single();
+      const heroDashBtn = document.getElementById('hero_dashboard_btn');
+      const heroUpgradeBtn = document.getElementById('hero_upgrade_btn');
+      if(profile?.plan === 'pro') {
+        if(heroUpgradeBtn) heroUpgradeBtn.style.display = 'none';
+        if(heroDashBtn) heroDashBtn.textContent = currentLang === 'en' ? '⭐ Go to Dashboard →' : '⭐ Ir al Dashboard →';
+      }
+    } catch(e) {}
+  }
+});
 async function startCheckout() {
   const { data: { session } } = await sb.auth.getSession();
   if (!session) { openModal('register'); return; }
@@ -548,5 +603,6 @@ loadTicker();
 // Actualizar cada 5 minutos
 setInterval(loadTicker, 5 * 60 * 1000);
 </script>
+
 </body>
 </html>
