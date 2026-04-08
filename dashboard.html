@@ -18,72 +18,91 @@
   --red:#ff5252;--bg:#070b0f;--bg2:#0d1117;--bg3:#131920;
   --border:rgba(255,255,255,0.07);--text:#f0f4f8;--muted:#8896a7;
   --card:rgba(255,255,255,0.04);
+  --sidebar-bg:linear-gradient(180deg,#0d1117 0%,#0a1628 100%);
 }
+/* LIGHT MODE */
+body.light{
+  --bg:#f0f4f8;--bg2:#ffffff;--bg3:#f8fafc;
+  --border:rgba(0,0,0,0.08);--text:#0f172a;--muted:#64748b;
+  --card:rgba(0,0,0,0.03);
+  --sidebar-bg:linear-gradient(180deg,#0f172a 0%,#1e293b 100%);
+}
+body.light .main-content{background:#f0f4f8;}
+body.light input[type=text]{background:#fff;color:#0f172a;border-color:rgba(0,0,0,0.1);}
+body.light .analyzer-card{background:#fff;border-color:rgba(0,0,0,0.08);}
+body.light .panel{background:#fff;border-color:rgba(0,0,0,0.08);}
+body.light .inner-panel{background:#f8fafc;}
+body.light .ind-card,.body.light .sm-card,.body.light .pc-card{background:#f8fafc;}
+body.light .sm-card,.body.light .pc-card{background:#f8fafc;}
+body.light .limit-modal{background:#fff;}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s;}
 
 /* LAYOUT */
 .app-layout{display:flex;min-height:100vh;}
 .sidebar{
 width:220px;flex-shrink:0;
-background:#0d1117;
-border-right:1px solid var(–border);
+background:var(–sidebar-bg);
+border-right:1px solid rgba(0,230,118,0.1);
 display:flex;flex-direction:column;
 padding:1.5rem 1rem;
 position:fixed;top:0;left:0;bottom:0;
 z-index:50;
 }
 @media(max-width:768px){
-.sidebar{transform:translateX(-100%);transition:transform .3s;background:#0d1117;box-shadow:4px 0 20px rgba(0,0,0,.8);}
+.sidebar{transform:translateX(-100%);transition:transform .3s;background:linear-gradient(180deg,#0d1117 0%,#0a1628 100%);box-shadow:4px 0 30px rgba(0,230,118,.1);}
 .sidebar.open{transform:translateX(0);}
 .main-content{margin-left:0!important;}
 }
 .sidebar-logo{
 font-family:‘Syne’,sans-serif;font-weight:800;font-size:15px;
-color:var(–text);text-decoration:none;
+color:#fff;text-decoration:none;
 display:flex;align-items:center;gap:8px;
-margin-bottom:2rem;
+margin-bottom:2rem;padding-bottom:1.5rem;
+border-bottom:1px solid rgba(255,255,255,0.06);
 }
 .logo-dot{width:7px;height:7px;border-radius:50%;background:var(–green);animation:blink 1.5s infinite;}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 .nav-item{
 display:flex;align-items:center;gap:10px;
 padding:10px 12px;border-radius:10px;
-font-size:13px;color:var(–muted);
+font-size:13px;color:rgba(255,255,255,0.5);
 text-decoration:none;cursor:pointer;
-transition:all .15s;margin-bottom:2px;
+transition:all .2s;margin-bottom:4px;
+font-weight:500;
 }
-.nav-item:hover{background:var(–card);color:var(–text);}
-.nav-item.active{background:var(–green-dim);color:var(–green);}
+.nav-item:hover{background:rgba(255,255,255,0.06);color:#fff;}
+.nav-item.active{background:rgba(0,230,118,0.12);color:#00e676;border-left:3px solid #00e676;padding-left:9px;}
 .nav-icon{font-size:16px;width:20px;text-align:center;}
-.sidebar-bottom{margin-top:auto;}
+.sidebar-bottom{margin-top:auto;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.06);}
 .user-info{
-background:var(–card);border:1px solid var(–border);
+background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
 border-radius:10px;padding:12px;
 margin-bottom:10px;
 }
-.user-email{font-size:11px;color:var(–muted);margin-bottom:4px;word-break:break-all;}
+.user-email{font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:4px;word-break:break-all;}
 .user-plan{
 font-size:10px;font-weight:600;text-transform:uppercase;
 letter-spacing:.08em;padding:2px 8px;border-radius:99px;
 display:inline-block;
 }
-.plan-free{background:var(–card);color:var(–muted);border:1px solid var(–border);}
-.plan-pro{background:var(–green-dim);color:var(–green);}
+.plan-free{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.4);border:1px solid rgba(255,255,255,0.1);}
+.plan-pro{background:rgba(0,230,118,0.15);color:#00e676;}
 .btn-upgrade{
 width:100%;padding:9px;border-radius:8px;
-background:var(–green);color:#000;
-border:none;font-size:12px;font-weight:600;
+background:linear-gradient(135deg,#00e676,#00c853);color:#000;
+border:none;font-size:12px;font-weight:700;
 cursor:pointer;margin-top:8px;transition:all .2s;
+box-shadow:0 4px 15px rgba(0,230,118,0.3);
 }
-.btn-upgrade:hover{background:var(–green-dark);}
+.btn-upgrade:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,230,118,0.4);}
 .btn-logout{
 width:100%;padding:9px;border-radius:8px;
-background:transparent;color:var(–muted);
-border:1px solid var(–border);font-size:12px;
+background:transparent;color:rgba(255,255,255,0.35);
+border:1px solid rgba(255,255,255,0.08);font-size:12px;
 cursor:pointer;transition:all .2s;margin-top:6px;
 }
-.btn-logout:hover{border-color:rgba(255,255,255,.2);color:var(–text);}
+.btn-logout:hover{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.7);}
 
 /* MAIN */
 .main-content{margin-left:220px;flex:1;padding:1.5rem;}
@@ -393,11 +412,11 @@ font-size:13px;cursor:pointer;
     <a href="index.html" class="sidebar-logo">
       <span class="logo-dot"></span>SmartStockSignal
     </a>
-    <a class="nav-item active" id="nav_btn_analyzer" onclick="showSection('analyzer')" href="#"><span class="nav-icon">📊</span> <span id="nav_analyzer">Analyzer</span></a>
-    <a class="nav-item" id="nav_btn_favorites" onclick="showSection('favorites')" href="#"><span class="nav-icon">⭐</span> <span id="nav_favorites_label">Favorites</span></a>
-    <a class="nav-item" id="nav_btn_news" onclick="showSection('news')" href="#"><span class="nav-icon">📰</span> <span id="nav_news_label">News</span></a>
-    <a class="nav-item" id="nav_btn_learn" onclick="showSection('learn')" href="#"><span class="nav-icon">📚</span> <span id="nav_learn_label">Learn</span></a>
-    <a class="nav-item" id="nav_btn_settings" onclick="showSection('settings')" href="#"><span class="nav-icon">⚙️</span> <span id="nav_settings_label">Settings</span></a>
+    <a class="nav-item active" id="nav_btn_analyzer" onclick="showSection('analyzer')" href="#"><span class="nav-dot" style="width:8px;height:8px;border-radius:50%;background:#00e676;flex-shrink:0;"></span> <span id="nav_analyzer">Analyzer</span></a>
+    <a class="nav-item" id="nav_btn_favorites" onclick="showSection('favorites')" href="#"><span class="nav-dot" style="width:8px;height:8px;border-radius:50%;background:#f59e0b;flex-shrink:0;"></span> <span id="nav_favorites_label">Favorites</span></a>
+    <a class="nav-item" id="nav_btn_news" onclick="showSection('news')" href="#"><span class="nav-dot" style="width:8px;height:8px;border-radius:50%;background:#818cf8;flex-shrink:0;"></span> <span id="nav_news_label">News</span></a>
+    <a class="nav-item" id="nav_btn_learn" onclick="showSection('learn')" href="#"><span class="nav-dot" style="width:8px;height:8px;border-radius:50%;background:#f472b6;flex-shrink:0;"></span> <span id="nav_learn_label">Learn</span></a>
+    <a class="nav-item" id="nav_btn_settings" onclick="showSection('settings')" href="#"><span class="nav-dot" style="width:8px;height:8px;border-radius:50%;background:#8896a7;flex-shrink:0;"></span> <span id="nav_settings_label">Settings</span></a>
     <div class="sidebar-bottom">
       <div class="user-info">
         <div class="user-email" id="userEmail">loading...</div>
@@ -417,6 +436,7 @@ font-size:13px;cursor:pointer;
         <div class="topbar-title" data-i18n="dash_title">Analyzer</div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <button onclick="toggleTheme()" id="themeBtn" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:6px 12px;color:#8896a7;font-size:13px;cursor:pointer;">🌙</button>
         <button onclick="toggleLang()" id="langBtn" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:6px 12px;color:#8896a7;font-size:13px;cursor:pointer;">🌐 ES</button>
         <div class="usage-bar-wrap" id="usageWrap">
           <div class="usage-label" data-i18n="dash_usage">Today's analyses:</div>
@@ -936,7 +956,10 @@ function renderPutCall(pcData){
   document.getElementById('pcInterp').textContent=pcr<=.55?`PCR ${pcr}: extreme greed. Contrarian signal: consider reducing exposure.`:pcr<=.7?`PCR ${pcr}: moderate optimism. Confirmatory bullish signal.`:pcr<=.9?`PCR ${pcr}: balanced market. Combine with technical indicators.`:pcr<=1.2?`PCR ${pcr}: more PUT than CALL. Historically signals bounces — contrarian bullish.`:`PCR ${pcr}: extreme panic. Historically marks important market bottoms. Strong contrarian bullish signal.`;
   return contra;
 }
-function renderInds(inds){document.getElementById('indGrid').innerHTML=inds.map(i=>`<div class="ind-card"><div class="ind-lbl">${i.label}</div><div class="ind-val">${i.value}</div><div class="ind-sig ${i.sig==='compra'?'c-buy':i.sig==='venta'?'c-sell':'c-neutral'}">${i.sig==='compra'?'▲ Buy':i.sig==='venta'?'▼ Sell':'— Neutral'}</div></div>`).join('');}
+function renderInds(inds){
+  const t = DASH_TRANSLATIONS[currentLang];
+  document.getElementById('indGrid').innerHTML=inds.map(i=>`<div class="ind-card"><div class="ind-lbl">${i.label}</div><div class="ind-val">${i.value}</div><div class="ind-sig ${i.sig==='compra'?'c-buy':i.sig==='venta'?'c-sell':'c-neutral'}">${i.sig==='compra'?'▲ '+(t.score_buy||'Buy'):i.sig==='venta'?'▼ '+(t.score_sell||'Sell'):'— '+(t.score_neutral||'Neutral')}</div></div>`).join('');
+}
 function renderScores(b,s,n,t){const bp=Math.round(b/t*100),sp=Math.round(s/t*100),np=Math.round(n/t*100);document.getElementById('barBuy').style.width=bp+'%';document.getElementById('numBuy').textContent=bp+'%';document.getElementById('barSell').style.width=sp+'%';document.getElementById('numSell').textContent=sp+'%';document.getElementById('barNeutral').style.width=np+'%';document.getElementById('numNeutral').textContent=np+'%';}
 function renderBanner(data,ticker){
   const sig=data.signal||'HOLD';const el=document.getElementById('banner');
@@ -1090,7 +1113,8 @@ async function analyze(){
     const result=JSON.parse(data.content.map(b=>b.text||'').join('').replace(/```json|```/g,'').trim());
     renderBanner(result,ticker);
   }catch(e){
-    renderBanner({signal:buys>sells?'BUY':sells>buys?'SELL':'HOLD',analysis:`${buys} buy signals vs ${sells} sell signals. ${patterns.length?'Pattern: '+patterns[0].name+'. ':''}Smart Money: ${sm.lbl}.`,tf_comment:`Based on real ${tfL} data.`,buy_price:support.toFixed(2),buy_reason:'Technical support level calculated.',stop_loss:stopLoss.toFixed(2),stop_reason:'3% below technical support.'},ticker);
+    const t2 = DASH_TRANSLATIONS[currentLang];
+    renderBanner({signal:buys>sells?'BUY':sells>buys?'SELL':'HOLD',analysis:`${buys} ${t2.score_buy||'buy'} signals vs ${sells} ${t2.score_sell||'sell'} signals. ${patterns.length?'Pattern: '+patterns[0].name+'. ':''}Smart Money: ${sm.lbl}.`,tf_comment:`Based on real ${tfL} data.`,buy_price:support.toFixed(2),buy_reason:'Technical support level calculated.',stop_loss:stopLoss.toFixed(2),stop_reason:'3% below technical support.'},ticker);
   }
 
   // Incrementar uso
@@ -1899,11 +1923,11 @@ function applyDashLang(lang) {
   document.getElementById('analyzeBtn').textContent = t.btn_analyze;
   // Sidebar nav
   const navItems = document.querySelectorAll('.nav-item');
-  if(navItems[0]) navItems[0].innerHTML = `<span class="nav-icon">📊</span> ${t.nav_analyzer}`;
-  if(navItems[1]) navItems[1].innerHTML = `<span class="nav-icon">⭐</span> ${t.nav_favorites}`;
-  if(navItems[2]) navItems[2].innerHTML = `<span class="nav-icon">📰</span> ${t.nav_news}`;
-  if(navItems[3]) navItems[3].innerHTML = `<span class="nav-icon">📚</span> ${t.nav_learn}`;
-  if(navItems[4]) navItems[4].innerHTML = `<span class="nav-icon">⚙️</span> ${t.nav_settings}`;
+  if(navItems[0]) navItems[0].innerHTML = `<span class="nav-dot" style="width:8px;height:8px;border-radius:50%;background:#00e676;flex-shrink:0;"></span> ${t.nav_analyzer}`;
+  if(navItems[1]) navItems[1].innerHTML = `<span class="nav-dot" style="width:8px;height:8px;border-radius:50%;background:#f59e0b;flex-shrink:0;"></span> ${t.nav_favorites}`;
+  if(navItems[2]) navItems[2].innerHTML = `<span class="nav-dot" style="width:8px;height:8px;border-radius:50%;background:#818cf8;flex-shrink:0;"></span> ${t.nav_news}`;
+  if(navItems[3]) navItems[3].innerHTML = `<span class="nav-dot" style="width:8px;height:8px;border-radius:50%;background:#f472b6;flex-shrink:0;"></span> ${t.nav_learn}`;
+  if(navItems[4]) navItems[4].innerHTML = `<span class="nav-dot" style="width:8px;height:8px;border-radius:50%;background:#8896a7;flex-shrink:0;"></span> ${t.nav_settings}`;
   // Botones upgrade y logout
   const upgradeBtn = document.getElementById('btnUpgrade');
   if(upgradeBtn) upgradeBtn.textContent = t.btn_upgrade;
@@ -1973,12 +1997,36 @@ function applyDashLang(lang) {
 
 function toggleLang() {
   applyDashLang(currentLang === 'es' ? 'en' : 'es');
-  // Si está en Learn, re-renderizar con nuevo idioma
   if(document.getElementById('learnPanel').style.display !== 'none') {
     const activeTab = document.querySelector('.learn-tab.active');
     const cat = activeTab ? activeTab.id.replace('tab_','') : 'all';
     renderLearn(cat);
   }
+}
+
+// ── THEME TOGGLE ──
+let isDark = localStorage.getItem('theme') !== 'light';
+function applyTheme(dark) {
+  isDark = dark;
+  if(dark) {
+    document.body.classList.remove('light');
+    document.getElementById('themeBtn').textContent = '☀️';
+  } else {
+    document.body.classList.add('light');
+    document.getElementById('themeBtn').textContent = '🌙';
+  }
+  localStorage.setItem('theme', dark ? 'dark' : 'light');
+}
+function toggleTheme() { applyTheme(!isDark); }
+applyTheme(isDark);
+
+// ── FIX TRADUCCIÓN EN ANÁLISIS ──
+// Los labels de señales deben respetar el idioma actual
+function getSignalLabel(sig) {
+  const t = DASH_TRANSLATIONS[currentLang];
+  if(sig === 'compra') return `▲ ${t.score_buy || 'Buy'}`;
+  if(sig === 'venta') return `▼ ${t.score_sell || 'Sell'}`;
+  return `— ${t.score_neutral || 'Neutral'}`;
 }
 
 // Aplicar idioma al cargar
