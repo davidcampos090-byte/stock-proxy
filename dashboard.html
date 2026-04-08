@@ -342,6 +342,14 @@ font-size:13px;cursor:pointer;
 .learn-tab.active{background:var(–green);color:#000;border-color:var(–green);}
 .learn-card{background:var(–bg3);border:1px solid var(–border);border-radius:14px;padding:1.5rem;margin-bottom:1rem;transition:border .2s;}
 .learn-card:hover{border-color:rgba(255,255,255,.15);}
+.learn-card.locked{position:relative;overflow:hidden;}
+.learn-card.locked::after{content:’’;position:absolute;inset:0;background:rgba(7,11,15,0.7);backdrop-filter:blur(3px);border-radius:14px;z-index:2;}
+.learn-lock-badge{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:3;background:var(–bg2);border:1px solid var(–border);border-radius:14px;padding:1.25rem 1.75rem;text-align:center;pointer-events:auto;}
+.learn-lock-icon{font-size:28px;margin-bottom:8px;}
+.learn-lock-title{font-family:‘Syne’,sans-serif;font-size:14px;font-weight:700;margin-bottom:6px;}
+.learn-lock-sub{font-size:12px;color:var(–muted);margin-bottom:12px;line-height:1.5;}
+.learn-lock-btn{background:var(–green);color:#000;border:none;border-radius:8px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;}
+.learn-lock-btn:hover{background:var(–green-dark);}
 .learn-card-header{display:flex;align-items:center;gap:12px;margin-bottom:1rem;}
 .learn-icon{font-size:32px;flex-shrink:0;}
 .learn-name{font-family:‘Syne’,sans-serif;font-size:17px;font-weight:700;}
@@ -1398,20 +1406,31 @@ function filterLearn(cat) {
 }
 
 function renderLearn(cat) {
+  const FREE_INDICATORS = ['rsi', 'macd', 'sma']; // Solo estos 3 gratis
   const filtered = cat === 'all' ? INDICATORS : INDICATORS.filter(i => i.category === cat);
   const lang = currentLang || 'en';
   const el = document.getElementById('learnGrid');
   el.innerHTML = filtered.map(ind => {
+    const isFree = FREE_INDICATORS.includes(ind.id);
+    const isUnlocked = isFree || userPlan === 'pro';
     const name = typeof ind.name === 'object' ? (ind.name[lang]||ind.name.en) : ind.name;
     const type = typeof ind.type === 'object' ? (ind.type[lang]||ind.type.en) : ind.type;
     const desc = typeof ind.desc === 'object' ? (ind.desc[lang]||ind.desc.en) : ind.desc;
     const tip = typeof ind.tip === 'object' ? (ind.tip[lang]||ind.tip.en) : ind.tip;
+    const lockBadge = !isUnlocked ? `
+      <div class="learn-lock-badge">
+        <div class="learn-lock-icon">🔒</div>
+        <div class="learn-lock-title">${lang==='en'?'Pro Indicator':'Indicador Pro'}</div>
+        <div class="learn-lock-sub">${lang==='en'?'Upgrade to Pro to unlock all 16 indicators':'Actualiza a Pro para desbloquear los 16 indicadores'}</div>
+        <button class="learn-lock-btn" onclick="startCheckout()">⚡ ${lang==='en'?'Upgrade to Pro — $12/mo':'Actualizar a Pro — $12/mes'}</button>
+      </div>` : '';
     return `
-    <div class="learn-card">
+    <div class="learn-card${!isUnlocked?' locked':''}">
+      ${lockBadge}
       <div class="learn-card-header">
         <div class="learn-icon">${ind.icon}</div>
         <div>
-          <div class="learn-name">${name}</div>
+          <div class="learn-name">${name}${isFree?'':' <span style="font-size:10px;background:var(--green-dim);color:var(--green);padding:2px 7px;border-radius:99px;font-weight:600;vertical-align:middle;">PRO</span>'}</div>
           <div class="learn-type">${type}</div>
         </div>
       </div>
