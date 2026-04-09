@@ -360,21 +360,6 @@ font-size:13px;cursor:pointer;
 .learn-tip{background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.15);border-radius:10px;padding:10px 14px;font-size:12px;color:#69f0ae;line-height:1.6;}
 .hamburger{display:none;background:none;border:none;color:var(–text);font-size:22px;cursor:pointer;padding:4px;}
 @media(max-width:768px){.hamburger{display:block;}}
-/* FIX: paneles ocultos no generan espacio en iOS */
-#favoritesPanel[style*=“display:none”],
-#newsMarketPanel[style*=“display:none”],
-#settingsPanel[style*=“display:none”],
-#learnPanel[style*=“display:none”],
-#analyzerSection[style*=“display:none”],
-#results[style*=“display:none”]{
-position:absolute !important;
-visibility:hidden !important;
-pointer-events:none !important;
-height:0 !important;
-overflow:hidden !important;
-margin:0 !important;
-padding:0 !important;
-}
 </style>
 
 </head>
