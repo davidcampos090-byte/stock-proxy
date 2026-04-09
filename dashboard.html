@@ -67,7 +67,7 @@ text-decoration:none;cursor:pointer;
 transition:all .15s;margin-bottom:2px;
 }
 .nav-item:hover{background:var(–card);color:var(–text);}
-.nav-item.active{background:rgba(0,230,118,0.12);color:#00e676;border-left:3px solid #00e676;padding-left:9px;}
+.nav-item.active{background:linear-gradient(90deg,rgba(0,230,118,0.2),rgba(0,230,118,0.05));color:#00e676;border-left:3px solid #00e676;padding-left:11px;box-shadow:inset 0 0 20px rgba(0,230,118,0.05);}
 .nav-icon{font-size:16px;width:20px;text-align:center;}
 .sidebar-bottom{margin-top:auto;}
 .user-info{
@@ -373,6 +373,28 @@ font-size:13px;cursor:pointer;
 .learn-tip{background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.15);border-radius:10px;padding:10px 14px;font-size:12px;color:#69f0ae;line-height:1.6;}
 .hamburger{display:none;background:none;border:none;color:var(–text);font-size:22px;cursor:pointer;padding:4px;}
 @media(max-width:768px){.hamburger{display:block;}}
+/* EXTRA COLOR */
+.topbar-title{
+background:linear-gradient(90deg,#00e676,#818cf8);
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+background-clip:text;
+}
+.analyzer-card{border-color:rgba(0,230,118,0.15);}
+.panel{border-color:rgba(255,255,255,0.06);}
+.panel:hover{border-color:rgba(0,230,118,0.12);transition:border .3s;}
+.btn-upgrade{
+background:linear-gradient(135deg,#00e676,#00c853);
+box-shadow:0 4px 15px rgba(0,230,118,0.3);
+}
+.btn-upgrade:hover{box-shadow:0 6px 25px rgba(0,230,118,0.5);transform:translateY(-1px);}
+button.primary{
+background:linear-gradient(135deg,#00e676,#00c853);
+box-shadow:0 4px 15px rgba(0,230,118,0.25);
+}
+button.primary:hover{box-shadow:0 6px 20px rgba(0,230,118,0.4);transform:translateY(-1px);}
+.price-big{background:linear-gradient(90deg,#fff,#e0e0e0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.logo-dot{box-shadow:0 0 8px #00e676;}
+
 /* PATTERN GUIDE */
 .news-cat-btn{background:var(–card);border:1px solid var(–border);border-radius:99px;padding:6px 16px;font-size:12px;color:var(–muted);cursor:pointer;transition:all .15s;font-weight:500;}
 .news-cat-btn.active{background:var(–green);color:#000;border-color:var(–green);font-weight:700;}
@@ -418,11 +440,11 @@ font-size:13px;cursor:pointer;
     <a href="index.html" class="sidebar-logo">
       <span class="logo-dot"></span>SmartStockSignal
     </a>
-    <a class="nav-item active" id="nav_btn_analyzer" onclick="showSection('analyzer')" href="#"><span style="width:8px;height:8px;border-radius:50%;background:#00e676;flex-shrink:0;display:inline-block;"></span> <span id="nav_analyzer">Analyzer</span></a>
-    <a class="nav-item" id="nav_btn_favorites" onclick="showSection('favorites')" href="#"><span style="width:8px;height:8px;border-radius:50%;background:#f59e0b;flex-shrink:0;display:inline-block;"></span> <span id="nav_favorites_label">Favorites</span></a>
-    <a class="nav-item" id="nav_btn_news" onclick="showSection('news')" href="#"><span style="width:8px;height:8px;border-radius:50%;background:#818cf8;flex-shrink:0;display:inline-block;"></span> <span id="nav_news_label">Charts</span></a>
-    <a class="nav-item" id="nav_btn_learn" onclick="showSection('learn')" href="#"><span style="width:8px;height:8px;border-radius:50%;background:#f472b6;flex-shrink:0;display:inline-block;"></span> <span id="nav_learn_label">Learn</span></a>
-    <a class="nav-item" id="nav_btn_settings" onclick="showSection('settings')" href="#"><span style="width:8px;height:8px;border-radius:50%;background:#8896a7;flex-shrink:0;display:inline-block;"></span> <span id="nav_settings_label">Settings</span></a>
+    <a class="nav-item active" id="nav_btn_analyzer" onclick="showSection('analyzer')" href="#"><span id="nav_analyzer">Analyzer</span></a>
+    <a class="nav-item" id="nav_btn_favorites" onclick="showSection('favorites')" href="#"><span id="nav_favorites_label">Favorites</span></a>
+    <a class="nav-item" id="nav_btn_news" onclick="showSection('news')" href="#"><span id="nav_news_label">Charts</span></a>
+    <a class="nav-item" id="nav_btn_learn" onclick="showSection('learn')" href="#"><span id="nav_learn_label">Learn</span></a>
+    <a class="nav-item" id="nav_btn_settings" onclick="showSection('settings')" href="#"><span id="nav_settings_label">Settings</span></a>
     <div class="sidebar-bottom">
       <div class="user-info">
         <div class="user-email" id="userEmail">loading...</div>
@@ -442,7 +464,7 @@ font-size:13px;cursor:pointer;
         <div class="topbar-title" data-i18n="dash_title">Analizador</div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-        <button onclick="toggleTheme()" id="themeBtn" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:6px 12px;color:#8896a7;font-size:13px;cursor:pointer;">🌙</button>
+        <button onclick="toggleTheme()" id="themeBtn" style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:7px 14px;color:#f0f4f8;font-size:15px;cursor:pointer;transition:all .2s;" title="Toggle dark/light mode">🌙</button>
         <button onclick="toggleLang()" id="langBtn" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:6px 12px;color:#8896a7;font-size:13px;cursor:pointer;">🌐 ES</button>
         <div class="usage-bar-wrap" id="usageWrap">
           <div class="usage-label" data-i18n="dash_usage">Análisis hoy:</div>
@@ -948,10 +970,10 @@ function renderCandle(o,h,l,c,pat){
   const uh=Math.max(2,((h-Math.max(o,c))/range)*H),bh=Math.max(3,(Math.abs(c-o)/range)*H),lh=Math.max(2,((Math.min(o,c)-l)/range)*H);
   document.getElementById('candleRow').innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;"><div style="width:2px;height:${uh}px;background:${col};border-radius:1px;"></div><div style="width:15px;height:${bh}px;background:${bull?col:'transparent'};border:2px solid ${col};border-radius:2px;"></div><div style="width:2px;height:${lh}px;background:${col};border-radius:1px;"></div></div><div style="font-size:11px;color:var(--muted);line-height:2.1;"><div>Open &nbsp;&nbsp;&nbsp;<b style="color:var(--text)">$${o.toFixed(2)}</b></div><div>High &nbsp;&nbsp;&nbsp;&nbsp;<b style="color:#00e676">$${h.toFixed(2)}</b></div><div>Low &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b style="color:#ff5252">$${l.toFixed(2)}</b></div><div>Close &nbsp;&nbsp;&nbsp;<b style="color:var(--text)">$${c.toFixed(2)}</b></div></div>`;
   document.getElementById('candleName').textContent=pat.name;
-  const se=document.getElementById('candleSig');se.textContent=pat.sig==='compra'?'▲ Bullish signal':pat.sig==='venta'?'▼ Bearish signal':'— Neutral';se.className='candle-sig '+(pat.sig==='compra'?'c-buy':pat.sig==='venta'?'c-sell':'c-neutral');document.getElementById('candleDesc').textContent=pat.desc;
+  const se=document.getElementById('candleSig');const trc=DASH_TRANSLATIONS[currentLang]||DASH_TRANSLATIONS['en'];se.textContent=pat.sig==='compra'?(currentLang==='es'?'▲ Señal alcista':'▲ Bullish signal'):pat.sig==='venta'?(currentLang==='es'?'▼ Señal bajista':'▼ Bearish signal'):'— Neutral';se.className='candle-sig '+(pat.sig==='compra'?'c-buy':pat.sig==='venta'?'c-sell':'c-neutral');document.getElementById('candleDesc').textContent=pat.desc;
 }
 function renderVWAP(vd,cur){
-  document.getElementById('vwapRows').innerHTML=[{l:'Resistance 2',v:'$'+vd.upper2,h:false},{l:'Resistance 1',v:'$'+vd.upper1,h:false},{l:'VWAP',v:'$'+vd.vwap,h:true,pos:cur>=vd.vwap},{l:'Current price',v:'$'+cur.toFixed(2),h:false},{l:'Support 1',v:'$'+vd.lower1,h:false},{l:'Support 2',v:'$'+vd.lower2,h:false}].map(r=>`<div class="vr" style="${r.h?'border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:4px 0;margin:2px 0;':''}"><span class="vrl" style="${r.h?'font-weight:600;color:var(--text);':''}">${r.l}</span><div style="display:flex;align-items:center;gap:7px;"><span class="vrv">${r.v}</span>${r.h?`<span class="badge ${r.pos?'badge-buy':'badge-sell'}">${r.pos?'Above':'Below'}</span>`:''}</div></div>`).join('');
+  document.getElementById('vwapRows').innerHTML=[{l:'Resistance 2',v:'$'+vd.upper2,h:false},{l:'Resistance 1',v:'$'+vd.upper1,h:false},{l:'VWAP',v:'$'+vd.vwap,h:true,pos:cur>=vd.vwap},{l:'Current price',v:'$'+cur.toFixed(2),h:false},{l:'Support 1',v:'$'+vd.lower1,h:false},{l:'Support 2',v:'$'+vd.lower2,h:false}].map(r=>`<div class="vr" style="${r.h?'border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:4px 0;margin:2px 0;':''}"><span class="vrl" style="${r.h?'font-weight:600;color:var(--text);':''}">${r.l}</span><div style="display:flex;align-items:center;gap:7px;"><span class="vrv">${r.v}</span>${r.h?`<span class="badge ${r.pos?'badge-buy':'badge-sell'}">${r.pos?(currentLang==='es'?'Encima':'Above'):(currentLang==='es'?'Debajo':'Below')}</span>`:''}</div></div>`).join('');
 }
 function renderChart(dates,closes,vwapVal,bb,isI){
   if(chartInst)chartInst.destroy();
@@ -964,7 +986,7 @@ function renderSM(sm){
   const b=document.getElementById('smBadge');b.textContent=sm.lbl;b.className='badge2 '+(sm.sig==='accumulating'?'g':sm.sig==='distributing'?'f':'n');
   const fv=v=>v>=1e9?(v/1e9).toFixed(2)+'B':v>=1e6?(v/1e6).toFixed(1)+'M':(v/1e3).toFixed(0)+'K';
   const lv=sm.volumes[sm.volumes.length-1]||0,vr=+(lv/sm.avg).toFixed(2);
-  document.getElementById('smGrid').innerHTML=`<div class="sm-card"><div class="sm-lbl">OBV</div><div class="sm-val ${sm.obv>=0?'c-buy':'c-sell'}">${sm.obv>=0?'+':''}${fv(sm.obv)}</div><div class="sm-sub">${sm.obv>=0?'Bullish':'Bearish'}</div></div><div class="sm-card"><div class="sm-lbl">MFI</div><div class="sm-val ${sm.mfi<20?'c-buy':sm.mfi>80?'c-sell':'c-neutral'}">${sm.mfi}</div><div class="sm-sub">${sm.mfi<20?'Oversold':sm.mfi>80?'Overbought':'Neutral'}</div></div><div class="sm-card"><div class="sm-lbl">CMF</div><div class="sm-val ${sm.cmf>.1?'c-buy':sm.cmf<-.1?'c-sell':'c-neutral'}">${sm.cmf>0?'+':''}${sm.cmf}</div><div class="sm-sub">${sm.cmf>.1?'Buying':sm.cmf<-.1?'Selling':'Neutral'}</div></div><div class="sm-card"><div class="sm-lbl">Inst.</div><div class="sm-val">${sm.ib} vs ${sm.is}</div><div class="sm-sub">B vs S</div></div><div class="sm-card"><div class="sm-lbl">Vol.</div><div class="sm-val ${vr>1.5?'c-buy':vr<.7?'c-sell':'c-neutral'}">${vr}x</div><div class="sm-sub">${vr>1.5?'High':'Normal'}</div></div>`;
+  document.getElementById('smGrid').innerHTML=`<div class="sm-card"><div class="sm-lbl">OBV</div><div class="sm-val ${sm.obv>=0?'c-buy':'c-sell'}">${sm.obv>=0?'+':''}${fv(sm.obv)}</div><div class="sm-sub">${sm.obv>=0?(currentLang==='es'?'Alcista':'Bullish'):(currentLang==='es'?'Bajista':'Bearish')}</div></div><div class="sm-card"><div class="sm-lbl">MFI</div><div class="sm-val ${sm.mfi<20?'c-buy':sm.mfi>80?'c-sell':'c-neutral'}">${sm.mfi}</div><div class="sm-sub">${sm.mfi<20?(currentLang==='es'?'Sobrevendido':'Oversold'):sm.mfi>80?(currentLang==='es'?'Sobrecomprado':'Overbought'):'Neutral'}</div></div><div class="sm-card"><div class="sm-lbl">CMF</div><div class="sm-val ${sm.cmf>.1?'c-buy':sm.cmf<-.1?'c-sell':'c-neutral'}">${sm.cmf>0?'+':''}${sm.cmf}</div><div class="sm-sub">${sm.cmf>.1?(currentLang==='es'?'Comprando':'Buying'):sm.cmf<-.1?(currentLang==='es'?'Vendiendo':'Selling'):'Neutral'}</div></div><div class="sm-card"><div class="sm-lbl">Inst.</div><div class="sm-val">${sm.ib} vs ${sm.is}</div><div class="sm-sub">B vs S</div></div><div class="sm-card"><div class="sm-lbl">Vol.</div><div class="sm-val ${vr>1.5?'c-buy':vr<.7?'c-sell':'c-neutral'}">${vr}x</div><div class="sm-sub">${vr>1.5?(currentLang==='es'?'Alto':'High'):(currentLang==='es'?'Normal':'Normal')}</div></div>`;
   document.getElementById('smBars').innerHTML=`<div class="bar-row"><span class="bar-lbl">Buying pressure</span><div class="bar-bg"><div class="bar-fill" style="width:${sm.bp}%;background:#00e676;"></div></div><span class="bar-val c-buy">${sm.bp}%</span></div><div class="bar-row"><span class="bar-lbl">Selling pressure</span><div class="bar-bg"><div class="bar-fill" style="width:${sm.sp}%;background:#ff5252;"></div></div><span class="bar-val c-sell">${sm.sp}%</span></div>`;
   document.getElementById('smDesc').textContent=sm.sig==='accumulating'?`Positive OBV and CMF ${sm.cmf} indicate volume supporting price increases. ${sm.ib} bullish institutional candles vs ${sm.is} bearish.`:sm.sig==='distributing'?`Negative OBV suggests selling flow. ${sm.is} bearish institutional candles vs ${sm.ib} bullish.`:`No clear direction. Buying pressure ${sm.bp}% vs selling ${sm.sp}%.`;
 }
@@ -995,8 +1017,15 @@ function renderPutCall(pcData){
   document.getElementById('pcInterp').textContent=pcr<=.55?`PCR ${pcr}: extreme greed. Contrarian signal: consider reducing exposure.`:pcr<=.7?`PCR ${pcr}: moderate optimism. Confirmatory bullish signal.`:pcr<=.9?`PCR ${pcr}: balanced market. Combine with technical indicators.`:pcr<=1.2?`PCR ${pcr}: more PUT than CALL. Historically signals bounces — contrarian bullish.`:`PCR ${pcr}: extreme panic. Historically marks important market bottoms. Strong contrarian bullish signal.`;
   return contra;
 }
-function renderInds(inds){document.getElementById('indGrid').innerHTML=inds.map(i=>`<div class="ind-card"><div class="ind-lbl">${i.label}</div><div class="ind-val">${i.value}</div><div class="ind-sig ${i.sig==='compra'?'c-buy':i.sig==='venta'?'c-sell':'c-neutral'}">${i.sig==='compra'?'▲ Buy':i.sig==='venta'?'▼ Sell':'— Neutral'}</div></div>`).join('');}
-function renderScores(b,s,n,t){const bp=Math.round(b/t*100),sp=Math.round(s/t*100),np=Math.round(n/t*100);document.getElementById('barBuy').style.width=bp+'%';document.getElementById('numBuy').textContent=bp+'%';document.getElementById('barSell').style.width=sp+'%';document.getElementById('numSell').textContent=sp+'%';document.getElementById('barNeutral').style.width=np+'%';document.getElementById('numNeutral').textContent=np+'%';}
+function renderInds(inds){document.getElementById('indGrid').innerHTML=inds.map(i=>`<div class="ind-card"><div class="ind-lbl">${i.label}</div><div class="ind-val">${i.value}</div><div class="ind-sig ${i.sig==='compra'?'c-buy':i.sig==='venta'?'c-sell':'c-neutral'}">${i.sig==='compra'?(currentLang==='es'?'▲ Compra':'▲ Buy'):i.sig==='venta'?(currentLang==='es'?'▼ Venta':'▼ Sell'):'— Neutral'}</div></div>`).join('');}
+function renderScores(b,s,n,t){const bp=Math.round(b/t*100),sp=Math.round(s/t*100),np=Math.round(n/t*100);document.getElementById('barBuy').style.width=bp+'%';document.getElementById('numBuy').textContent=bp+'%';
+document.getElementById('barSell').style.width=sp+'%';document.getElementById('numSell').textContent=sp+'%';
+document.getElementById('barNeutral').style.width=np+'%';document.getElementById('numNeutral').textContent=np+'%';
+const trs=DASH_TRANSLATIONS[currentLang]||DASH_TRANSLATIONS['en'];
+const slbls=document.querySelectorAll('.score-lbl');
+if(slbls[0])slbls[0].textContent=trs.score_buy||'Buy';
+if(slbls[1])slbls[1].textContent=trs.score_neutral||'Neutral';
+if(slbls[2])slbls[2].textContent=trs.score_sell||'Sell';}
 function renderBanner(data,ticker){
   const sig=data.signal||'HOLD';const el=document.getElementById('banner');
   const isBuy=sig==='BUY'||sig==='COMPRAR';
@@ -1066,7 +1095,7 @@ async function analyze(){
 
   let entries,pcData;
   try{
-    document.getElementById('loadingText').textContent='Obteniendo precios...';
+    document.getElementById('loadingText').textContent=DASH_TRANSLATIONS[currentLang]?.loading_prices||'Getting prices...';
     const [td,pc]=await Promise.all([fetchTD(ticker),fetchPutCall()]);
     entries=td;pcData=pc;
   }catch(e){
@@ -1093,7 +1122,16 @@ async function analyze(){
 
   document.getElementById('priceBig').textContent='$'+cur.toFixed(2);
   const ce=document.getElementById('priceChg');ce.textContent=(chg>=0?'+':'')+chg.toFixed(2)+' ('+(chgPct>=0?'+':'')+chgPct.toFixed(2)+'%)';ce.className='price-chg '+(chg>=0?'up':'down');
-  document.getElementById('priceMeta').textContent=ticker+' · Alpha Vantage · '+dates[dates.length-1].slice(0,isI?16:10);
+  document.getElementById('priceMeta').textContent=ticker+' · '+dates[dates.length-1].slice(0,isI?16:10);
+const tal=DASH_TRANSLATIONS[currentLang]||DASH_TRANSLATIONS['en'];
+const panelCandle=document.getElementById('panel_candle');
+const panelPatterns=document.getElementById('panel_patterns');
+const scoreTitle=document.getElementById('score_title');
+if(panelCandle)panelCandle.textContent=tal.panel_candle||'Current candle';
+if(panelPatterns)panelPatterns.textContent=tal.panel_patterns||'📐 Chart patterns';
+if(scoreTitle)scoreTitle.textContent=tal.score_title||'Total signal score';
+const panelNews=document.getElementById('panel_news');
+if(panelNews)panelNews.textContent=tal.panel_news||"Today's news";
 
   const rsi=calcRSI(closes),sma20=calcSMA(closes,Math.min(20,closes.length)),sma50=calcSMA(closes,Math.min(50,closes.length));
   const macd=+(calcEMA(closes,Math.min(12,closes.length))-calcEMA(closes,Math.min(26,closes.length))).toFixed(2);
@@ -1138,7 +1176,7 @@ async function analyze(){
   // Noticias async
   renderNews(ticker);
 
-  document.getElementById('loadingText').textContent='Generando análisis con IA...';
+  document.getElementById('loadingText').textContent=DASH_TRANSLATIONS[currentLang]?.loading_ai||'Generating AI analysis...';
   const tfL=isI?'intradía 15min':tfMode==='1M'?'1 mes':tfMode==='3M'?'3 meses':tfMode==='6M'?'6 meses':'1 año';
   const support=+(Math.min(bb.lower,vd.lower1)*1.001).toFixed(2);
   const stopLoss=+(support*.97).toFixed(2);
@@ -1167,17 +1205,18 @@ initAuth();
 // ══ THEME TOGGLE ══
 function toggleTheme() {
   const isLight = document.body.classList.toggle('light');
-  document.getElementById('themeBtn').textContent = isLight ? '☀️' : '🌙';
+  const btn = document.getElementById('themeBtn');
+  if(btn) btn.textContent = isLight ? '☀️' : '🌙';
   localStorage.setItem('theme', isLight ? 'light' : 'dark');
 }
-// Aplicar tema guardado
-if(localStorage.getItem('theme') === 'light') {
-  document.body.classList.add('light');
-  document.addEventListener('DOMContentLoaded', () => {
+// Aplicar tema guardado al cargar
+(function(){
+  if(localStorage.getItem('theme') === 'light') {
+    document.body.classList.add('light');
     const btn = document.getElementById('themeBtn');
     if(btn) btn.textContent = '☀️';
-  });
-}
+  }
+})();
 
 // ══ FILTER PATTERN GUIDE ══
 function filterPatternGuide(cat, btn) {
