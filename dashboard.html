@@ -1,441 +1,326 @@
 <!DOCTYPE html>
-<html lang="es">
+
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard — SmartStockSignal v1775775941</title>
+<title>Dashboard — SmartStockSignal</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://js.stripe.com/v3/"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<!-- Google AdSense -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8509604172341454" crossorigin="anonymous"></script>
 <style>
-:root{
-  --green:#00e676;--green-dark:#00c853;--green-dim:rgba(0,230,118,0.1);
-  --red:#ff5252;--bg:#070b0f;--bg2:#0d1117;--bg3:#131920;
-  --border:rgba(255,255,255,0.07);--text:#f0f4f8;--muted:#8896a7;
+:root {
+  --green:#00e676; --green-dark:#00c853; --green-dim:rgba(0,230,118,0.1);
+  --red:#ff5252; --bg:#070b0f; --bg2:#0d1117; --bg3:#131920;
+  --border:rgba(255,255,255,0.07); --text:#f0f4f8; --muted:#8896a7;
   --card:rgba(255,255,255,0.04);
 }
-
-/* LIGHT MODE */
-body.light{
-  --bg:#f0f4f8;--bg2:#ffffff;--bg3:#f8fafc;
-  --border:rgba(0,0,0,0.1);--text:#0f172a;--muted:#64748b;
+body.light {
+  --bg:#f0f4f8; --bg2:#ffffff; --bg3:#f1f5f9;
+  --border:rgba(0,0,0,0.1); --text:#0f172a; --muted:#64748b;
   --card:rgba(0,0,0,0.04);
 }
-body.light .main-content{background:#f0f4f8;}
-body.light .sidebar{background:linear-gradient(180deg,#1e293b 0%,#0f172a 100%) !important;}
-body.light input[type=text]{background:#fff;color:#0f172a;border-color:rgba(0,0,0,0.12);}
-body.light .analyzer-card{background:#fff;border-color:rgba(0,0,0,0.08);}
-body.light .panel{background:#fff;border-color:rgba(0,0,0,0.08);}
-body.light .inner-panel{background:#f8fafc;}
-body.light .ind-card{background:#f8fafc;}
-body.light .sm-card{background:#f8fafc;}
-body.light .pc-card{background:#f8fafc;}
-body.light .learn-card{background:#f8fafc;border-color:rgba(0,0,0,0.08);}
-body.light .learn-chart{background:#fff;}
-body.light .topbar{background:#f0f4f8;}
-body.light .limit-modal{background:#fff;}
-body.light .user-info{background:rgba(255,255,255,0.1);}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+body.light .sidebar { background: linear-gradient(180deg,#1e293b 0%,#0f172a 100%) !important; }
+body.light .analyzer-card { background:#fff; border-color:rgba(0,0,0,0.08); }
+body.light .panel { background:#fff; border-color:rgba(0,0,0,0.08); }
+body.light .inner-panel { background:#f1f5f9; }
+body.light .ind-card { background:#f1f5f9; }
+body.light .sm-card { background:#f1f5f9; }
+body.light .pc-card { background:#f1f5f9; }
+body.light .learn-card { background:#f1f5f9; border-color:rgba(0,0,0,0.08); }
+body.light .learn-chart { background:#fff; }
+body.light .topbar { background:var(--bg); }
+body.light input[type=text] { background:#fff; color:#0f172a; border-color:rgba(0,0,0,0.12); }
+
+- { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:‘DM Sans’,sans-serif; background:var(–bg); color:var(–text); min-height:100vh; transition:background .3s,color .3s; }
 
 /* LAYOUT */
-.app-layout{display:flex;min-height:100vh;}
-.sidebar{
-  width:220px;flex-shrink:0;
-  background:#0d1117;
-  border-right:1px solid var(--border);
-  display:flex;flex-direction:column;
-  padding:1.5rem 1rem;
-  position:fixed;top:0;left:0;bottom:0;
-  z-index:50;
+.app-layout { display:flex; min-height:100vh; }
+.sidebar {
+width:220px; flex-shrink:0;
+background:linear-gradient(180deg,#0a0f1a 0%,#070b14 100%);
+border-right:1px solid rgba(0,230,118,0.12);
+display:flex; flex-direction:column;
+padding:1.5rem 1rem;
+position:fixed; top:0; left:0; bottom:0; z-index:50;
 }
 @media(max-width:768px){
-  .sidebar{transform:translateX(-100%);transition:transform .3s;background:#0d1117;box-shadow:4px 0 20px rgba(0,0,0,.8);}
-  .sidebar.open{transform:translateX(0);}
-  .main-content{margin-left:0!important;}
+.sidebar { transform:translateX(-100%); transition:transform .3s; box-shadow:4px 0 30px rgba(0,230,118,.1); }
+.sidebar.open { transform:translateX(0); }
+.main-content { margin-left:0 !important; }
 }
-.sidebar-logo{
-  font-family:'Syne',sans-serif;font-weight:800;font-size:15px;
-  color:var(--text);text-decoration:none;
-  display:flex;align-items:center;gap:8px;
-  margin-bottom:2rem;
+.sidebar-logo {
+font-family:‘Syne’,sans-serif; font-weight:800; font-size:15px;
+color:#fff; text-decoration:none;
+display:flex; align-items:center; gap:8px;
+margin-bottom:2rem; padding-bottom:1.5rem;
+border-bottom:1px solid rgba(255,255,255,0.06);
 }
-.logo-dot{width:8px;height:8px;border-radius:50%;background:#00e676;animation:blink 1.5s infinite;box-shadow:0 0 10px #00e676;}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.nav-item{
-  display:flex;align-items:center;gap:10px;
-  padding:11px 14px;border-radius:10px;
-  font-size:13px;color:rgba(255,255,255,0.55);
-  text-decoration:none;cursor:pointer;
-  transition:all .2s;margin-bottom:4px;
-  font-weight:600;letter-spacing:.01em;
+.logo-dot { width:8px; height:8px; border-radius:50%; background:#00e676; animation:blink 1.5s infinite; box-shadow:0 0 10px #00e676; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+.nav-item {
+display:flex; align-items:center; gap:10px;
+padding:11px 14px; border-radius:10px;
+font-size:13px; color:rgba(255,255,255,0.5);
+text-decoration:none; cursor:pointer;
+transition:all .2s; margin-bottom:4px; font-weight:600;
 }
-.nav-item:hover{background:rgba(255,255,255,0.08);color:#fff;transform:translateX(3px);}
-.nav-item.active{background:linear-gradient(90deg,rgba(0,230,118,0.2),rgba(0,230,118,0.05));color:#00e676;border-left:3px solid #00e676;padding-left:11px;box-shadow:inset 0 0 20px rgba(0,230,118,0.05);}
-.nav-icon{font-size:16px;width:20px;text-align:center;}
-.sidebar-bottom{margin-top:auto;}
-.user-info{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:10px;padding:12px;
-  margin-bottom:10px;
-}
-.user-email{font-size:11px;color:var(--muted);margin-bottom:4px;word-break:break-all;}
-.user-plan{
-  font-size:10px;font-weight:600;text-transform:uppercase;
-  letter-spacing:.08em;padding:2px 8px;border-radius:99px;
-  display:inline-block;
-}
-.plan-free{background:var(--card);color:var(--muted);border:1px solid var(--border);}
-.plan-pro{background:var(--green-dim);color:var(--green);}
-.btn-upgrade{
-  width:100%;padding:9px;border-radius:8px;
-  background:var(--green);color:#000;
-  border:none;font-size:12px;font-weight:600;
-  cursor:pointer;margin-top:8px;transition:all .2s;
-}
-.btn-upgrade:hover{background:var(--green-dark);}
-.btn-logout{
-  width:100%;padding:9px;border-radius:8px;
-  background:transparent;color:var(--muted);
-  border:1px solid var(--border);font-size:12px;
-  cursor:pointer;transition:all .2s;margin-top:6px;
-}
-.btn-logout:hover{border-color:rgba(255,255,255,.2);color:var(--text);}
+.nav-item:hover { background:rgba(255,255,255,0.08); color:#fff; transform:translateX(3px); }
+.nav-item.active { background:linear-gradient(90deg,rgba(0,230,118,0.2),rgba(0,230,118,0.04)); color:#00e676; border-left:3px solid #00e676; padding-left:11px; }
+.sidebar-bottom { margin-top:auto; padding-top:1rem; border-top:1px solid rgba(255,255,255,0.06); }
+.user-info { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:12px; margin-bottom:10px; }
+.user-email { font-size:11px; color:rgba(255,255,255,0.4); margin-bottom:4px; word-break:break-all; }
+.user-plan { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.08em; padding:2px 8px; border-radius:99px; display:inline-block; }
+.plan-free { background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.4); border:1px solid rgba(255,255,255,0.1); }
+.plan-pro { background:rgba(0,230,118,0.15); color:#00e676; }
+.btn-upgrade { width:100%; padding:9px; border-radius:8px; background:linear-gradient(135deg,#00e676,#00c853); color:#000; border:none; font-size:12px; font-weight:700; cursor:pointer; margin-top:8px; transition:all .2s; box-shadow:0 4px 15px rgba(0,230,118,0.3); }
+.btn-upgrade:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(0,230,118,0.4); }
+.btn-logout { width:100%; padding:9px; border-radius:8px; background:transparent; color:rgba(255,255,255,0.35); border:1px solid rgba(255,255,255,0.08); font-size:12px; cursor:pointer; transition:all .2s; margin-top:6px; }
+.btn-logout:hover { border-color:rgba(255,255,255,.2); color:rgba(255,255,255,.7); }
 
 /* MAIN */
-.main-content{margin-left:220px;flex:1;padding:1.5rem;}
-@media(max-width:768px){.main-content{margin-left:0;padding:1rem;}}
+.main-content { margin-left:220px; flex:1; padding:1.5rem; }
+@media(max-width:768px){ .main-content { margin-left:0; padding:1rem; } }
 
 /* TOPBAR */
-.topbar{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:1.5rem;flex-wrap:wrap;gap:10px;
-}
-/* topbar-title defined below */
-.usage-bar-wrap{
-  display:flex;align-items:center;gap:10px;
-  background:var(--card);border:1px solid var(--border);
-  border-radius:10px;padding:8px 14px;
-}
-.usage-label{font-size:12px;color:var(--muted);}
-.usage-bar{width:100px;height:6px;background:var(--border);border-radius:99px;overflow:hidden;}
-.usage-fill{height:100%;border-radius:99px;transition:width .5s;background:var(--green);}
-.usage-fill.warning{background:#f59e0b;}
-.usage-fill.danger{background:var(--red);}
-.usage-count{font-size:12px;font-weight:600;}
+.topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; flex-wrap:wrap; gap:10px; }
+.topbar-left { display:flex; align-items:center; gap:12px; }
+.topbar-title { font-family:‘Syne’,sans-serif; font-size:20px; font-weight:700; background:linear-gradient(90deg,#00e676,#818cf8); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.topbar-controls { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.ctrl-btn { background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12); border-radius:8px; padding:7px 13px; color:var(–text); font-size:14px; cursor:pointer; transition:all .2s; }
+.ctrl-btn:hover { background:rgba(255,255,255,0.12); border-color:rgba(0,230,118,0.3); }
+.usage-bar-wrap { display:flex; align-items:center; gap:8px; background:var(–card); border:1px solid var(–border); border-radius:10px; padding:7px 12px; }
+.usage-label { font-size:12px; color:var(–muted); }
+.usage-bar { width:80px; height:5px; background:var(–border); border-radius:99px; overflow:hidden; }
+.usage-fill { height:100%; border-radius:99px; transition:width .5s; background:#00e676; }
+.usage-fill.warning { background:#f59e0b; }
+.usage-fill.danger { background:#ff5252; }
+.usage-count { font-size:12px; font-weight:600; }
+.hamburger { display:none; background:none; border:none; color:var(–text); font-size:22px; cursor:pointer; }
+@media(max-width:768px){ .hamburger { display:block; } }
 
-/* AD BANNER — solo plan gratis */
-.ad-banner{
-  background:var(--bg2);border:1px solid var(--border);
-  border-radius:12px;padding:1rem;
-  text-align:center;margin-bottom:1.5rem;
-  font-size:11px;color:var(--muted);
-}
-.ad-label{font-size:10px;color:#444;margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em;}
+/* AD BANNER */
+.ad-banner { background:var(–bg2); border:1px solid var(–border); border-radius:12px; padding:1rem; text-align:center; margin-bottom:1.5rem; }
+.ad-label { font-size:10px; color:#444; margin-bottom:6px; text-transform:uppercase; }
 
-/* ANALYZER CARD */
-.analyzer-card{
-  background:var(--bg2);border:1px solid var(--border);
-  border-radius:14px;padding:1.5rem;margin-bottom:1rem;
-}
-.input-row{display:flex;gap:10px;margin-bottom:1rem;flex-wrap:wrap;}
-input[type=text]{
-  flex:1;min-width:150px;padding:10px 14px;
-  background:var(--bg3);border:1px solid var(--border);
-  border-radius:10px;color:var(--text);font-size:15px;
-  text-transform:uppercase;outline:none;transition:border .2s;
-}
-input[type=text]:focus{border-color:var(--green);}
-/* button.primary defined below */
-button.primary:hover{background:linear-gradient(135deg,#00c853,#00e676);box-shadow:0 6px 20px rgba(0,230,118,0.5);transform:translateY(-1px);}
-button.primary:disabled{opacity:.4;cursor:not-allowed;}
-.tf-row{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap;}
-.tf-btn{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:99px;padding:5px 14px;
-  font-size:12px;color:var(--muted);cursor:pointer;transition:all .15s;
-}
-.tf-btn.active{background:var(--green);color:#000;border-color:var(--green);}
-.tf-btn.intraday{background:rgba(74,90,205,0.15);color:#818cf8;border-color:rgba(74,90,205,0.3);}
-.tf-btn.intraday.active{background:#4a5acd;color:#fff;border-color:#4a5acd;}
-.chips{display:flex;gap:6px;flex-wrap:wrap;}
-.chip{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:99px;padding:5px 12px;
-  font-size:12px;color:var(--muted);cursor:pointer;transition:all .15s;
-}
-.chip:hover{border-color:var(--green);color:var(--green);}
+/* ANALYZER */
+.analyzer-card { background:var(–bg2); border:1px solid rgba(0,230,118,0.12); border-radius:14px; padding:1.5rem; margin-bottom:1rem; }
+.input-row { display:flex; gap:10px; margin-bottom:1rem; flex-wrap:wrap; }
+input[type=text] { flex:1; min-width:150px; padding:10px 14px; background:var(–bg3); border:1px solid var(–border); border-radius:10px; color:var(–text); font-size:15px; text-transform:uppercase; outline:none; transition:border .2s; }
+input[type=text]:focus { border-color:#00e676; }
+button.primary { background:linear-gradient(135deg,#00e676,#00c853); color:#000; border:none; border-radius:10px; padding:10px 24px; font-size:14px; font-weight:700; cursor:pointer; transition:all .2s; box-shadow:0 4px 15px rgba(0,230,118,0.25); }
+button.primary:hover { box-shadow:0 6px 20px rgba(0,230,118,0.4); transform:translateY(-1px); }
+button.primary:disabled { opacity:.4; cursor:not-allowed; transform:none; }
+.tf-row { display:flex; gap:6px; margin-bottom:1rem; flex-wrap:wrap; }
+.tf-btn { background:var(–card); border:1px solid var(–border); border-radius:99px; padding:5px 14px; font-size:12px; color:var(–muted); cursor:pointer; transition:all .15s; }
+.tf-btn.active { background:#00e676; color:#000; border-color:#00e676; }
+.tf-btn.intraday { background:rgba(74,90,205,0.15); color:#818cf8; border-color:rgba(74,90,205,0.3); }
+.tf-btn.intraday.active { background:#4a5acd; color:#fff; border-color:#4a5acd; }
+.chips { display:flex; gap:6px; flex-wrap:wrap; }
+.chip { background:var(–card); border:1px solid var(–border); border-radius:99px; padding:5px 12px; font-size:12px; color:var(–muted); cursor:pointer; transition:all .15s; }
+.chip:hover { border-color:#00e676; color:#00e676; }
 
 /* LIMIT MODAL */
-.limit-overlay{
-  position:fixed;inset:0;z-index:200;
-  background:rgba(0,0,0,.8);backdrop-filter:blur(8px);
-  display:none;align-items:center;justify-content:center;padding:1rem;
-}
-.limit-overlay.open{display:flex;}
-.limit-modal{
-  background:var(--bg2);border:1px solid var(--border);
-  border-radius:20px;padding:2.5rem;
-  width:100%;max-width:400px;text-align:center;
-  animation:modalIn .3s ease;
-}
-@keyframes modalIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.limit-icon{font-size:48px;margin-bottom:1rem;}
-.limit-modal h3{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;margin-bottom:.75rem;}
-.limit-modal p{font-size:14px;color:var(--muted);margin-bottom:1.5rem;line-height:1.6;}
-.btn-upgrade-big{
-  width:100%;padding:14px;border-radius:10px;
-  background:var(--green);color:#000;
-  border:none;font-size:15px;font-weight:600;
-  cursor:pointer;transition:all .2s;margin-bottom:10px;
-}
-.btn-upgrade-big:hover{background:var(--green-dark);}
-.btn-dismiss{
-  background:none;border:none;color:var(--muted);
-  font-size:13px;cursor:pointer;
-}
-.btn-dismiss:hover{color:var(--text);}
+.limit-overlay { position:fixed; inset:0; z-index:200; background:rgba(0,0,0,.85); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; padding:1rem; }
+.limit-overlay.open { display:flex; }
+.limit-modal { background:var(–bg2); border:1px solid var(–border); border-radius:20px; padding:2.5rem; width:100%; max-width:400px; text-align:center; animation:modalIn .3s ease; }
+@keyframes modalIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+.limit-icon { font-size:48px; margin-bottom:1rem; }
+.limit-modal h3 { font-family:‘Syne’,sans-serif; font-size:22px; font-weight:700; margin-bottom:.75rem; }
+.limit-modal p { font-size:14px; color:var(–muted); margin-bottom:1.5rem; line-height:1.6; }
+.btn-upgrade-big { width:100%; padding:14px; border-radius:10px; background:#00e676; color:#000; border:none; font-size:15px; font-weight:700; cursor:pointer; margin-bottom:10px; }
+.btn-dismiss { background:none; border:none; color:var(–muted); font-size:13px; cursor:pointer; }
 
-/* LOADING */
-.loading-state{text-align:center;padding:3rem;color:var(--muted);display:none;}
-.spinner{display:inline-block;width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;margin-right:10px;vertical-align:middle;}
-@keyframes spin{to{transform:rotate(360deg);}}
-
-/* ERROR */
-.error-msg{background:rgba(255,82,82,.1);border:1px solid rgba(255,82,82,.3);border-radius:10px;padding:12px 16px;font-size:13px;color:#ff8a80;margin-bottom:1rem;display:none;}
+/* LOADING / ERROR */
+.loading-state { text-align:center; padding:3rem; color:var(–muted); display:none; }
+.spinner { display:inline-block; width:18px; height:18px; border:2px solid var(–border); border-top-color:#00e676; border-radius:50%; animation:spin .7s linear infinite; margin-right:10px; vertical-align:middle; }
+@keyframes spin { to{transform:rotate(360deg)} }
+.error-msg { background:rgba(255,82,82,.1); border:1px solid rgba(255,82,82,.3); border-radius:10px; padding:12px 16px; font-size:13px; color:#ff8a80; margin-bottom:1rem; display:none; }
 
 /* RESULTS */
-.results{display:none;}
-.price-header{display:flex;align-items:baseline;gap:14px;margin-bottom:1.25rem;flex-wrap:wrap;}
-.price-big{font-size:34px;font-weight:700;letter-spacing:-.5px;font-family:'Syne',sans-serif;}
-.price-chg{font-size:15px;font-weight:600;}
-.price-chg.up{color:var(--green)}.price-chg.down{color:var(--red)}
-.price-meta{font-size:12px;color:var(--muted);align-self:center;}
-.banner{border-radius:12px;padding:1.2rem 1.5rem;margin-bottom:1rem;display:none;}
-.banner.buy{background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.3);}
-.banner.sell{background:rgba(255,82,82,.08);border:1px solid rgba(255,82,82,.3);}
-.banner.neutral{background:var(--card);border:1px solid var(--border);}
-.banner-title{font-size:16px;font-weight:700;margin-bottom:6px;font-family:'Syne',sans-serif;}
-.banner.buy .banner-title,.banner.buy .banner-body,.banner.buy .banner-note{color:#69f0ae;}
-.banner.sell .banner-title,.banner.sell .banner-body,.banner.sell .banner-note{color:#ff8a80;}
-.banner.neutral .banner-title{color:var(--text);}
-.banner.neutral .banner-body,.banner.neutral .banner-note{color:var(--muted);}
-.banner-body{font-size:13px;line-height:1.7;}
-.banner-note{font-size:11px;margin-top:6px;opacity:.8;}
-.targets-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;}
-@media(max-width:520px){.targets-row{grid-template-columns:1fr;}}
-.target-box{display:flex;align-items:center;gap:12px;border-radius:12px;padding:1rem 1.2rem;border:1px solid;}
-.target-box.buy-t{background:rgba(0,230,118,.06);border-color:rgba(0,230,118,.25);}
-.target-box.sell-t{background:rgba(255,82,82,.06);border-color:rgba(255,82,82,.25);}
-.target-icon{font-size:22px;}
-.target-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:2px;}
-.target-box.buy-t .target-lbl{color:#69f0ae;}
-.target-box.sell-t .target-lbl{color:#ff8a80;}
-.target-price{font-size:22px;font-weight:700;letter-spacing:-.5px;font-family:'Syne',sans-serif;}
-.target-box.buy-t .target-price{color:#00e676;}
-.target-box.sell-t .target-price{color:var(--red);}
-.target-desc{font-size:11px;line-height:1.5;margin-top:3px;}
-.target-box.buy-t .target-desc{color:#69f0ae;}
-.target-box.sell-t .target-desc{color:#ff8a80;}
-.chart-wrap{position:relative;height:220px;margin-bottom:1rem;}
+.results { display:none; }
+.price-header { display:flex; align-items:baseline; gap:14px; margin-bottom:1.25rem; flex-wrap:wrap; }
+.price-big { font-size:34px; font-weight:700; letter-spacing:-.5px; font-family:‘Syne’,sans-serif; }
+.price-chg { font-size:15px; font-weight:600; }
+.price-chg.up { color:#00e676; } .price-chg.down { color:#ff5252; }
+.price-meta { font-size:12px; color:var(–muted); align-self:center; }
+.banner { border-radius:12px; padding:1.2rem 1.5rem; margin-bottom:1rem; display:none; }
+.banner.buy { background:rgba(0,230,118,.08); border:1px solid rgba(0,230,118,.3); }
+.banner.sell { background:rgba(255,82,82,.08); border:1px solid rgba(255,82,82,.3); }
+.banner.neutral { background:var(–card); border:1px solid var(–border); }
+.banner-title { font-size:16px; font-weight:700; margin-bottom:6px; font-family:‘Syne’,sans-serif; }
+.banner.buy .banner-title,.banner.buy .banner-body,.banner.buy .banner-note { color:#69f0ae; }
+.banner.sell .banner-title,.banner.sell .banner-body,.banner.sell .banner-note { color:#ff8a80; }
+.banner.neutral .banner-title { color:var(–text); }
+.banner.neutral .banner-body,.banner.neutral .banner-note { color:var(–muted); }
+.banner-body { font-size:13px; line-height:1.7; }
+.banner-note { font-size:11px; margin-top:6px; opacity:.8; }
+.targets-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:1rem; }
+@media(max-width:520px){ .targets-row { grid-template-columns:1fr; } }
+.target-box { display:flex; align-items:center; gap:12px; border-radius:12px; padding:1rem 1.2rem; border:1px solid; }
+.target-box.buy-t { background:rgba(0,230,118,.06); border-color:rgba(0,230,118,.25); }
+.target-box.sell-t { background:rgba(255,82,82,.06); border-color:rgba(255,82,82,.25); }
+.target-icon { font-size:22px; }
+.target-lbl { font-size:10px; text-transform:uppercase; letter-spacing:.07em; font-weight:600; margin-bottom:2px; }
+.target-box.buy-t .target-lbl { color:#69f0ae; } .target-box.sell-t .target-lbl { color:#ff8a80; }
+.target-price { font-size:22px; font-weight:700; font-family:‘Syne’,sans-serif; }
+.target-box.buy-t .target-price { color:#00e676; } .target-box.sell-t .target-price { color:#ff5252; }
+.target-desc { font-size:11px; line-height:1.5; margin-top:3px; }
+.target-box.buy-t .target-desc { color:#69f0ae; } .target-box.sell-t .target-desc { color:#ff8a80; }
+.chart-wrap { position:relative; height:220px; margin-bottom:1rem; }
 
 /* PANELS */
-.panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:1.4rem;margin-bottom:1rem;transition:border .3s;}
-.panel:hover{border-color:rgba(0,230,118,0.15);}
-.panel-title{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:1rem;font-weight:600;}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;}
-@media(max-width:560px){.two-col{grid-template-columns:1fr;}}
-.inner-panel{background:var(--bg3);border-radius:12px;padding:14px 16px;}
+.panel { background:var(–bg2); border:1px solid var(–border); border-radius:14px; padding:1.4rem; margin-bottom:1rem; transition:border .3s; }
+.panel:hover { border-color:rgba(0,230,118,0.12); }
+.panel-title { font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(–muted); margin-bottom:1rem; font-weight:600; }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem; }
+@media(max-width:560px){ .two-col { grid-template-columns:1fr; } }
+.inner-panel { background:var(–bg3); border-radius:12px; padding:14px 16px; }
 
-/* CHART PATTERNS */
-.cp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin-bottom:1rem;}
-.cp-card{border-radius:12px;padding:14px 16px;border:1px solid;}
-.cp-card.bull{background:rgba(0,230,118,.06);border-color:rgba(0,230,118,.2);}
-.cp-card.bear{background:rgba(255,82,82,.06);border-color:rgba(255,82,82,.2);}
-.cp-card.neut{background:var(--card);border-color:var(--border);}
-.cp-card-head{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
-.cp-card-icon{font-size:20px;}
-.cp-card-name{font-size:13px;font-weight:700;}
-.cp-card.bull .cp-card-name{color:#69f0ae;}
-.cp-card.bear .cp-card-name{color:#ff8a80;}
-.cp-card.neut .cp-card-name{color:var(--text);}
-.cp-card-type{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-top:1px;}
-.cp-card.bull .cp-card-type{color:rgba(0,230,118,.6);}
-.cp-card.bear .cp-card-type{color:rgba(255,82,82,.6);}
-.cp-card-desc{font-size:12px;line-height:1.6;margin-bottom:8px;color:var(--muted);}
-.cp-card-target{font-size:11px;font-weight:600;padding:5px 10px;border-radius:8px;margin-bottom:6px;}
-.cp-card.bull .cp-card-target{background:rgba(0,230,118,.1);color:#69f0ae;}
-.cp-card.bear .cp-card-target{background:rgba(255,82,82,.1);color:#ff8a80;}
-.cp-card.neut .cp-card-target{background:var(--card);color:var(--muted);}
-.cp-conf-row{display:flex;align-items:center;gap:8px;}
-.cp-conf-bg{flex:1;height:5px;background:var(--border);border-radius:99px;overflow:hidden;}
-.cp-conf-fill{height:100%;border-radius:99px;transition:width .5s;}
-.cp-conf-pct{font-size:11px;font-weight:700;min-width:32px;text-align:right;color:var(--muted);}
+/* CHART PATTERNS in results */
+.cp-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:10px; }
+.cp-card { border-radius:12px; padding:14px 16px; border:1px solid; }
+.cp-card.bull { background:rgba(0,230,118,.06); border-color:rgba(0,230,118,.2); }
+.cp-card.bear { background:rgba(255,82,82,.06); border-color:rgba(255,82,82,.2); }
+.cp-card.neut { background:var(–card); border-color:var(–border); }
+.cp-card-head { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.cp-card-name { font-size:13px; font-weight:700; }
+.cp-card.bull .cp-card-name { color:#69f0ae; } .cp-card.bear .cp-card-name { color:#ff8a80; } .cp-card.neut .cp-card-name { color:var(–text); }
+.cp-card-type { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; margin-top:1px; }
+.cp-card.bull .cp-card-type { color:rgba(0,230,118,.6); } .cp-card.bear .cp-card-type { color:rgba(255,82,82,.6); }
+.cp-card-desc { font-size:12px; line-height:1.6; margin-bottom:8px; color:var(–muted); }
+.cp-card-target { font-size:11px; font-weight:600; padding:5px 10px; border-radius:8px; margin-bottom:6px; }
+.cp-card.bull .cp-card-target { background:rgba(0,230,118,.1); color:#69f0ae; }
+.cp-card.bear .cp-card-target { background:rgba(255,82,82,.1); color:#ff8a80; }
+.cp-conf-row { display:flex; align-items:center; gap:8px; }
+.cp-conf-bg { flex:1; height:5px; background:var(–border); border-radius:99px; overflow:hidden; }
+.cp-conf-fill { height:100%; border-radius:99px; }
+.cp-conf-pct { font-size:11px; font-weight:700; min-width:32px; text-align:right; color:var(–muted); }
 
 /* SMART MONEY */
-.sm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:1rem;}
-.sm-card{background:var(--bg3);border-radius:10px;padding:10px 12px;}
-.sm-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:3px;}
-.sm-val{font-size:15px;font-weight:700;}
-.sm-sub{font-size:10px;color:var(--muted);margin-top:2px;}
-.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:7px;}
-.bar-lbl{font-size:12px;color:var(--muted);min-width:130px;}
-.bar-bg{flex:1;height:7px;background:var(--border);border-radius:99px;overflow:hidden;}
-.bar-fill{height:100%;border-radius:99px;transition:width .6s;}
-.bar-val{font-size:11px;font-weight:600;min-width:38px;text-align:right;}
-.sm-desc{font-size:12px;color:var(--muted);line-height:1.65;background:var(--bg3);border-radius:10px;padding:10px 14px;margin-top:8px;}
+.sm-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); gap:8px; margin-bottom:1rem; }
+.sm-card { background:var(–bg3); border-radius:10px; padding:10px 12px; }
+.sm-lbl { font-size:10px; text-transform:uppercase; letter-spacing:.05em; color:var(–muted); margin-bottom:3px; }
+.sm-val { font-size:15px; font-weight:700; }
+.sm-sub { font-size:10px; color:var(–muted); margin-top:2px; }
+.bar-row { display:flex; align-items:center; gap:10px; margin-bottom:7px; }
+.bar-lbl { font-size:12px; color:var(–muted); min-width:130px; }
+.bar-bg { flex:1; height:7px; background:var(–border); border-radius:99px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:99px; transition:width .6s; }
+.bar-val { font-size:11px; font-weight:600; min-width:38px; text-align:right; }
+.sm-desc { font-size:12px; color:var(–muted); line-height:1.65; background:var(–bg3); border-radius:10px; padding:10px 14px; margin-top:8px; }
 
 /* CANDLE */
-.candle-row{display:flex;align-items:center;gap:14px;height:66px;margin-bottom:10px;}
-.candle-name{font-size:14px;font-weight:700;margin-bottom:3px;font-family:'Syne',sans-serif;}
-.candle-sig{font-size:12px;font-weight:600;}
-.candle-desc{font-size:12px;color:var(--muted);line-height:1.55;margin-top:6px;}
+.candle-row { display:flex; align-items:center; gap:14px; height:66px; margin-bottom:10px; }
+.candle-name { font-size:14px; font-weight:700; margin-bottom:3px; font-family:‘Syne’,sans-serif; }
+.candle-sig { font-size:12px; font-weight:600; }
+.candle-desc { font-size:12px; color:var(–muted); line-height:1.55; margin-top:6px; }
 
 /* VWAP */
-.vwap-rows{display:flex;flex-direction:column;gap:5px;}
-.vr{display:flex;justify-content:space-between;align-items:center;}
-.vrl{font-size:12px;color:var(--muted);}
-.vrv{font-size:13px;font-weight:600;}
-.badge{font-size:11px;font-weight:600;padding:2px 9px;border-radius:99px;}
-.badge-buy{background:rgba(0,230,118,.15);color:#69f0ae;}
-.badge-sell{background:rgba(255,82,82,.15);color:#ff8a80;}
+.vwap-rows { display:flex; flex-direction:column; gap:5px; }
+.vr { display:flex; justify-content:space-between; align-items:center; }
+.vrl { font-size:12px; color:var(–muted); }
+.vrv { font-size:13px; font-weight:600; }
+.badge { font-size:11px; font-weight:600; padding:2px 9px; border-radius:99px; }
+.badge-buy { background:rgba(0,230,118,.15); color:#69f0ae; }
+.badge-sell { background:rgba(255,82,82,.15); color:#ff8a80; }
 
 /* INDICATORS */
-.ind-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(85px,1fr));gap:7px;margin-bottom:1rem;}
-.ind-card{background:var(--bg3);border-radius:10px;padding:10px 12px;}
-.ind-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;}
-.ind-val{font-size:13px;font-weight:700;}
-.ind-sig{font-size:10px;margin-top:2px;font-weight:600;}
-.c-buy{color:#00e676;}.c-sell{color:var(--red);}.c-neutral{color:var(--muted);}
+.ind-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(85px,1fr)); gap:7px; margin-bottom:1rem; }
+.ind-card { background:var(–bg3); border-radius:10px; padding:10px 12px; }
+.ind-lbl { font-size:10px; color:var(–muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:3px; }
+.ind-val { font-size:13px; font-weight:700; }
+.ind-sig { font-size:10px; margin-top:2px; font-weight:600; }
+.c-buy { color:#00e676; } .c-sell { color:#ff5252; } .c-neutral { color:var(–muted); }
 
 /* SCORES */
-.score-row{display:flex;align-items:center;gap:10px;margin-bottom:7px;}
-.score-bg{flex:1;height:5px;background:var(--border);border-radius:99px;overflow:hidden;}
-.score-bar{height:100%;border-radius:99px;transition:width .5s;}
-.score-lbl{font-size:12px;color:var(--muted);min-width:58px;}
-.score-num{font-size:12px;font-weight:700;min-width:32px;text-align:right;}
-
-/* NEWS */
-.news-item{border-radius:12px;padding:12px 14px;margin-bottom:8px;border:1px solid;display:flex;align-items:flex-start;gap:12px;}
-.news-item.good{background:rgba(0,230,118,.05);border-color:rgba(0,230,118,.2);}
-.news-item.bad{background:rgba(255,82,82,.05);border-color:rgba(255,82,82,.2);}
-.news-icon{font-size:18px;flex-shrink:0;margin-top:2px;}
-.news-body{flex:1;}
-.news-headline{font-size:13px;font-weight:600;line-height:1.4;margin-bottom:4px;}
-.news-item.good .news-headline{color:#69f0ae;}
-.news-item.bad .news-headline{color:#ff8a80;}
-.news-why{font-size:12px;line-height:1.55;color:var(--muted);}
-.news-source{font-size:10px;color:#444;margin-top:4px;}
-.news-loading{font-size:13px;color:var(--muted);padding:1.5rem;text-align:center;background:var(--bg3);border-radius:10px;margin-bottom:8px;}
-.news-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
-.news-section-title.good{color:#00e676;}
-.news-section-title.bad{color:var(--red);}
+.score-row { display:flex; align-items:center; gap:10px; margin-bottom:7px; }
+.score-bg { flex:1; height:5px; background:var(–border); border-radius:99px; overflow:hidden; }
+.score-bar { height:100%; border-radius:99px; transition:width .5s; }
+.score-lbl { font-size:12px; color:var(–muted); min-width:58px; }
+.score-num { font-size:12px; font-weight:700; min-width:32px; text-align:right; }
+.sec-title { font-size:11px; color:var(–muted); text-transform:uppercase; letter-spacing:.06em; margin-bottom:8px; font-weight:600; }
+.divider { border:none; border-top:1px solid var(–border); margin:1rem 0; }
 
 /* PUT/CALL */
-.pc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:1rem;}
-.pc-card{background:var(--bg3);border-radius:10px;padding:10px 12px;}
-.pc-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:3px;}
-.pc-val{font-size:18px;font-weight:700;}
-.pc-sub{font-size:10px;color:var(--muted);margin-top:2px;}
-.pc-gauge-wrap{margin:.5rem 0 1rem;}
-.pc-gauge-label{display:flex;justify-content:space-between;font-size:10px;color:#444;margin-bottom:5px;}
-.pc-gauge-bg{height:12px;border-radius:99px;background:linear-gradient(to right,#00e676 0%,#f5c518 45%,#ff5252 100%);position:relative;}
-.pc-needle{position:absolute;top:-4px;width:4px;height:20px;background:var(--text);border-radius:2px;transform:translateX(-50%);transition:left .8s ease;}
-.pc-hist{position:relative;height:110px;margin-bottom:1rem;}
-.pc-interp{font-size:12px;color:var(--muted);line-height:1.65;background:var(--bg3);border-radius:10px;padding:10px 14px;}
-.badge2{font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;}
-.badge2.g{background:rgba(0,230,118,.15);color:#00e676;}
-.badge2.f{background:rgba(255,82,82,.15);color:var(--red);}
-.badge2.n{background:var(--card);color:var(--muted);}
-.badge2.eg{background:rgba(0,200,80,.2);color:#00e676;border:1px solid rgba(0,230,118,.3);}
-.badge2.ef{background:rgba(255,50,50,.2);color:var(--red);border:1px solid rgba(255,82,82,.3);}
+.pc-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); gap:8px; margin-bottom:1rem; }
+.pc-card { background:var(–bg3); border-radius:10px; padding:10px 12px; }
+.pc-lbl { font-size:10px; text-transform:uppercase; letter-spacing:.05em; color:var(–muted); margin-bottom:3px; }
+.pc-val { font-size:18px; font-weight:700; }
+.pc-sub { font-size:10px; color:var(–muted); margin-top:2px; }
+.pc-gauge-wrap { margin:.5rem 0 1rem; }
+.pc-gauge-label { display:flex; justify-content:space-between; font-size:10px; color:#444; margin-bottom:5px; }
+.pc-gauge-bg { height:12px; border-radius:99px; background:linear-gradient(to right,#00e676 0%,#f5c518 45%,#ff5252 100%); position:relative; }
+.pc-needle { position:absolute; top:-4px; width:4px; height:20px; background:var(–text); border-radius:2px; transform:translateX(-50%); transition:left .8s ease; }
+.pc-hist { position:relative; height:110px; margin-bottom:1rem; }
+.pc-interp { font-size:12px; color:var(–muted); line-height:1.65; background:var(–bg3); border-radius:10px; padding:10px 14px; }
+.badge2 { font-size:11px; font-weight:700; padding:3px 10px; border-radius:99px; }
+.badge2.g { background:rgba(0,230,118,.15); color:#00e676; }
+.badge2.f { background:rgba(255,82,82,.15); color:#ff5252; }
+.badge2.n { background:var(–card); color:var(–muted); }
+.badge2.eg { background:rgba(0,200,80,.2); color:#00e676; border:1px solid rgba(0,230,118,.3); }
+.badge2.ef { background:rgba(255,50,50,.2); color:#ff5252; border:1px solid rgba(255,82,82,.3); }
 
-.sec-title{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;font-weight:600;}
-.divider{border:none;border-top:1px solid var(--border);margin:1rem 0;}
-.learn-tab{background:var(--card);border:1px solid var(--border);border-radius:99px;padding:6px 16px;font-size:12px;color:var(--muted);cursor:pointer;transition:all .15s;}
-.learn-tab.active{background:var(--green);color:#000;border-color:var(--green);}
-.learn-card{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1rem;transition:border .2s;}
-.learn-card:hover{border-color:rgba(255,255,255,.15);}
-.learn-card-header{display:flex;align-items:center;gap:12px;margin-bottom:1rem;}
-.learn-icon{font-size:32px;flex-shrink:0;}
-.learn-name{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;}
-.learn-type{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-top:2px;}
-.learn-desc{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:1rem;}
-.learn-chart{background:var(--bg2);border-radius:10px;padding:1rem;margin-bottom:1rem;}
-.learn-signals{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem;}
-@media(max-width:500px){.learn-signals{grid-template-columns:1fr;}}
-.learn-signal{border-radius:10px;padding:10px 12px;}
-.learn-signal.buy{background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.2);}
-.learn-signal.sell{background:rgba(255,82,82,.08);border:1px solid rgba(255,82,82,.2);}
-.learn-signal-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
-.learn-signal.buy .learn-signal-title{color:#00e676;}
-.learn-signal.sell .learn-signal-title{color:#ff5252;}
-.learn-signal-desc{font-size:12px;color:var(--muted);line-height:1.5;}
-.learn-tip{background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.15);border-radius:10px;padding:10px 14px;font-size:12px;color:#69f0ae;line-height:1.6;}
-.hamburger{display:none;background:none;border:none;color:var(--text);font-size:22px;cursor:pointer;padding:4px;}
-@media(max-width:768px){.hamburger{display:block;}}
-/* EXTRA COLOR */
-.topbar-title{
-  background:linear-gradient(90deg,#00e676,#818cf8);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  background-clip:text;
-}
-.analyzer-card{border-color:rgba(0,230,118,0.15);}
-.panel{border-color:rgba(255,255,255,0.06);}
-.panel:hover{border-color:rgba(0,230,118,0.12);transition:border .3s;}
-.btn-upgrade{
-  background:linear-gradient(135deg,#00e676,#00c853);
-  box-shadow:0 4px 15px rgba(0,230,118,0.3);
-}
-.btn-upgrade:hover{box-shadow:0 6px 25px rgba(0,230,118,0.5);transform:translateY(-1px);}
-button.primary{
-  background:linear-gradient(135deg,#00e676,#00c853);
-  box-shadow:0 4px 15px rgba(0,230,118,0.25);
-}
-button.primary:hover{box-shadow:0 6px 20px rgba(0,230,118,0.4);transform:translateY(-1px);}
-.price-big{background:linear-gradient(90deg,#fff,#e0e0e0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.logo-dot{box-shadow:0 0 8px #00e676;}
+/* LEARN */
+.learn-tab { background:var(–card); border:1px solid var(–border); border-radius:99px; padding:6px 16px; font-size:12px; color:var(–muted); cursor:pointer; transition:all .15s; }
+.learn-tab.active { background:#00e676; color:#000; border-color:#00e676; }
+.learn-card { background:var(–bg3); border:1px solid var(–border); border-radius:14px; padding:1.5rem; margin-bottom:1rem; transition:border .2s; }
+.learn-card:hover { border-color:rgba(255,255,255,.15); }
+.learn-card-header { display:flex; align-items:center; gap:12px; margin-bottom:1rem; }
+.learn-icon { font-size:32px; flex-shrink:0; }
+.learn-name { font-family:‘Syne’,sans-serif; font-size:17px; font-weight:700; }
+.learn-type { font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(–muted); margin-top:2px; }
+.learn-desc { font-size:13px; color:var(–muted); line-height:1.7; margin-bottom:1rem; }
+.learn-chart { background:var(–bg2); border-radius:10px; padding:1rem; margin-bottom:1rem; }
+.learn-signals { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:1rem; }
+@media(max-width:500px){ .learn-signals { grid-template-columns:1fr; } }
+.learn-signal { border-radius:10px; padding:10px 12px; }
+.learn-signal.buy { background:rgba(0,230,118,.08); border:1px solid rgba(0,230,118,.2); }
+.learn-signal.sell { background:rgba(255,82,82,.08); border:1px solid rgba(255,82,82,.2); }
+.learn-signal-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; margin-bottom:4px; }
+.learn-signal.buy .learn-signal-title { color:#00e676; } .learn-signal.sell .learn-signal-title { color:#ff5252; }
+.learn-signal-desc { font-size:12px; color:var(–muted); line-height:1.5; }
+.learn-tip { background:rgba(0,230,118,.06); border:1px solid rgba(0,230,118,.15); border-radius:10px; padding:10px 14px; font-size:12px; color:#69f0ae; line-height:1.6; }
 
 /* PATTERN GUIDE */
-.news-cat-btn{background:var(--card);border:1px solid var(--border);border-radius:99px;padding:6px 16px;font-size:12px;color:var(--muted);cursor:pointer;transition:all .15s;font-weight:500;}
-.news-cat-btn.active{background:var(--green);color:#000;border-color:var(--green);font-weight:700;}
-.news-cat-btn:hover:not(.active){border-color:var(--green);color:var(--green);}
-.pattern-section{margin-bottom:2rem;}
-.pattern-section-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:8px 14px;border-radius:10px;margin-bottom:1rem;display:inline-block;}
-.pattern-section-title.bullish{background:rgba(0,230,118,.1);color:#00e676;border:1px solid rgba(0,230,118,.2);}
-.pattern-section-title.bearish{background:rgba(255,82,82,.1);color:#ff5252;border:1px solid rgba(255,82,82,.2);}
-.pattern-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;}
-@media(max-width:500px){.pattern-grid{grid-template-columns:1fr 1fr;}}
-.pattern-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:12px;transition:all .2s;}
-.pattern-card:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.15);box-shadow:0 8px 24px rgba(0,0,0,.3);}
-.pattern-chart-wrap{border-radius:10px;padding:8px;margin-bottom:10px;}
-.pattern-chart-wrap.bullish{background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.15);}
-.pattern-chart-wrap.bearish{background:rgba(255,82,82,.06);border:1px solid rgba(255,82,82,.15);}
-.pattern-name{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:6px;line-height:1.3;}
-.pattern-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:2px 8px;border-radius:99px;display:inline-block;margin-bottom:8px;}
-.bullish-tag{background:rgba(0,230,118,.12);color:#00e676;}
-.bearish-tag{background:rgba(255,82,82,.12);color:#ff5252;}
-.pattern-desc{font-size:11px;color:var(--muted);line-height:1.55;}
-
+.news-cat-btn { background:var(–card); border:1px solid var(–border); border-radius:99px; padding:6px 14px; font-size:12px; color:var(–muted); cursor:pointer; transition:all .15s; font-weight:500; }
+.news-cat-btn.active { background:#00e676; color:#000; border-color:#00e676; font-weight:700; }
+.news-cat-btn:hover:not(.active) { border-color:#00e676; color:#00e676; }
+.pattern-section { margin-bottom:2rem; }
+.pattern-section-title { font-family:‘Syne’,sans-serif; font-size:13px; font-weight:700; text-transform:uppercase; padding:7px 13px; border-radius:10px; margin-bottom:1rem; display:inline-block; }
+.pattern-section-title.bullish { background:rgba(0,230,118,.1); color:#00e676; border:1px solid rgba(0,230,118,.2); }
+.pattern-section-title.bearish { background:rgba(255,82,82,.1); color:#ff5252; border:1px solid rgba(255,82,82,.2); }
+.pattern-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; }
+@media(max-width:500px){ .pattern-grid { grid-template-columns:1fr 1fr; } }
+.pattern-card { background:var(–bg2); border:1px solid var(–border); border-radius:14px; padding:12px; transition:all .2s; }
+.pattern-card:hover { transform:translateY(-2px); border-color:rgba(255,255,255,.15); box-shadow:0 8px 24px rgba(0,0,0,.3); }
+.pattern-chart-wrap { border-radius:10px; padding:8px; margin-bottom:10px; }
+.pattern-chart-wrap.bullish { background:rgba(0,230,118,.06); border:1px solid rgba(0,230,118,.15); }
+.pattern-chart-wrap.bearish { background:rgba(255,82,82,.06); border:1px solid rgba(255,82,82,.15); }
+.pattern-name { font-family:‘Syne’,sans-serif; font-size:13px; font-weight:700; margin-bottom:6px; }
+.pattern-tag { font-size:10px; font-weight:700; text-transform:uppercase; padding:2px 8px; border-radius:99px; display:inline-block; margin-bottom:8px; }
+.bullish-tag { background:rgba(0,230,118,.12); color:#00e676; }
+.bearish-tag { background:rgba(255,82,82,.12); color:#ff5252; }
+.pattern-desc { font-size:11px; color:var(–muted); line-height:1.55; }
 </style>
+
 </head>
 <body>
 
 <!-- LIMIT MODAL -->
+
 <div class="limit-overlay" id="limitOverlay">
   <div class="limit-modal">
     <div class="limit-icon">🚀</div>
-    <h3>Límite diario alcanzado</h3>
-    <p>Has usado tus 5 análisis gratuitos de hoy. Actualiza al plan Pro para análisis ilimitados, sin publicidad y con todas las funciones avanzadas.</p>
-    <button class="btn-upgrade-big" onclick="startCheckout()" id="limit_btn">Upgrade to Pro — $12/mo</button>
-    <button class="btn-dismiss" onclick="document.getElementById('limitOverlay').classList.remove('open')">Volver mañana</button>
+    <h3 id="lim_title">Daily limit reached</h3>
+    <p id="lim_msg">You've used your 5 free analyses today. Upgrade to Pro for unlimited analyses.</p>
+    <button class="btn-upgrade-big" onclick="startCheckout()" id="lim_btn">Upgrade to Pro — $12/mo</button>
+    <button class="btn-dismiss" onclick="document.getElementById('limitOverlay').classList.remove('open')" id="lim_dismiss">Come back tomorrow</button>
   </div>
 </div>
 
@@ -447,299 +332,268 @@ button.primary:hover{box-shadow:0 6px 20px rgba(0,230,118,0.4);transform:transla
     <a href="index.html" class="sidebar-logo">
       <span class="logo-dot"></span>SmartStockSignal
     </a>
-    <a class="nav-item active" id="nav_btn_analyzer" onclick="showSection('analyzer')" href="#"><span id="nav_analyzer">Analyzer</span></a>
-    <a class="nav-item" id="nav_btn_favorites" onclick="showSection('favorites')" href="#"><span id="nav_favorites_label">Favorites</span></a>
-    <a class="nav-item" id="nav_btn_news" onclick="showSection('news')" href="#"><span id="nav_news_label">Charts</span></a>
-    <a class="nav-item" id="nav_btn_learn" onclick="showSection('learn')" href="#"><span id="nav_learn_label">Learn</span></a>
-    <a class="nav-item" id="nav_btn_settings" onclick="showSection('settings')" href="#"><span id="nav_settings_label">Settings</span></a>
+    <a class="nav-item active" id="nav_btn_analyzer" onclick="showSection('analyzer')" href="#">
+      <span id="nav_analyzer">Analyzer</span>
+    </a>
+    <a class="nav-item" id="nav_btn_favorites" onclick="showSection('favorites')" href="#">
+      <span id="nav_favorites_label">Favorites</span>
+    </a>
+    <a class="nav-item" id="nav_btn_charts" onclick="showSection('charts')" href="#">
+      <span id="nav_charts_label">Charts</span>
+    </a>
+    <a class="nav-item" id="nav_btn_learn" onclick="showSection('learn')" href="#">
+      <span id="nav_learn_label">Learn</span>
+    </a>
+    <a class="nav-item" id="nav_btn_settings" onclick="showSection('settings')" href="#">
+      <span id="nav_settings_label">Settings</span>
+    </a>
     <div class="sidebar-bottom">
       <div class="user-info">
         <div class="user-email" id="userEmail">loading...</div>
         <span class="user-plan plan-free" id="userPlan">Free Plan</span>
-        <button class="btn-upgrade" id="btnUpgrade" onclick="startCheckout()">⚡ Upgrade to Pro</button>
+        <button class="btn-upgrade" id="btnUpgrade" onclick="startCheckout()" id="nav_upgrade">Upgrade to Pro</button>
       </div>
-      <button class="btn-logout" onclick="handleLogout()" id="btn_logout_text">Sign out</button>
+      <button class="btn-logout" onclick="handleLogout()" id="nav_logout">Sign out</button>
     </div>
   </aside>
 
   <!-- MAIN -->
+
   <main class="main-content">
     <div class="topbar">
-      <div style="display:flex;align-items:center;gap:12px;">
+      <div class="topbar-left">
         <button class="hamburger" onclick="toggleSidebar()">☰</button>
-        <div class="topbar-title" data-i18n="dash_title">Analizador</div>
+        <div class="topbar-title" id="topbar_title">Analyzer</div>
       </div>
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-        <button onclick="toggleTheme()" id="themeBtn" style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:7px 14px;color:#f0f4f8;font-size:15px;cursor:pointer;transition:all .2s;" title="Toggle dark/light mode">🌙</button>
-        <button onclick="toggleLang()" id="langBtn" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:6px 12px;color:#8896a7;font-size:13px;cursor:pointer;">🌐 ES</button>
+      <div class="topbar-controls">
+        <button class="ctrl-btn" onclick="toggleTheme()" id="themeBtn" title="Toggle theme">🌙</button>
+        <button class="ctrl-btn" onclick="toggleLang()" id="langBtn">🌐 ES</button>
         <div class="usage-bar-wrap" id="usageWrap">
-          <div class="usage-label" data-i18n="dash_usage">Análisis hoy:</div>
+          <div class="usage-label" id="usage_label">Today:</div>
           <div class="usage-bar"><div class="usage-fill" id="usageFill" style="width:0%"></div></div>
           <div class="usage-count" id="usageCount">0/5</div>
         </div>
       </div>
     </div>
 
-    <!-- AD BANNER — solo plan gratis -->
-    <div class="ad-banner" id="adBanner" style="display:none;">
-      <div class="ad-label">Advertising</div>
-      <ins class="adsbygoogle"
-        style="display:block"
-        data-ad-client="ca-pub-8509604172341454"
-        data-ad-slot="auto"
-        data-ad-format="auto"
-        data-full-width-responsive="true"></ins>
+```
+<div class="ad-banner" id="adBanner" style="display:none;">
+  <div class="ad-label">Advertising</div>
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8509604172341454" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
+</div>
+
+<!-- ANALYZER SECTION -->
+<div id="analyzerSection">
+  <div class="analyzer-card">
+    <div class="input-row">
+      <input type="text" id="tickerInput" placeholder="E.g: AAPL, TSLA..." maxlength="10"/>
+      <button class="primary" id="analyzeBtn" onclick="analyze()">Analyze</button>
+    </div>
+    <div class="tf-row">
+      <button class="tf-btn intraday active" onclick="setTF(this,'1D')">1D</button>
+      <button class="tf-btn" onclick="setTF(this,'1M')">1M</button>
+      <button class="tf-btn" onclick="setTF(this,'3M')">3M</button>
+      <button class="tf-btn" onclick="setTF(this,'6M')">6M</button>
+      <button class="tf-btn" onclick="setTF(this,'1Y')">1Y</button>
+    </div>
+    <div class="chips">
+      <button class="chip" onclick="setTicker('AAPL')">AAPL</button>
+      <button class="chip" onclick="setTicker('TSLA')">TSLA</button>
+      <button class="chip" onclick="setTicker('MSFT')">MSFT</button>
+      <button class="chip" onclick="setTicker('NVDA')">NVDA</button>
+      <button class="chip" onclick="setTicker('AMZN')">AMZN</button>
+      <button class="chip" onclick="setTicker('GOOGL')">GOOGL</button>
+      <button class="chip" onclick="setTicker('META')">META</button>
+      <button class="chip" onclick="setTicker('SPY')">SPY</button>
+    </div>
+  </div>
+
+  <div class="error-msg" id="errorMsg"></div>
+  <div class="loading-state" id="loadingMsg"><span class="spinner"></span><span id="loadingText">Analyzing...</span></div>
+
+  <div class="results" id="results">
+    <div class="analyzer-card">
+      <div class="price-header">
+        <div class="price-big" id="priceBig"></div>
+        <div class="price-chg" id="priceChg"></div>
+        <div class="price-meta" id="priceMeta"></div>
+        <button id="favBtn" onclick="toggleFavorite()" style="background:none;border:none;font-size:22px;cursor:pointer;margin-left:auto;opacity:.5;transition:opacity .2s;">⭐</button>
+      </div>
+      <div class="banner" id="banner">
+        <div class="banner-title" id="bannerTitle"></div>
+        <div class="banner-body" id="bannerBody"></div>
+        <div class="banner-note" id="bannerNote"></div>
+      </div>
+      <div class="targets-row" id="targetsRow" style="display:none;">
+        <div class="target-box buy-t"><div class="target-icon">🎯</div>
+          <div><div class="target-lbl" id="lbl_entry">Entry Price</div><div class="target-price" id="buyTargetPrice"></div><div class="target-desc" id="buyTargetDesc"></div></div></div>
+        <div class="target-box sell-t"><div class="target-icon">🛑</div>
+          <div><div class="target-lbl" id="lbl_sl">Stop Loss</div><div class="target-price" id="slTargetPrice"></div><div class="target-desc" id="slTargetDesc"></div></div></div>
+      </div>
+      <div class="chart-wrap"><canvas id="priceChart"></canvas></div>
     </div>
 
-    <!-- ══ FAVORITES PANEL ══ -->
-    <div id="favoritesPanel" style="display:none;">
-      <div class="panel" style="margin-bottom:1rem;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
-          <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;">⭐ Favorites</div>
-          <div style="font-size:12px;color:var(--muted);">Click ⭐ on any analysis to save</div>
-        </div>
-        <div id="favoritesList"></div>
+    <!-- CHART PATTERNS -->
+    <div class="panel">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;">
+        <div class="panel-title" id="panel_patterns">Chart Patterns</div>
+        <span class="badge2" id="cpBadge">—</span>
       </div>
+      <div id="cpContent"></div>
     </div>
 
-    <!-- ══ CHARTS / PATTERN GUIDE ══ -->
-    <div id="newsMarketPanel" style="display:none;">
-      <div style="margin-bottom:1.5rem;">
-        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;">Chart Patterns</div>
-        <div style="font-size:13px;color:var(--muted);margin-top:4px;">Visual reference for the most important trading patterns</div>
+    <!-- SMART MONEY -->
+    <div class="panel">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;">
+        <div class="panel-title" id="panel_sm">Smart Money</div>
+        <span class="badge2" id="smBadge">—</span>
       </div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.5rem;">
-        <button class="news-cat-btn active" onclick="filterPatternGuide('all',this)">All</button>
-        <button class="news-cat-btn" onclick="filterPatternGuide('bullish_cont',this)">▲ Bull Continuation</button>
-        <button class="news-cat-btn" onclick="filterPatternGuide('bullish_rev',this)">▲ Bull Reversal</button>
-        <button class="news-cat-btn" onclick="filterPatternGuide('bearish_cont',this)">▼ Bear Continuation</button>
-        <button class="news-cat-btn" onclick="filterPatternGuide('bearish_rev',this)">▼ Bear Reversal</button>
-      </div>
-      <div class="pattern-section" id="pg_bullish_cont">
-        <div class="pattern-section-title bullish">▲ Bullish Continuation</div>
-        <div class="pattern-grid">
-          <div class="pattern-card"><div class="pattern-chart-wrap bullish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#1e3a2e" stroke-width="1"/><line x1="20" y1="75" x2="50" y2="20" stroke="#00e676" stroke-width="2.5"/><rect x="50" y="18" width="45" height="22" rx="3" fill="rgba(0,230,118,0.08)" stroke="#00e676" stroke-width="1" stroke-dasharray="3,2"/><polyline points="50,20 62,30 74,24 86,32 95,26" fill="none" stroke="#00e676" stroke-width="1.5"/><polyline points="95,26 115,8 128,8" fill="none" stroke="#00e676" stroke-width="2.5"/><polygon points="128,5 136,8 128,11" fill="#00e676"/><text x="115" y="6" fill="#00e676" font-size="8" font-weight="bold">TP</text><rect x="52" y="34" width="30" height="10" rx="2" fill="rgba(0,230,118,0.15)"/><text x="55" y="42" fill="#00e676" font-size="7" font-weight="bold">Entry ▲</text></svg></div><div class="pattern-name">Bull Flag</div><div class="pattern-tag bullish-tag">Bullish</div><div class="pattern-desc">Sharp pole + tight consolidation. Strong continuation on breakout above flag.</div></div>
-          <div class="pattern-card"><div class="pattern-chart-wrap bullish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#1e3a2e" stroke-width="1"/><line x1="30" y1="28" x2="95" y2="28" stroke="#00e676" stroke-width="1.5" stroke-dasharray="4,3" opacity=".7"/><line x1="15" y1="75" x2="95" y2="48" stroke="#00e676" stroke-width="1.5" opacity=".7"/><polyline points="15,75 30,28 45,58 60,28 75,45 90,28" fill="none" stroke="#00e676" stroke-width="2"/><polyline points="90,28 110,10 125,10" fill="none" stroke="#00e676" stroke-width="2.5"/><polygon points="125,7 133,10 125,13" fill="#00e676"/><text x="97" y="8" fill="#00e676" font-size="8" font-weight="bold">TP</text><rect x="55" y="32" width="24" height="10" rx="2" fill="rgba(0,230,118,0.15)"/><text x="58" y="40" fill="#00e676" font-size="7" font-weight="bold">Entry</text></svg></div><div class="pattern-name">Ascending Triangle</div><div class="pattern-tag bullish-tag">Bullish</div><div class="pattern-desc">Flat resistance + rising lows. Buyers accumulate until explosive breakout.</div></div>
-          <div class="pattern-card"><div class="pattern-chart-wrap bullish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#1e3a2e" stroke-width="1"/><line x1="10" y1="70" x2="90" y2="22" stroke="#00e676" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/><line x1="10" y1="55" x2="90" y2="35" stroke="#00e676" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/><polyline points="10,70 25,38 38,52 53,28 67,42 80,25" fill="none" stroke="#00e676" stroke-width="2"/><polyline points="80,25 100,8 120,8" fill="none" stroke="#00e676" stroke-width="2.5"/><polygon points="120,5 128,8 120,11" fill="#00e676"/><text x="105" y="6" fill="#00e676" font-size="8" font-weight="bold">TP</text><rect x="62" y="14" width="24" height="10" rx="2" fill="rgba(0,230,118,0.15)"/><text x="64" y="22" fill="#00e676" font-size="7" font-weight="bold">Entry</text></svg></div><div class="pattern-name">Bullish Wedge</div><div class="pattern-tag bullish-tag">Bullish</div><div class="pattern-desc">Converging upward trendlines. Breakout above resistance signals continuation.</div></div>
-          <div class="pattern-card"><div class="pattern-chart-wrap bullish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#1e3a2e" stroke-width="1"/><line x1="10" y1="18" x2="90" y2="38" stroke="#00e676" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/><line x1="10" y1="68" x2="90" y2="48" stroke="#00e676" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/><polyline points="10,20 28,62 46,32 64,58 82,42" fill="none" stroke="#00e676" stroke-width="2"/><polyline points="82,42 105,20 120,20" fill="none" stroke="#00e676" stroke-width="2.5"/><polygon points="120,17 128,20 120,23" fill="#00e676"/><text x="105" y="16" fill="#00e676" font-size="8" font-weight="bold">TP</text><rect x="65" y="28" width="24" height="10" rx="2" fill="rgba(0,230,118,0.15)"/><text x="67" y="36" fill="#00e676" font-size="7" font-weight="bold">Entry</text></svg></div><div class="pattern-name">Symmetrical Triangle</div><div class="pattern-tag bullish-tag">Bullish</div><div class="pattern-desc">Converging highs and lows. Explosive breakout when price exits the apex.</div></div>
-        </div>
-      </div>
-      <div class="pattern-section" id="pg_bullish_rev">
-        <div class="pattern-section-title bullish">▲ Bullish Reversal</div>
-        <div class="pattern-grid">
-          <div class="pattern-card"><div class="pattern-chart-wrap bullish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#1e3a2e" stroke-width="1"/><polyline points="10,20 40,72 70,28 100,72 128,12" fill="none" stroke="#00e676" stroke-width="2.5"/><line x1="10" y1="30" x2="128" y2="30" stroke="#00e676" stroke-width="1.5" stroke-dasharray="5,3"/><text x="45" y="27" fill="#00e676" font-size="7" font-weight="bold">Neckline — Entry</text><circle cx="40" cy="72" r="4" fill="none" stroke="#00e676" stroke-width="1.5"/><circle cx="100" cy="72" r="4" fill="none" stroke="#00e676" stroke-width="1.5"/><text x="118" y="10" fill="#00e676" font-size="8" font-weight="bold">TP</text></svg></div><div class="pattern-name">Double Bottom</div><div class="pattern-tag bullish-tag">Bullish</div><div class="pattern-desc">Two similar lows — W shape. Sellers failed twice, buyers taking control.</div></div>
-          <div class="pattern-card"><div class="pattern-chart-wrap bullish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#1e3a2e" stroke-width="1"/><polyline points="8,18 28,70 48,25 68,70 88,25 108,70 128,8" fill="none" stroke="#00e676" stroke-width="2.5"/><line x1="8" y1="28" x2="128" y2="28" stroke="#00e676" stroke-width="1.5" stroke-dasharray="5,3"/><circle cx="28" cy="70" r="4" fill="none" stroke="#00e676" stroke-width="1.5"/><circle cx="68" cy="70" r="4" fill="none" stroke="#00e676" stroke-width="1.5"/><circle cx="108" cy="70" r="4" fill="none" stroke="#00e676" stroke-width="1.5"/><text x="118" y="6" fill="#00e676" font-size="8" font-weight="bold">TP</text></svg></div><div class="pattern-name">Triple Bottom</div><div class="pattern-tag bullish-tag">Bullish</div><div class="pattern-desc">Three tests of support that hold. Very strong reversal signal.</div></div>
-          <div class="pattern-card"><div class="pattern-chart-wrap bullish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#1e3a2e" stroke-width="1"/><polyline points="10,20 25,55 32,38 50,70 58,50 75,70 82,38 97,55 112,20" fill="none" stroke="#00e676" stroke-width="2"/><line x1="25" y1="42" x2="112" y2="42" stroke="#00e676" stroke-width="1.5" stroke-dasharray="5,3"/><text x="40" y="39" fill="#00e676" font-size="7">Neckline</text><polyline points="112,42 125,15 130,12" fill="none" stroke="#00e676" stroke-width="2.5"/><text x="8" y="35" fill="#8896a7" font-size="6">LS</text><text x="47" y="78" fill="#8896a7" font-size="6">Head</text><text x="96" y="35" fill="#8896a7" font-size="6">RS</text></svg></div><div class="pattern-name">Inv. Head & Shoulders</div><div class="pattern-tag bullish-tag">Bullish</div><div class="pattern-desc">3 lows with middle lowest. Neckline breakout confirms powerful bullish reversal.</div></div>
-          <div class="pattern-card"><div class="pattern-chart-wrap bullish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#1e3a2e" stroke-width="1"/><line x1="10" y1="12" x2="90" y2="55" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="4,3" opacity=".7"/><line x1="10" y1="28" x2="90" y2="65" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="4,3" opacity=".7"/><polyline points="10,12 28,60 45,32 62,62 80,42" fill="none" stroke="#00e676" stroke-width="2"/><polyline points="80,42 102,18 120,18" fill="none" stroke="#00e676" stroke-width="2.5"/><polygon points="120,15 128,18 120,21" fill="#00e676"/><text x="105" y="14" fill="#00e676" font-size="8" font-weight="bold">TP</text><rect x="63" y="28" width="24" height="10" rx="2" fill="rgba(0,230,118,0.15)"/><text x="65" y="36" fill="#00e676" font-size="7" font-weight="bold">Entry</text></svg></div><div class="pattern-name">Falling Wedge</div><div class="pattern-tag bullish-tag">Bullish</div><div class="pattern-desc">Downward converging lines. Breakout above signals strong bullish reversal.</div></div>
-        </div>
-      </div>
-      <div class="pattern-section" id="pg_bearish_cont">
-        <div class="pattern-section-title bearish">▼ Bearish Continuation</div>
-        <div class="pattern-grid">
-          <div class="pattern-card"><div class="pattern-chart-wrap bearish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#3a1e1e" stroke-width="1"/><polyline points="20,10 50,60" fill="none" stroke="#ff5252" stroke-width="2.5"/><rect x="50" y="45" width="40" height="22" rx="3" fill="rgba(255,82,82,0.08)" stroke="#ff5252" stroke-width="1" stroke-dasharray="3,2"/><polyline points="50,60 62,50 74,56 86,48 90,54" fill="none" stroke="#ff5252" stroke-width="1.5"/><polyline points="90,54 110,78 125,80" fill="none" stroke="#ff5252" stroke-width="2.5"/><polygon points="125,77 133,80 125,83" fill="#ff5252"/><text x="110" y="76" fill="#ff5252" font-size="8" font-weight="bold">TP</text><rect x="52" y="60" width="30" height="10" rx="2" fill="rgba(255,82,82,0.15)"/><text x="55" y="68" fill="#ff5252" font-size="7" font-weight="bold">Entry ▼</text></svg></div><div class="pattern-name">Bear Flag</div><div class="pattern-tag bearish-tag">Bearish</div><div class="pattern-desc">Sharp drop + weak bounce. Sellers resting before next leg down.</div></div>
-          <div class="pattern-card"><div class="pattern-chart-wrap bearish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#3a1e1e" stroke-width="1"/><line x1="30" y1="62" x2="95" y2="62" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="4,3" opacity=".7"/><line x1="15" y1="25" x2="95" y2="52" stroke="#ff5252" stroke-width="1.5" opacity=".7"/><polyline points="15,25 30,62 45,40 60,62 75,50 90,62" fill="none" stroke="#ff5252" stroke-width="2"/><polyline points="90,62 110,80 125,80" fill="none" stroke="#ff5252" stroke-width="2.5"/><polygon points="125,77 133,80 125,83" fill="#ff5252"/><text x="97" y="78" fill="#ff5252" font-size="8" font-weight="bold">TP</text><rect x="50" y="42" width="30" height="10" rx="2" fill="rgba(255,82,82,0.15)"/><text x="53" y="50" fill="#ff5252" font-size="7" font-weight="bold">Entry ▼</text></svg></div><div class="pattern-name">Descending Triangle</div><div class="pattern-tag bearish-tag">Bearish</div><div class="pattern-desc">Flat support + declining highs. Sellers pushing down — breakdown imminent.</div></div>
-          <div class="pattern-card"><div class="pattern-chart-wrap bearish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#3a1e1e" stroke-width="1"/><line x1="10" y1="12" x2="90" y2="48" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/><line x1="10" y1="30" x2="90" y2="60" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/><polyline points="10,12 28,52 44,28 62,55 78,38" fill="none" stroke="#ff5252" stroke-width="2"/><polyline points="78,38 100,68 118,75" fill="none" stroke="#ff5252" stroke-width="2.5"/><polygon points="118,72 126,75 118,78" fill="#ff5252"/><text x="104" y="72" fill="#ff5252" font-size="8" font-weight="bold">TP</text><rect x="62" y="24" width="24" height="10" rx="2" fill="rgba(255,82,82,0.15)"/><text x="64" y="32" fill="#ff5252" font-size="7" font-weight="bold">Entry</text></svg></div><div class="pattern-name">Bear Wedge</div><div class="pattern-tag bearish-tag">Bearish</div><div class="pattern-desc">Downward converging channel. Continuation of downtrend after breakdown.</div></div>
-          <div class="pattern-card"><div class="pattern-chart-wrap bearish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#3a1e1e" stroke-width="1"/><line x1="10" y1="18" x2="90" y2="42" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/><line x1="10" y1="62" x2="90" y2="48" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/><polyline points="10,20 28,55 46,30 64,52 80,42" fill="none" stroke="#ff5252" stroke-width="2"/><polyline points="80,42 102,68 118,75" fill="none" stroke="#ff5252" stroke-width="2.5"/><polygon points="118,72 126,75 118,78" fill="#ff5252"/><text x="104" y="72" fill="#ff5252" font-size="8" font-weight="bold">TP</text><rect x="63" y="28" width="24" height="10" rx="2" fill="rgba(255,82,82,0.15)"/><text x="65" y="36" fill="#ff5252" font-size="7" font-weight="bold">Entry</text></svg></div><div class="pattern-name">Symmetrical Triangle</div><div class="pattern-tag bearish-tag">Bearish</div><div class="pattern-desc">Converging lines in downtrend. Breakdown confirms bearish continuation.</div></div>
-        </div>
-      </div>
-      <div class="pattern-section" id="pg_bearish_rev">
-        <div class="pattern-section-title bearish">▼ Bearish Reversal</div>
-        <div class="pattern-grid">
-          <div class="pattern-card"><div class="pattern-chart-wrap bearish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#3a1e1e" stroke-width="1"/><polyline points="10,62 40,12 70,62 100,12 128,72" fill="none" stroke="#ff5252" stroke-width="2.5"/><line x1="10" y1="52" x2="128" y2="52" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="5,3"/><text x="42" y="49" fill="#ff5252" font-size="7" font-weight="bold">Neckline — Sell</text><circle cx="40" cy="12" r="4" fill="none" stroke="#ff5252" stroke-width="1.5"/><circle cx="100" cy="12" r="4" fill="none" stroke="#ff5252" stroke-width="1.5"/><text x="120" y="72" fill="#ff5252" font-size="8" font-weight="bold">TP</text></svg></div><div class="pattern-name">Double Top</div><div class="pattern-tag bearish-tag">Bearish</div><div class="pattern-desc">Two similar highs — M shape. Buyers failed twice, sellers taking control.</div></div>
-          <div class="pattern-card"><div class="pattern-chart-wrap bearish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#3a1e1e" stroke-width="1"/><polyline points="8,65 28,12 48,65 68,12 88,65 108,12 128,72" fill="none" stroke="#ff5252" stroke-width="2.5"/><line x1="8" y1="52" x2="128" y2="52" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="5,3"/><circle cx="28" cy="12" r="3" fill="none" stroke="#ff5252" stroke-width="1.5"/><circle cx="68" cy="12" r="3" fill="none" stroke="#ff5252" stroke-width="1.5"/><circle cx="108" cy="12" r="3" fill="none" stroke="#ff5252" stroke-width="1.5"/><text x="118" y="72" fill="#ff5252" font-size="8" font-weight="bold">TP</text></svg></div><div class="pattern-name">Triple Top</div><div class="pattern-tag bearish-tag">Bearish</div><div class="pattern-desc">Three failed attempts at resistance. Very strong reversal signal.</div></div>
-          <div class="pattern-card"><div class="pattern-chart-wrap bearish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#3a1e1e" stroke-width="1"/><polyline points="8,62 22,38 32,50 50,12 62,38 78,50 92,38 108,62" fill="none" stroke="#ff5252" stroke-width="2"/><line x1="22" y1="48" x2="108" y2="48" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="5,3"/><text x="42" y="44" fill="#ff5252" font-size="7" font-weight="bold">Neckline</text><polyline points="108,48 122,72 130,78" fill="none" stroke="#ff5252" stroke-width="2.5"/><text x="8" y="34" fill="#8896a7" font-size="6">LS</text><text x="46" y="10" fill="#8896a7" font-size="6">Head</text><text x="88" y="34" fill="#8896a7" font-size="6">RS</text></svg></div><div class="pattern-name">Head & Shoulders</div><div class="pattern-tag bearish-tag">Bearish</div><div class="pattern-desc">3 peaks with middle highest. Neckline break confirms major bearish reversal.</div></div>
-          <div class="pattern-card"><div class="pattern-chart-wrap bearish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#3a1e1e" stroke-width="1"/><line x1="10" y1="65" x2="90" y2="18" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/><line x1="10" y1="78" x2="90" y2="38" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/><polyline points="10,65 28,45 44,62 60,35 76,52" fill="none" stroke="#ff5252" stroke-width="2"/><polyline points="76,52 98,75 115,80" fill="none" stroke="#ff5252" stroke-width="2.5"/><polygon points="115,77 123,80 115,83" fill="#ff5252"/><text x="100" y="75" fill="#ff5252" font-size="8" font-weight="bold">TP</text><rect x="58" y="22" width="30" height="10" rx="2" fill="rgba(255,82,82,0.15)"/><text x="61" y="30" fill="#ff5252" font-size="7" font-weight="bold">Entry ▼</text></svg></div><div class="pattern-name">Rising Wedge</div><div class="pattern-tag bearish-tag">Bearish</div><div class="pattern-desc">Upward converging lines losing momentum. Breakdown signals strong bearish reversal.</div></div>
-        </div>
-      </div>
+      <div class="sm-grid" id="smGrid"></div>
+      <div class="sec-title" id="lbl_flow">Flow distribution</div>
+      <div id="smBars"></div>
+      <div class="sm-desc" id="smDesc"></div>
     </div>
 
-    <!-- ══ SETTINGS PANEL ══ -->
-    <div id="settingsPanel" style="display:none;">
-      <div class="panel" style="margin-bottom:1rem;">
-        <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:1.5rem;">⚙️ Settings</div>
-
-        <!-- Idioma -->
-        <div style="background:var(--bg3);border-radius:12px;padding:1.25rem;margin-bottom:1rem;">
-          <div style="font-size:13px;font-weight:600;margin-bottom:.5rem;">🌐 Language</div>
-          <div style="display:flex;gap:10px;margin-top:.75rem;">
-            <button onclick="applyDashLang('en');document.getElementById('langBtn').textContent='🌐 ES';" style="flex:1;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:13px;transition:all .2s;" id="btnLangEn">🇺🇸 English</button>
-            <button onclick="applyDashLang('es');document.getElementById('langBtn').textContent='🌐 EN';" style="flex:1;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:13px;transition:all .2s;" id="btnLangEs">🇪🇸 Español</button>
-          </div>
-        </div>
-
-        <!-- Plan -->
-        <div style="background:var(--bg3);border-radius:12px;padding:1.25rem;margin-bottom:1rem;">
-          <div style="font-size:13px;font-weight:600;margin-bottom:.5rem;">💳 Subscription</div>
-          <div style="font-size:13px;color:var(--muted);margin-bottom:.75rem;" id="settingsPlanText">Loading...</div>
-          <button id="settingsUpgradeBtn" onclick="startCheckout()" style="width:100%;padding:10px;border-radius:8px;background:var(--green);color:#000;border:none;font-size:13px;font-weight:600;cursor:pointer;">⚡ Upgrade to Pro — $12/mo</button>
-        </div>
-
-        <!-- Cuenta -->
-        <div style="background:var(--bg3);border-radius:12px;padding:1.25rem;margin-bottom:1rem;">
-          <div style="font-size:13px;font-weight:600;margin-bottom:.5rem;">👤 Account</div>
-          <div style="font-size:13px;color:var(--muted);margin-bottom:.75rem;" id="settingsEmail">—</div>
-          <button onclick="handleLogout()" style="width:100%;padding:10px;border-radius:8px;background:transparent;color:var(--muted);border:1px solid var(--border);font-size:13px;cursor:pointer;">Sign out</button>
-        </div>
-
-        <!-- Links -->
-        <div style="background:var(--bg3);border-radius:12px;padding:1.25rem;">
-          <div style="font-size:13px;font-weight:600;margin-bottom:.75rem;">📄 Legal</div>
-          <div style="display:flex;gap:1rem;">
-            <a href="terms.html" style="font-size:13px;color:var(--green);text-decoration:none;">Terms of Service</a>
-            <a href="privacy.html" style="font-size:13px;color:var(--green);text-decoration:none;">Privacy Policy</a>
-          </div>
-        </div>
+    <!-- CANDLE + VWAP -->
+    <div class="two-col">
+      <div class="inner-panel">
+        <div class="panel-title" id="panel_candle">Current candle</div>
+        <div class="candle-row" id="candleRow"></div>
+        <div class="candle-name" id="candleName"></div>
+        <div class="candle-sig" id="candleSig"></div>
+        <div class="candle-desc" id="candleDesc"></div>
+      </div>
+      <div class="inner-panel">
+        <div class="panel-title">VWAP</div>
+        <div class="vwap-rows" id="vwapRows"></div>
       </div>
     </div>
 
-    <!-- ══ LEARN PANEL ══ -->
-    <div id="learnPanel" style="display:none;">
-      <div class="panel" style="margin-bottom:1rem;">
-        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:.5rem;" id="learn_title_h">📚 Indicator Guide</div>
-        <div style="font-size:13px;color:var(--muted);margin-bottom:2rem;" id="learn_sub_h">Learn how every indicator works and how to use it to make better trading decisions.</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.5rem;">
-          <button onclick="filterLearn('all')" class="learn-tab active" id="tab_all">All</button>
-          <button onclick="filterLearn('momentum')" class="learn-tab" id="tab_momentum">Momentum</button>
-          <button onclick="filterLearn('trend')" class="learn-tab" id="tab_trend">Trend</button>
-          <button onclick="filterLearn('volume')" class="learn-tab" id="tab_volume">Volume</button>
-          <button onclick="filterLearn('pattern')" class="learn-tab" id="tab_pattern">Patterns</button>
-          <button onclick="filterLearn('sentiment')" class="learn-tab" id="tab_sentiment">Sentiment</button>
-        </div>
-        <div id="learnGrid"></div>
-      </div>
+    <!-- INDICATORS + SCORE -->
+    <div class="panel">
+      <div class="ind-grid" id="indGrid"></div>
+      <hr class="divider">
+      <div class="sec-title" id="score_title">Total signal score</div>
+      <div class="score-row"><span class="score-lbl c-buy" id="score_buy_lbl">Buy</span><div class="score-bg"><div class="score-bar" id="barBuy" style="background:#00e676;width:0%"></div></div><span class="score-num" id="numBuy">0%</span></div>
+      <div class="score-row"><span class="score-lbl c-neutral" id="score_neu_lbl">Neutral</span><div class="score-bg"><div class="score-bar" id="barNeutral" style="background:#8896a7;width:0%"></div></div><span class="score-num" id="numNeutral">0%</span></div>
+      <div class="score-row"><span class="score-lbl c-sell" id="score_sell_lbl">Sell</span><div class="score-bg"><div class="score-bar" id="barSell" style="background:#ff5252;width:0%"></div></div><span class="score-num" id="numSell">0%</span></div>
     </div>
 
-    <!-- ANALYZER -->
-    <div class="analyzer-card" id="analyzerSection">
-      <div class="input-row">
-        <input type="text" id="tickerInput" placeholder="Ej: AAPL, TSLA, NVDA..." maxlength="10"/>
-        <button class="primary" id="analyzeBtn" onclick="analyze()">Analizar</button>
+    <!-- PUT/CALL -->
+    <div class="panel">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;">
+        <div class="panel-title">Put/Call Ratio</div>
+        <span class="badge2" id="pcBadge">—</span>
       </div>
-      <div class="tf-row">
-        <button class="tf-btn intraday active" onclick="setTF(this,'1D')">1D</button>
-        <button class="tf-btn" onclick="setTF(this,'1M')">1M</button>
-        <button class="tf-btn" onclick="setTF(this,'3M')">3M</button>
-        <button class="tf-btn" onclick="setTF(this,'6M')">6M</button>
-        <button class="tf-btn" onclick="setTF(this,'1Y')">1A</button>
+      <div class="pc-grid" id="pcGrid"></div>
+      <div class="pc-gauge-wrap">
+        <div class="pc-gauge-label"><span id="lbl_greed">Greed</span><span>Neutral</span><span id="lbl_fear">Fear</span></div>
+        <div class="pc-gauge-bg"><div class="pc-needle" id="pcNeedle" style="left:50%"></div></div>
       </div>
-      <div class="chips">
-        <button class="chip" onclick="setTicker('AAPL')">AAPL</button>
-        <button class="chip" onclick="setTicker('TSLA')">TSLA</button>
-        <button class="chip" onclick="setTicker('MSFT')">MSFT</button>
-        <button class="chip" onclick="setTicker('NVDA')">NVDA</button>
-        <button class="chip" onclick="setTicker('AMZN')">AMZN</button>
-        <button class="chip" onclick="setTicker('GOOGL')">GOOGL</button>
-        <button class="chip" onclick="setTicker('META')">META</button>
-        <button class="chip" onclick="setTicker('SPY')">SPY</button>
-      </div>
+      <div class="pc-hist"><canvas id="pcHistChart"></canvas></div>
+      <div class="pc-interp" id="pcInterp"></div>
     </div>
 
-    <div class="error-msg" id="errorMsg"></div>
-    <div class="loading-state" id="loadingMsg"><span class="spinner"></span><span id="loadingText">Analizando...</span></div>
+    <p style="font-size:11px;color:#444;margin-top:1rem;line-height:1.6;" id="footer_note">Prices: Twelve Data · AI: Claude · Put/Call: CBOE · Not financial advice.</p>
+  </div>
+</div>
 
-    <div class="results" id="results">
-      <div class="analyzer-card">
-        <div class="price-header">
-          <div class="price-big" id="priceBig"></div>
-          <div class="price-chg" id="priceChg"></div>
-          <div class="price-meta" id="priceMeta"></div>
-          <button id="favBtn" onclick="toggleFavorite()" style="background:none;border:none;font-size:22px;cursor:pointer;margin-left:auto;opacity:.5;transition:all .2s;" title="Add to favorites">⭐</button>
-        </div>
-        <div class="banner" id="banner">
-          <div class="banner-title" id="bannerTitle"></div>
-          <div class="banner-body" id="bannerBody"></div>
-          <div class="banner-note" id="bannerNote"></div>
-        </div>
-        <div class="targets-row" id="targetsRow" style="display:none;">
-          <div class="target-box buy-t"><div class="target-icon">🎯</div>
-            <div><div class="target-lbl">Precio de entrada</div><div class="target-price" id="buyTargetPrice"></div><div class="target-desc" id="buyTargetDesc"></div></div></div>
-          <div class="target-box sell-t"><div class="target-icon">🛑</div>
-            <div><div class="target-lbl">Stop Loss</div><div class="target-price" id="slTargetPrice"></div><div class="target-desc" id="slTargetDesc"></div></div></div>
-        </div>
-        <div class="chart-wrap"><canvas id="priceChart"></canvas></div>
-      </div>
-
-      <!-- CHART PATTERNS -->
-      <div class="panel">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;">
-          <div class="panel-title" style="margin-bottom:0;" id="panel_patterns">📐 Chart patterns</div>
-          <span class="badge2" id="cpBadge">—</span>
-        </div>
-        <div id="cpContent"></div>
-      </div>
-
-      <!-- PUT/CALL -->
-      <div class="panel">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;">
-          <div class="panel-title" style="margin-bottom:0;">📊 Put/Call Ratio</div>
-          <span class="badge2" id="pcBadge">—</span>
-        </div>
-        <div class="pc-grid" id="pcGrid"></div>
-        <div class="pc-gauge-wrap">
-          <div class="pc-gauge-label"><span>Greed (CALL)</span><span>Neutral</span><span>Fear (PUT)</span></div>
-          <div class="pc-gauge-bg"><div class="pc-needle" id="pcNeedle" style="left:50%"></div></div>
-        </div>
-        <div class="pc-hist"><canvas id="pcHistChart"></canvas></div>
-        <div class="pc-interp" id="pcInterp"></div>
-      </div>
-
-      <!-- SMART MONEY -->
-      <div class="panel">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;">
-          <div class="panel-title" style="margin-bottom:0;">💼 Smart Money</div>
-          <span class="badge2" id="smBadge">—</span>
-        </div>
-        <div class="sm-grid" id="smGrid"></div>
-        <div class="sec-title">Flow distribution</div>
-        <div id="smBars"></div>
-        <div class="sm-desc" id="smDesc"></div>
-      </div>
-
-      <div class="two-col">
-        <div class="inner-panel">
-          <div class="panel-title" id="panel_candle">Current candle</div>
-          <div class="candle-row" id="candleRow"></div>
-          <div class="candle-name" id="candleName"></div>
-          <div class="candle-sig" id="candleSig"></div>
-          <div class="candle-desc" id="candleDesc"></div>
-        </div>
-        <div class="inner-panel">
-          <div class="panel-title">VWAP</div>
-          <div class="vwap-rows" id="vwapRows"></div>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="ind-grid" id="indGrid"></div>
-        <hr class="divider">
-        <div class="sec-title" id="score_title">Total signal score</div>
-        <div class="score-row"><span class="score-lbl c-buy">Compra</span><div class="score-bg"><div class="score-bar" id="barBuy" style="background:#00e676;width:0%"></div></div><span class="score-num" id="numBuy">0%</span></div>
-        <div class="score-row"><span class="score-lbl c-neutral">Neutral</span><div class="score-bg"><div class="score-bar" id="barNeutral" style="background:#8896a7;width:0%"></div></div><span class="score-num" id="numNeutral">0%</span></div>
-        <div class="score-row"><span class="score-lbl c-sell">Venta</span><div class="score-bg"><div class="score-bar" id="barSell" style="background:#ff5252;width:0%"></div></div><span class="score-num" id="numSell">0%</span></div>
-      </div>
-
-      <p style="font-size:11px;color:#333;margin-top:1rem;line-height:1.6;">⚡ Precios: Twelve Data · Noticias: Alpha Vantage + IA · Put/Call: CBOE · No constituye asesoramiento financiero.</p>
+<!-- FAVORITES PANEL -->
+<div id="favoritesPanel" style="display:none;">
+  <div class="panel">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+      <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;" id="fav_title">Favorites</div>
+      <div style="font-size:12px;color:var(--muted);" id="fav_hint">Click ⭐ to save</div>
     </div>
+    <div id="favoritesList"></div>
+  </div>
+</div>
+
+<!-- CHARTS PANEL -->
+<div id="chartsPanel" style="display:none;">
+  <div style="margin-bottom:1.5rem;">
+    <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;" id="charts_title">Chart Patterns</div>
+    <div style="font-size:13px;color:var(--muted);margin-top:4px;" id="charts_sub">Visual reference for the most important trading patterns</div>
+  </div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.5rem;">
+    <button class="news-cat-btn active" onclick="filterPatternGuide('all',this)" id="pg_all">All</button>
+    <button class="news-cat-btn" onclick="filterPatternGuide('bullish_cont',this)" id="pg_bc">Bull Continuation</button>
+    <button class="news-cat-btn" onclick="filterPatternGuide('bullish_rev',this)" id="pg_br">Bull Reversal</button>
+    <button class="news-cat-btn" onclick="filterPatternGuide('bearish_cont',this)" id="pg_sc">Bear Continuation</button>
+    <button class="news-cat-btn" onclick="filterPatternGuide('bearish_rev',this)" id="pg_sr">Bear Reversal</button>
+  </div>
+  <div id="patternGuideContent"></div>
+</div>
+
+<!-- LEARN PANEL -->
+<div id="learnPanel" style="display:none;">
+  <div class="panel">
+    <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:.5rem;" id="learn_title">Indicator Guide</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:2rem;" id="learn_sub">Learn how every indicator works.</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.5rem;">
+      <button onclick="filterLearn('all')" class="learn-tab active" id="tab_all">All</button>
+      <button onclick="filterLearn('momentum')" class="learn-tab" id="tab_momentum">Momentum</button>
+      <button onclick="filterLearn('trend')" class="learn-tab" id="tab_trend">Trend</button>
+      <button onclick="filterLearn('volume')" class="learn-tab" id="tab_volume">Volume</button>
+      <button onclick="filterLearn('pattern')" class="learn-tab" id="tab_pattern">Patterns</button>
+      <button onclick="filterLearn('sentiment')" class="learn-tab" id="tab_sentiment">Sentiment</button>
+    </div>
+    <div id="learnGrid"></div>
+  </div>
+</div>
+
+<!-- SETTINGS PANEL -->
+<div id="settingsPanel" style="display:none;">
+  <div class="panel">
+    <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:1.5rem;" id="settings_title">Settings</div>
+    <div style="background:var(--bg3);border-radius:12px;padding:1.25rem;margin-bottom:1rem;">
+      <div style="font-size:13px;font-weight:600;margin-bottom:.75rem;" id="set_lang_lbl">Language</div>
+      <div style="display:flex;gap:10px;">
+        <button onclick="applyLang('en')" style="flex:1;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:13px;">English</button>
+        <button onclick="applyLang('es')" style="flex:1;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:13px;">Español</button>
+      </div>
+    </div>
+    <div style="background:var(--bg3);border-radius:12px;padding:1.25rem;margin-bottom:1rem;">
+      <div style="font-size:13px;font-weight:600;margin-bottom:.5rem;" id="set_plan_lbl">Subscription</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:.75rem;" id="settingsPlanText">Loading...</div>
+      <button id="settingsUpgradeBtn" onclick="startCheckout()" style="width:100%;padding:10px;border-radius:8px;background:#00e676;color:#000;border:none;font-size:13px;font-weight:700;cursor:pointer;">Upgrade to Pro — $12/mo</button>
+    </div>
+    <div style="background:var(--bg3);border-radius:12px;padding:1.25rem;margin-bottom:1rem;">
+      <div style="font-size:13px;font-weight:600;margin-bottom:.5rem;" id="set_acc_lbl">Account</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:.75rem;" id="settingsEmail">—</div>
+      <button onclick="handleLogout()" style="width:100%;padding:10px;border-radius:8px;background:transparent;color:var(--muted);border:1px solid var(--border);font-size:13px;cursor:pointer;" id="set_logout_btn">Sign out</button>
+    </div>
+    <div style="background:var(--bg3);border-radius:12px;padding:1.25rem;">
+      <div style="font-size:13px;font-weight:600;margin-bottom:.75rem;">Legal</div>
+      <div style="display:flex;gap:1rem;">
+        <a href="terms.html" style="font-size:13px;color:#00e676;text-decoration:none;">Terms</a>
+        <a href="privacy.html" style="font-size:13px;color:#00e676;text-decoration:none;">Privacy</a>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
   </main>
 </div>
 
 <script>
-// ── SUPABASE + STRIPE ──
+
+// == SUPABASE + STRIPE ==
 const { createClient } = supabase;
 const sb = createClient(
   'https://wnfogptzpqqugjxvwlnb.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InduZm9ncHR6cHFxdWdqeHZ3bG5iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzOTY2MzUsImV4cCI6MjA5MDk3MjYzNX0.qLngiAY9bFvVipEAtKVqQVQAV62QcUPAlElKPkWAqRk'
 );
 const stripe = Stripe('pk_live_51TIsOgPqcW30lq4d4cC2KH5yCGnPYQtcbLjBimVbrUN7R0rGTP05q3BaIr63Y9dzmZLrD82gYdtlLJgcfxPYuICD00sh5pMB0m');
-
 const PROXY = 'https://stock-proxy-ruddy.vercel.app/api/quote';
 const FREE_LIMIT = 5;
 
 let chartInst = null, pcChartInst = null, tfMode = '1D';
-let userPlan = 'free'; // 'free' | 'pro'
+let userPlan = 'free';
 let usageToday = 0;
+let currentTicker = '';
 
-// ── AUTH CHECK ──
 function toggleSidebar() {
   const s = document.getElementById('sidebar');
   const o = document.getElementById('sidebarOverlay');
@@ -754,42 +608,32 @@ function closeSidebar() {
 async function initAuth() {
   const { data: { session } } = await sb.auth.getSession();
   if (!session) { window.location.href = 'index.html'; return; }
-  const email = session.user.email;
-  document.getElementById('userEmail').textContent = email;
+  document.getElementById('userEmail').textContent = session.user.email;
 
-  // ── MANEJAR PAGO EXITOSO ──
   const params = new URLSearchParams(window.location.search);
   if (params.get('success') === 'true') {
     const userId = params.get('userId') || session.user.id;
-    // Activar plan Pro en Supabase
     try {
-      await fetch('https://stock-proxy-ruddy.vercel.app/api/quote?type=activate_pro', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      await fetch(PROXY + '?type=activate_pro', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ userId })
       });
     } catch(e) {}
-    // Limpiar URL
     window.history.replaceState({}, '', 'dashboard.html');
-    // Mostrar mensaje de bienvenida Pro
-    showProWelcome();
+    showToast('Welcome to Pro! Enjoy unlimited analyses.');
   }
-
   if (params.get('canceled') === 'true') {
     window.history.replaceState({}, '', 'dashboard.html');
   }
 
-  // Cargar uso del día
   const today = new Date().toISOString().slice(0,10);
-  const stored = localStorage.getItem(`usage_${today}`);
-  usageToday = stored ? parseInt(stored) : 0;
+  usageToday = parseInt(localStorage.getItem('usage_' + today) || '0');
   updateUsageBar();
 
-  // Verificar plan en Supabase
   const { data: profile } = await sb.from('profiles').select('plan').eq('id', session.user.id).single();
   if (profile?.plan === 'pro') {
     userPlan = 'pro';
-    document.getElementById('userPlan').textContent = 'Pro ⭐';
+    document.getElementById('userPlan').textContent = 'Pro';
     document.getElementById('userPlan').className = 'user-plan plan-pro';
     document.getElementById('btnUpgrade').style.display = 'none';
     document.getElementById('usageWrap').style.display = 'none';
@@ -800,65 +644,56 @@ async function initAuth() {
   }
 }
 
-function showProWelcome() {
-  const div = document.createElement('div');
-  div.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;background:#00e676;color:#000;padding:16px 24px;border-radius:14px;font-weight:700;font-size:15px;box-shadow:0 8px 30px rgba(0,230,118,0.4);animation:modalIn .3s ease;';
-  div.innerHTML = '🎉 Welcome to Pro! Enjoy unlimited analyses.';
-  document.body.appendChild(div);
-  setTimeout(() => div.remove(), 5000);
-}
-
 function updateUsageBar() {
   const pct = (usageToday / FREE_LIMIT) * 100;
   const fill = document.getElementById('usageFill');
-  document.getElementById('usageCount').textContent = `${usageToday}/${FREE_LIMIT}`;
+  document.getElementById('usageCount').textContent = usageToday + '/' + FREE_LIMIT;
   fill.style.width = pct + '%';
   fill.className = 'usage-fill' + (pct >= 100 ? ' danger' : pct >= 80 ? ' warning' : '');
 }
-
 function incrementUsage() {
   usageToday++;
   const today = new Date().toISOString().slice(0,10);
-  localStorage.setItem(`usage_${today}`, usageToday);
+  localStorage.setItem('usage_' + today, usageToday);
   updateUsageBar();
 }
-
 async function handleLogout() {
   await sb.auth.signOut();
   window.location.href = 'index.html';
 }
-
 async function startCheckout() {
   const { data: { session } } = await sb.auth.getSession();
   if (!session) { window.location.href = 'index.html'; return; }
   const btn = document.getElementById('btnUpgrade');
-  const originalText = btn.textContent;
-  btn.textContent = '⏳ Processing...';
-  btn.disabled = true;
+  const orig = btn.textContent;
+  btn.textContent = 'Processing...'; btn.disabled = true;
   try {
-    const r = await fetch('https://stock-proxy-ruddy.vercel.app/api/quote?type=checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const r = await fetch(PROXY + '?type=checkout', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ email: session.user.email, userId: session.user.id })
     });
     const d = await r.json();
     if (d.url) window.location.href = d.url;
-    else throw new Error(d.error || 'Payment error');
+    else throw new Error(d.error || 'Error');
   } catch(e) {
     alert('Error: ' + e.message);
-    btn.textContent = originalText;
-    btn.disabled = false;
+    btn.textContent = orig; btn.disabled = false;
   }
 }
-
-// ── HELPERS ──
 function setTicker(t) { document.getElementById('tickerInput').value = t; }
 function setTF(el, m) {
   document.querySelectorAll('.tf-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active'); tfMode = m;
 }
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:9999;background:#00e676;color:#000;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;box-shadow:0 4px 20px rgba(0,230,118,.3);';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
 
-// ── FETCH ──
+
 async function fetchTD(ticker) {
   const TD_KEY = 'cbecfbf347f74e9780b89f34b34d2431';
   const sizeMap = {'1M':30,'3M':65,'6M':130,'1Y':260};
@@ -921,6 +756,7 @@ async function fetchPutCall() {
 }
 
 // ── INDICATORS ──
+
 function calcRSI(c,p=14){if(c.length<p+1)return 50;let g=0,l=0;for(let i=c.length-p;i<c.length;i++){const d=c[i]-c[i-1];d>0?g+=d:l-=d;}const ag=g/p,al=l/p;if(!al)return 100;return+(100-100/(1+ag/al)).toFixed(1);}
 function calcSMA(a,p){const s=a.slice(-Math.min(p,a.length));return+(s.reduce((x,y)=>x+y,0)/s.length).toFixed(2);}
 function calcEMA(a,p){const k=2/(p+1);let e=a[0];for(let i=1;i<a.length;i++)e=a[i]*k+e*(1-k);return+e.toFixed(2);}
@@ -946,6 +782,7 @@ function calcSM(opens,highs,lows,closes,volumes){
 }
 
 // ── CHART PATTERNS ──
+
 function detectAllPatterns(closes,highs,lows,opens){
   const n=closes.length;if(n<10)return[];const results=[];
   const sma=(arr,p)=>{const s=arr.slice(-Math.min(p,arr.length));return s.reduce((a,b)=>a+b,0)/s.length;};
@@ -967,10 +804,12 @@ function detectAllPatterns(closes,highs,lows,opens){
 }
 
 // ── CANDLE ──
+
 const PAT=[{name:'Doji',sig:'neutral',desc:'Opening and closing nearly equal. Market indecision.'},{name:'Hammer',sig:'compra',desc:'Long lower wick. Bullish signal at support levels.'},{name:'Bullish Marubozu',sig:'compra',desc:'Long green candle with no wicks. Buyers dominated the session.'},{name:'Bearish Marubozu',sig:'venta',desc:'Long red candle with no wicks. Sellers dominated the session.'},{name:'Shooting Star',sig:'venta',desc:'Long upper wick. Rejection of high prices.'},{name:'Bullish Engulfing',sig:'compra',desc:'Green candle engulfs the previous one. Buyers in control.'},{name:'Bearish Engulfing',sig:'venta',desc:'Red candle engulfs the previous one. Sellers in control.'},{name:'Spinning Top',sig:'neutral',desc:'Small body with long wicks. High indecision.'}];
 function detectCandle(o,h,l,c,po,pc){const body=Math.abs(c-o),range=h-l||.001,uw=h-Math.max(o,c),lw=Math.min(o,c)-l,bull=c>=o;if(body<range*.1)return(uw>range*.35&&lw>range*.35)?PAT.find(p=>p.name==='Spinning Top'):PAT.find(p=>p.name==='Doji');if(body>range*.85)return bull?PAT.find(p=>p.name==='Bullish Marubozu'):PAT.find(p=>p.name==='Bearish Marubozu');if(!bull&&lw>body*2&&uw<body*.3)return PAT.find(p=>p.name==='Hammer');if(bull&&uw>body*2&&lw<body*.3)return PAT.find(p=>p.name==='Shooting Star');if(po&&pc){const pb=pc>=po;if(bull&&!pb&&c>po&&o<pc)return PAT.find(p=>p.name==='Bullish Engulfing');if(!bull&&pb&&c<po&&o>pc)return PAT.find(p=>p.name==='Bearish Engulfing');}return PAT.find(p=>p.name==='Spinning Top');}
 
 // ── RENDER FUNCTIONS ──
+
 function renderCandle(o,h,l,c,pat){
   const bull=c>=o,col=bull?'#00e676':'#ff5252',range=h-l||.001,H=58;
   const uh=Math.max(2,((h-Math.max(o,c))/range)*H),bh=Math.max(3,(Math.abs(c-o)/range)*H),lh=Math.max(2,((Math.min(o,c)-l)/range)*H);
@@ -1055,6 +894,8 @@ function renderBanner(data,ticker){
 
 
 // ── MAIN ANALYZE ──
+
+
 async function analyze(){
   const ticker=document.getElementById('tickerInput').value.trim().toUpperCase();
   if(!ticker)return;
@@ -1208,126 +1049,321 @@ if(panelNews)panelNews.textContent=tal.panel_news||"Today's news";
   updateFavBtn(ticker);
 }
 
-document.getElementById('tickerInput').addEventListener('keydown',e=>{if(e.key==='Enter')analyze();});
+
+document.getElementById('tickerInput').addEventListener('keydown', e => { if(e.key==='Enter') analyze(); });
 initAuth();
 
-// ══ THEME TOGGLE ══
+
+// == THEME ==
+function getChartColors() {
+  const isLight = document.body.classList.contains('light');
+  return {
+    tick: isLight ? '#64748b' : '#8896a7',
+    grid: isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.04)'
+  };
+}
 function toggleTheme() {
   const isLight = document.body.classList.toggle('light');
-  const btn = document.getElementById('themeBtn');
-  if(btn) btn.textContent = isLight ? '☀️' : '🌙';
+  document.getElementById('themeBtn').textContent = isLight ? '☀️' : '🌙';
   localStorage.setItem('theme', isLight ? 'light' : 'dark');
-  // Re-renderizar charts con nuevos colores
-  if(chartInst) {
+  if (chartInst) {
     const cc = getChartColors();
     chartInst.options.scales.x.ticks.color = cc.tick;
     chartInst.options.scales.y.ticks.color = cc.tick;
     chartInst.options.scales.y.grid.color = cc.grid;
     chartInst.update('none');
   }
-  if(pcChartInst) {
+  if (pcChartInst) {
     const cc = getChartColors();
     pcChartInst.options.scales.x.ticks.color = cc.tick;
     pcChartInst.options.scales.y.ticks.color = cc.tick;
     pcChartInst.update('none');
   }
 }
-// Aplicar tema guardado al cargar
-(function applyTheme(){
-  const saved = localStorage.getItem('theme');
-  if(saved === 'light') {
+(function(){
+  if (localStorage.getItem('theme') === 'light') {
     document.body.classList.add('light');
-    document.addEventListener('DOMContentLoaded', function(){
-      const btn = document.getElementById('themeBtn');
-      if(btn) btn.textContent = '☀️';
-    });
+    document.getElementById('themeBtn').textContent = '☀️';
   }
 })();
 
-// ══ FILTER PATTERN GUIDE ══
-function filterPatternGuide(cat, btn) {
-  document.querySelectorAll('.news-cat-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  const sections = ['pg_bullish_cont','pg_bullish_rev','pg_bearish_cont','pg_bearish_rev'];
-  const map = {
-    'all': sections,
-    'bullish_cont': ['pg_bullish_cont'],
-    'bullish_rev': ['pg_bullish_rev'],
-    'bearish_cont': ['pg_bearish_cont'],
-    'bearish_rev': ['pg_bearish_rev']
-  };
-  sections.forEach(id => {
+// == LANGUAGE ==
+const T = {
+  en: {
+    topbar_analyzer:'Analyzer', topbar_favorites:'Favorites', topbar_charts:'Charts',
+    topbar_learn:'Learn', topbar_settings:'Settings',
+    nav_analyzer:'Analyzer', nav_favorites:'Favorites', nav_charts:'Charts',
+    nav_learn:'Learn', nav_settings:'Settings',
+    btn_analyze:'Analyze', placeholder:'E.g: AAPL, TSLA, NVDA...',
+    usage_label:"Today's analyses:",
+    lim_title:'Daily limit reached',
+    lim_msg:"You've used your 5 free analyses. Upgrade for unlimited.",
+    lim_btn:'Upgrade to Pro — $12/mo', lim_dismiss:'Come back tomorrow',
+    fav_title:'Favorites', fav_hint:'Click ⭐ on any analysis to save',
+    charts_title:'Chart Patterns', charts_sub:'Visual reference for the most important trading patterns',
+    pg_all:'All', pg_bc:'Bull Continuation', pg_br:'Bull Reversal',
+    pg_sc:'Bear Continuation', pg_sr:'Bear Reversal',
+    learn_title:'Indicator Guide', learn_sub:'Learn how every indicator works.',
+    tab_all:'All', tab_momentum:'Momentum', tab_trend:'Trend',
+    tab_volume:'Volume', tab_pattern:'Patterns', tab_sentiment:'Sentiment',
+    settings_title:'Settings', set_lang_lbl:'Language', set_plan_lbl:'Subscription',
+    set_acc_lbl:'Account', set_logout_btn:'Sign out',
+    panel_patterns:'Chart Patterns', panel_sm:'Smart Money',
+    panel_candle:'Current candle', score_title:'Total signal score',
+    score_buy:'Buy', score_neu:'Neutral', score_sell:'Sell',
+    lbl_entry:'Entry Price', lbl_sl:'Stop Loss',
+    lbl_flow:'Flow distribution', lbl_greed:'Greed', lbl_fear:'Fear',
+    buy_signal:'BUY', sell_signal:'SELL', hold_signal:'HOLD',
+    loading_prices:'Getting prices...', loading_ai:'Generating AI analysis...',
+    above:'Above', below:'Below',
+    bullish:'Bullish', bearish:'Bearish', neutral:'Neutral',
+    oversold:'Oversold', overbought:'Overbought',
+    buying:'Buying', selling:'Selling', high:'High', normal:'Normal',
+    nav_upgrade:'Upgrade to Pro', nav_logout:'Sign out',
+    btn_upgrade_big:'Upgrade to Pro — $12/mo',
+    footer_note:'Prices: Twelve Data · AI: Claude · Not financial advice.'
+  },
+  es: {
+    topbar_analyzer:'Analizador', topbar_favorites:'Favoritos', topbar_charts:'Gráficos',
+    topbar_learn:'Aprender', topbar_settings:'Configuración',
+    nav_analyzer:'Analizador', nav_favorites:'Favoritos', nav_charts:'Gráficos',
+    nav_learn:'Aprender', nav_settings:'Configuración',
+    btn_analyze:'Analizar', placeholder:'Ej: AAPL, TSLA, NVDA...',
+    usage_label:'Análisis hoy:',
+    lim_title:'Límite diario alcanzado',
+    lim_msg:'Has usado tus 5 análisis gratuitos. Actualiza para análisis ilimitados.',
+    lim_btn:'Actualizar a Pro — $12/mes', lim_dismiss:'Volver mañana',
+    fav_title:'Favoritos', fav_hint:'Haz clic en ⭐ en cualquier análisis para guardar',
+    charts_title:'Patrones de Gráfico', charts_sub:'Referencia visual de los patrones de trading más importantes',
+    pg_all:'Todos', pg_bc:'Cont. Alcista', pg_br:'Rev. Alcista',
+    pg_sc:'Cont. Bajista', pg_sr:'Rev. Bajista',
+    learn_title:'Guía de Indicadores', learn_sub:'Aprende cómo funciona cada indicador.',
+    tab_all:'Todos', tab_momentum:'Momentum', tab_trend:'Tendencia',
+    tab_volume:'Volumen', tab_pattern:'Patrones', tab_sentiment:'Sentimiento',
+    settings_title:'Configuración', set_lang_lbl:'Idioma', set_plan_lbl:'Suscripción',
+    set_acc_lbl:'Cuenta', set_logout_btn:'Cerrar sesión',
+    panel_patterns:'Patrones de Gráfico', panel_sm:'Smart Money',
+    panel_candle:'Vela actual', score_title:'Puntuación total de señales',
+    score_buy:'Compra', score_neu:'Neutral', score_sell:'Venta',
+    lbl_entry:'Precio de entrada', lbl_sl:'Stop Loss',
+    lbl_flow:'Distribución de flujo', lbl_greed:'Codicia', lbl_fear:'Miedo',
+    buy_signal:'COMPRAR', sell_signal:'VENDER', hold_signal:'MANTENER',
+    loading_prices:'Obteniendo precios...', loading_ai:'Generando análisis con IA...',
+    above:'Encima', below:'Debajo',
+    bullish:'Alcista', bearish:'Bajista', neutral:'Neutral',
+    oversold:'Sobrevendido', overbought:'Sobrecomprado',
+    buying:'Comprando', selling:'Vendiendo', high:'Alto', normal:'Normal',
+    nav_upgrade:'Actualizar a Pro', nav_logout:'Cerrar sesión',
+    btn_upgrade_big:'Actualizar a Pro — $12/mes',
+    footer_note:'Precios: Twelve Data · IA: Claude · No es asesoramiento financiero.'
+  }
+};
+let currentLang = localStorage.getItem('lang') || 'en';
+
+function applyLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('lang', lang);
+  const t = T[lang];
+  // IDs directos
+  const ids = [
+    'topbar_title','nav_analyzer','nav_favorites_label','nav_charts_label',
+    'nav_learn_label','nav_settings_label','usage_label',
+    'lim_title','lim_btn','lim_dismiss','fav_title','fav_hint',
+    'charts_title','charts_sub','pg_all','pg_bc','pg_br','pg_sc','pg_sr',
+    'learn_title','learn_sub','tab_all','tab_momentum','tab_trend',
+    'tab_volume','tab_pattern','tab_sentiment','settings_title',
+    'set_lang_lbl','set_plan_lbl','set_acc_lbl','set_logout_btn',
+    'panel_patterns','panel_sm','panel_candle','score_title',
+    'score_buy_lbl','score_neu_lbl','score_sell_lbl','lbl_entry','lbl_sl',
+    'lbl_flow','lbl_greed','lbl_fear','nav_upgrade','nav_logout','footer_note'
+  ];
+  const keys = [
+    'topbar_analyzer','nav_analyzer','nav_favorites','nav_charts','nav_learn',
+    'nav_settings','usage_label','lim_title','lim_btn','lim_dismiss',
+    'fav_title','fav_hint','charts_title','charts_sub','pg_all','pg_bc',
+    'pg_br','pg_sc','pg_sr','learn_title','learn_sub','tab_all',
+    'tab_momentum','tab_trend','tab_volume','tab_pattern','tab_sentiment',
+    'settings_title','set_lang_lbl','set_plan_lbl','set_acc_lbl','set_logout_btn',
+    'panel_patterns','panel_sm','panel_candle','score_title',
+    'score_buy','score_neu','score_sell','lbl_entry','lbl_sl',
+    'lbl_flow','lbl_greed','lbl_fear','nav_upgrade','nav_logout','footer_note'
+  ];
+  ids.forEach((id, i) => {
     const el = document.getElementById(id);
-    if(el) el.style.display = (map[cat]||sections).includes(id) ? 'block' : 'none';
+    if (el && t[keys[i]]) el.textContent = t[keys[i]];
   });
+  // lim_msg especial
+  const lm = document.getElementById('lim_msg'); if(lm) lm.textContent = t.lim_msg;
+  // Inputs
+  const ti = document.getElementById('tickerInput'); if(ti) ti.placeholder = t.placeholder;
+  const ab = document.getElementById('analyzeBtn'); if(ab) ab.textContent = t.btn_analyze;
+  const ub = document.getElementById('btnUpgrade'); if(ub) ub.textContent = t.nav_upgrade;
+  const lo = document.querySelector('.btn-logout'); if(lo) lo.textContent = t.nav_logout;
+  // Botón idioma
+  document.getElementById('langBtn').textContent = lang === 'es' ? 'EN' : 'ES';
+  document.documentElement.lang = lang;
+  // Re-renderizar Learn si está visible
+  if (document.getElementById('learnPanel').style.display !== 'none') {
+    const at = document.querySelector('.learn-tab.active');
+    renderLearn(at ? at.id.replace('tab_','') : 'all');
+  }
+  // Actualizar topbar según sección activa
+  const activeBtn = document.querySelector('.nav-item.active');
+  if (activeBtn) {
+    const sec = activeBtn.id.replace('nav_btn_','');
+    const titleMap = {
+      analyzer: t.topbar_analyzer,
+      favorites: t.topbar_favorites,
+      charts: t.topbar_charts,
+      learn: t.topbar_learn,
+      settings: t.topbar_settings
+    };
+    const titleEl = document.getElementById('topbar_title');
+    if (titleEl && titleMap[sec]) titleEl.textContent = titleMap[sec];
+  }
+}
+function toggleLang() {
+  applyLang(currentLang === 'es' ? 'en' : 'es');
 }
 
 
-// ══ NAVEGACIÓN DE SECCIONES ══
+
+// == NAVIGATION ==
 function showSection(section) {
   closeSidebar();
-
-  // Ocultar todos los paneles
-  ['favoritesPanel','newsMarketPanel','settingsPanel','learnPanel'].forEach(id => {
+  const panels = ['analyzerSection','favoritesPanel','chartsPanel','learnPanel','settingsPanel'];
+  panels.forEach(id => {
     const el = document.getElementById(id);
-    if(el) el.style.display = 'none';
+    if (el) el.style.display = 'none';
   });
-
-  // El analyzerSection siempre visible excepto cuando estamos en otra sección
-  const analyzerSection = document.getElementById('analyzerSection');
-  const results = document.getElementById('results');
-  const errorMsg = document.getElementById('errorMsg');
-  const loadingMsg = document.getElementById('loadingMsg');
-
-  if(analyzerSection) analyzerSection.style.display = 'none';
-  if(results) results.style.display = 'none';
-  if(errorMsg) errorMsg.style.display = 'none';
-
-  // Quitar active de nav
   document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-
-  const titleEl = document.querySelector('.topbar-title');
-  const t = DASH_TRANSLATIONS[currentLang] || DASH_TRANSLATIONS['en'];
-
-  if(section === 'analyzer') {
-    if(analyzerSection) analyzerSection.style.display = 'block';
-    if(currentTicker && results) results.style.display = 'block';
-    const btn = document.getElementById('nav_btn_analyzer');
-    if(btn) btn.classList.add('active');
-    if(titleEl) titleEl.textContent = t.dash_title || 'Analyzer';
-
-  } else if(section === 'favorites') {
-    const panel = document.getElementById('favoritesPanel');
-    if(panel) panel.style.display = 'block';
-    const btn = document.getElementById('nav_btn_favorites');
-    if(btn) btn.classList.add('active');
-    if(titleEl) titleEl.textContent = '⭐ ' + (t.nav_favorites || 'Favorites');
+  const t = T[currentLang];
+  const titleEl = document.getElementById('topbar_title');
+  
+  if (section === 'analyzer') {
+    document.getElementById('analyzerSection').style.display = 'block';
+    document.getElementById('nav_btn_analyzer').classList.add('active');
+    if (titleEl) titleEl.textContent = t.topbar_analyzer;
+  } else if (section === 'favorites') {
+    document.getElementById('favoritesPanel').style.display = 'block';
+    document.getElementById('nav_btn_favorites').classList.add('active');
+    if (titleEl) titleEl.textContent = t.topbar_favorites;
     renderFavorites();
-
-  } else if(section === 'news') {
-    const panel = document.getElementById('newsMarketPanel');
-    if(panel) panel.style.display = 'block';
-    const btn = document.getElementById('nav_btn_news');
-    if(btn) btn.classList.add('active');
-    if(titleEl) titleEl.textContent = '📊 ' + (t.nav_news || 'Charts');
-
-  } else if(section === 'learn') {
-    const panel = document.getElementById('learnPanel');
-    if(panel) panel.style.display = 'block';
-    const btn = document.getElementById('nav_btn_learn');
-    if(btn) btn.classList.add('active');
-    if(titleEl) titleEl.textContent = '📚 ' + (t.nav_learn || 'Learn');
+  } else if (section === 'charts') {
+    document.getElementById('chartsPanel').style.display = 'block';
+    document.getElementById('nav_btn_charts').classList.add('active');
+    if (titleEl) titleEl.textContent = t.topbar_charts;
+    renderPatternGuide();
+  } else if (section === 'learn') {
+    document.getElementById('learnPanel').style.display = 'block';
+    document.getElementById('nav_btn_learn').classList.add('active');
+    if (titleEl) titleEl.textContent = t.topbar_learn;
     renderLearn('all');
-
-  } else if(section === 'settings') {
-    const panel = document.getElementById('settingsPanel');
-    if(panel) panel.style.display = 'block';
-    const btn = document.getElementById('nav_btn_settings');
-    if(btn) btn.classList.add('active');
-    if(titleEl) titleEl.textContent = '⚙️ ' + (t.nav_settings || 'Settings');
+  } else if (section === 'settings') {
+    document.getElementById('settingsPanel').style.display = 'block';
+    document.getElementById('nav_btn_settings').classList.add('active');
+    if (titleEl) titleEl.textContent = t.topbar_settings;
     loadSettings();
   }
 }
+
+
+// PATTERNS HTML para el panel Charts
+const PATTERNS_HTML = '<div class="pattern-section" id="pg_bullish_cont">\n        <div class="pattern-section-title bullish">▲ Bullish Continuation</div>\n        <div class="pattern-grid">\n          <div class="pattern-card"><div class="pattern-chart-wrap bullish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#1e3a2e" stroke-width="1"/><line x1="20" y1="75" x2="50" y2="20" stroke="#00e676" stroke-width="2.5"/><rect x="50" y="18" width="45" height="22" rx="3" fill="rgba(0,230,118,0.08)" stroke="#00e676" stroke-width="1" stroke-dasharray="3,2"/><polyline points="50,20 62,30 74,24 86,32 95,26" fill="none" stroke="#00e676" stroke-width="1.5"/><polyline points="95,26 115,8 128,8" fill="none" stroke="#00e676" stroke-width="2.5"/><polygon points="128,5 136,8 128,11" fill="#00e676"/><text x="115" y="6" fill="#00e676" font-size="8" font-weight="bold">TP</text><rect x="52" y="34" width="30" height="10" rx="2" fill="rgba(0,230,118,0.15)"/><text x="55" y="42" fill="#00e676" font-size="7" font-weight="bold">Entry ▲</text></svg></div><div class="pattern-name">Bull Flag</div><div class="pattern-tag bullish-tag">Bullish</div><div class="pattern-desc">Sharp pole + tight consolidation. Strong continuation on breakout above flag.</div></div>\n          <div class="pattern-card"><div class="pattern-chart-wrap bullish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#1e3a2e" stroke-width="1"/><line x1="30" y1="28" x2="95" y2="28" stroke="#00e676" stroke-width="1.5" stroke-dasharray="4,3" opacity=".7"/><line x1="15" y1="75" x2="95" y2="48" stroke="#00e676" stroke-width="1.5" opacity=".7"/><polyline points="15,75 30,28 45,58 60,28 75,45 90,28" fill="none" stroke="#00e676" stroke-width="2"/><polyline points="90,28 110,10 125,10" fill="none" stroke="#00e676" stroke-width="2.5"/><polygon points="125,7 133,10 125,13" fill="#00e676"/><text x="97" y="8" fill="#00e676" font-size="8" font-weight="bold">TP</text><rect x="55" y="32" width="24" height="10" rx="2" fill="rgba(0,230,118,0.15)"/><text x="58" y="40" fill="#00e676" font-size="7" font-weight="bold">Entry</text></svg></div><div class="pattern-name">Ascending Triangle</div><div class="pattern-tag bullish-tag">Bullish</div><div class="pattern-desc">Flat resistance + rising lows. Buyers accumulate until explosive breakout.</div></div>\n          <div class="pattern-card"><div class="pattern-chart-wrap bullish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#1e3a2e" stroke-width="1"/><line x1="10" y1="70" x2="90" y2="22" stroke="#00e676" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/><line x1="10" y1="55" x2="90" y2="35" stroke="#00e676" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/><polyline points="10,70 25,38 38,52 53,28 67,42 80,25" fill="none" stroke="#00e676" stroke-width="2"/><polyline points="80,25 100,8 120,8" fill="none" stroke="#00e676" stroke-width="2.5"/><polygon points="120,5 128,8 120,11" fill="#00e676"/><text x="105" y="6" fill="#00e676" font-size="8" font-weight="bold">TP</text><rect x="62" y="14" width="24" height="10" rx="2" fill="rgba(0,230,118,0.15)"/><text x="64" y="22" fill="#00e676" font-size="7" font-weight="bold">Entry</text></svg></div><div class="pattern-name">Bullish Wedge</div><div class="pattern-tag bullish-tag">Bullish</div><div class="pattern-desc">Converging upward trendlines. Breakout above resistance signals continuation.</div></div>\n          <div class="pattern-card"><div class="pattern-chart-wrap bullish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#1e3a2e" stroke-width="1"/><line x1="10" y1="18" x2="90" y2="38" stroke="#00e676" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/><line x1="10" y1="68" x2="90" y2="48" stroke="#00e676" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/><polyline points="10,20 28,62 46,32 64,58 82,42" fill="none" stroke="#00e676" stroke-width="2"/><polyline points="82,42 105,20 120,20" fill="none" stroke="#00e676" stroke-width="2.5"/><polygon points="120,17 128,20 120,23" fill="#00e676"/><text x="105" y="16" fill="#00e676" font-size="8" font-weight="bold">TP</text><rect x="65" y="28" width="24" height="10" rx="2" fill="rgba(0,230,118,0.15)"/><text x="67" y="36" fill="#00e676" font-size="7" font-weight="bold">Entry</text></svg></div><div class="pattern-name">Symmetrical Triangle</div><div class="pattern-tag bullish-tag">Bullish</div><div class="pattern-desc">Converging highs and lows. Explosive breakout when price exits the apex.</div></div>\n        </div>\n      </div>\n      <div class="pattern-section" id="pg_bullish_rev">\n        <div class="pattern-section-title bullish">▲ Bullish Reversal</div>\n        <div class="pattern-grid">\n          <div class="pattern-card"><div class="pattern-chart-wrap bullish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#1e3a2e" stroke-width="1"/><polyline points="10,20 40,72 70,28 100,72 128,12" fill="none" stroke="#00e676" stroke-width="2.5"/><line x1="10" y1="30" x2="128" y2="30" stroke="#00e676" stroke-width="1.5" stroke-dasharray="5,3"/><text x="45" y="27" fill="#00e676" font-size="7" font-weight="bold">Neckline — Entry</text><circle cx="40" cy="72" r="4" fill="none" stroke="#00e676" stroke-width="1.5"/><circle cx="100" cy="72" r="4" fill="none" stroke="#00e676" stroke-width="1.5"/><text x="118" y="10" fill="#00e676" font-size="8" font-weight="bold">TP</text></svg></div><div class="pattern-name">Double Bottom</div><div class="pattern-tag bullish-tag">Bullish</div><div class="pattern-desc">Two similar lows — W shape. Sellers failed twice, buyers taking control.</div></div>\n          <div class="pattern-card"><div class="pattern-chart-wrap bullish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#1e3a2e" stroke-width="1"/><polyline points="8,18 28,70 48,25 68,70 88,25 108,70 128,8" fill="none" stroke="#00e676" stroke-width="2.5"/><line x1="8" y1="28" x2="128" y2="28" stroke="#00e676" stroke-width="1.5" stroke-dasharray="5,3"/><circle cx="28" cy="70" r="4" fill="none" stroke="#00e676" stroke-width="1.5"/><circle cx="68" cy="70" r="4" fill="none" stroke="#00e676" stroke-width="1.5"/><circle cx="108" cy="70" r="4" fill="none" stroke="#00e676" stroke-width="1.5"/><text x="118" y="6" fill="#00e676" font-size="8" font-weight="bold">TP</text></svg></div><div class="pattern-name">Triple Bottom</div><div class="pattern-tag bullish-tag">Bullish</div><div class="pattern-desc">Three tests of support that hold. Very strong reversal signal.</div></div>\n          <div class="pattern-card"><div class="pattern-chart-wrap bullish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#1e3a2e" stroke-width="1"/><polyline points="10,20 25,55 32,38 50,70 58,50 75,70 82,38 97,55 112,20" fill="none" stroke="#00e676" stroke-width="2"/><line x1="25" y1="42" x2="112" y2="42" stroke="#00e676" stroke-width="1.5" stroke-dasharray="5,3"/><text x="40" y="39" fill="#00e676" font-size="7">Neckline</text><polyline points="112,42 125,15 130,12" fill="none" stroke="#00e676" stroke-width="2.5"/><text x="8" y="35" fill="#8896a7" font-size="6">LS</text><text x="47" y="78" fill="#8896a7" font-size="6">Head</text><text x="96" y="35" fill="#8896a7" font-size="6">RS</text></svg></div><div class="pattern-name">Inv. Head & Shoulders</div><div class="pattern-tag bullish-tag">Bullish</div><div class="pattern-desc">3 lows with middle lowest. Neckline breakout confirms powerful bullish reversal.</div></div>\n          <div class="pattern-card"><div class="pattern-chart-wrap bullish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#1e3a2e" stroke-width="1"/><line x1="10" y1="12" x2="90" y2="55" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="4,3" opacity=".7"/><line x1="10" y1="28" x2="90" y2="65" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="4,3" opacity=".7"/><polyline points="10,12 28,60 45,32 62,62 80,42" fill="none" stroke="#00e676" stroke-width="2"/><polyline points="80,42 102,18 120,18" fill="none" stroke="#00e676" stroke-width="2.5"/><polygon points="120,15 128,18 120,21" fill="#00e676"/><text x="105" y="14" fill="#00e676" font-size="8" font-weight="bold">TP</text><rect x="63" y="28" width="24" height="10" rx="2" fill="rgba(0,230,118,0.15)"/><text x="65" y="36" fill="#00e676" font-size="7" font-weight="bold">Entry</text></svg></div><div class="pattern-name">Falling Wedge</div><div class="pattern-tag bullish-tag">Bullish</div><div class="pattern-desc">Downward converging lines. Breakout above signals strong bullish reversal.</div></div>\n        </div>\n      </div>\n      <div class="pattern-section" id="pg_bearish_cont">\n        <div class="pattern-section-title bearish">▼ Bearish Continuation</div>\n        <div class="pattern-grid">\n          <div class="pattern-card"><div class="pattern-chart-wrap bearish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#3a1e1e" stroke-width="1"/><polyline points="20,10 50,60" fill="none" stroke="#ff5252" stroke-width="2.5"/><rect x="50" y="45" width="40" height="22" rx="3" fill="rgba(255,82,82,0.08)" stroke="#ff5252" stroke-width="1" stroke-dasharray="3,2"/><polyline points="50,60 62,50 74,56 86,48 90,54" fill="none" stroke="#ff5252" stroke-width="1.5"/><polyline points="90,54 110,78 125,80" fill="none" stroke="#ff5252" stroke-width="2.5"/><polygon points="125,77 133,80 125,83" fill="#ff5252"/><text x="110" y="76" fill="#ff5252" font-size="8" font-weight="bold">TP</text><rect x="52" y="60" width="30" height="10" rx="2" fill="rgba(255,82,82,0.15)"/><text x="55" y="68" fill="#ff5252" font-size="7" font-weight="bold">Entry ▼</text></svg></div><div class="pattern-name">Bear Flag</div><div class="pattern-tag bearish-tag">Bearish</div><div class="pattern-desc">Sharp drop + weak bounce. Sellers resting before next leg down.</div></div>\n          <div class="pattern-card"><div class="pattern-chart-wrap bearish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#3a1e1e" stroke-width="1"/><line x1="30" y1="62" x2="95" y2="62" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="4,3" opacity=".7"/><line x1="15" y1="25" x2="95" y2="52" stroke="#ff5252" stroke-width="1.5" opacity=".7"/><polyline points="15,25 30,62 45,40 60,62 75,50 90,62" fill="none" stroke="#ff5252" stroke-width="2"/><polyline points="90,62 110,80 125,80" fill="none" stroke="#ff5252" stroke-width="2.5"/><polygon points="125,77 133,80 125,83" fill="#ff5252"/><text x="97" y="78" fill="#ff5252" font-size="8" font-weight="bold">TP</text><rect x="50" y="42" width="30" height="10" rx="2" fill="rgba(255,82,82,0.15)"/><text x="53" y="50" fill="#ff5252" font-size="7" font-weight="bold">Entry ▼</text></svg></div><div class="pattern-name">Descending Triangle</div><div class="pattern-tag bearish-tag">Bearish</div><div class="pattern-desc">Flat support + declining highs. Sellers pushing down — breakdown imminent.</div></div>\n          <div class="pattern-card"><div class="pattern-chart-wrap bearish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#3a1e1e" stroke-width="1"/><line x1="10" y1="12" x2="90" y2="48" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/><line x1="10" y1="30" x2="90" y2="60" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/><polyline points="10,12 28,52 44,28 62,55 78,38" fill="none" stroke="#ff5252" stroke-width="2"/><polyline points="78,38 100,68 118,75" fill="none" stroke="#ff5252" stroke-width="2.5"/><polygon points="118,72 126,75 118,78" fill="#ff5252"/><text x="104" y="72" fill="#ff5252" font-size="8" font-weight="bold">TP</text><rect x="62" y="24" width="24" height="10" rx="2" fill="rgba(255,82,82,0.15)"/><text x="64" y="32" fill="#ff5252" font-size="7" font-weight="bold">Entry</text></svg></div><div class="pattern-name">Bear Wedge</div><div class="pattern-tag bearish-tag">Bearish</div><div class="pattern-desc">Downward converging channel. Continuation of downtrend after breakdown.</div></div>\n          <div class="pattern-card"><div class="pattern-chart-wrap bearish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#3a1e1e" stroke-width="1"/><line x1="10" y1="18" x2="90" y2="42" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/><line x1="10" y1="62" x2="90" y2="48" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/><polyline points="10,20 28,55 46,30 64,52 80,42" fill="none" stroke="#ff5252" stroke-width="2"/><polyline points="80,42 102,68 118,75" fill="none" stroke="#ff5252" stroke-width="2.5"/><polygon points="118,72 126,75 118,78" fill="#ff5252"/><text x="104" y="72" fill="#ff5252" font-size="8" font-weight="bold">TP</text><rect x="63" y="28" width="24" height="10" rx="2" fill="rgba(255,82,82,0.15)"/><text x="65" y="36" fill="#ff5252" font-size="7" font-weight="bold">Entry</text></svg></div><div class="pattern-name">Symmetrical Triangle</div><div class="pattern-tag bearish-tag">Bearish</div><div class="pattern-desc">Converging lines in downtrend. Breakdown confirms bearish continuation.</div></div>\n        </div>\n      </div>\n      <div class="pattern-section" id="pg_bearish_rev">\n        <div class="pattern-section-title bearish">▼ Bearish Reversal</div>\n        <div class="pattern-grid">\n          <div class="pattern-card"><div class="pattern-chart-wrap bearish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#3a1e1e" stroke-width="1"/><polyline points="10,62 40,12 70,62 100,12 128,72" fill="none" stroke="#ff5252" stroke-width="2.5"/><line x1="10" y1="52" x2="128" y2="52" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="5,3"/><text x="42" y="49" fill="#ff5252" font-size="7" font-weight="bold">Neckline — Sell</text><circle cx="40" cy="12" r="4" fill="none" stroke="#ff5252" stroke-width="1.5"/><circle cx="100" cy="12" r="4" fill="none" stroke="#ff5252" stroke-width="1.5"/><text x="120" y="72" fill="#ff5252" font-size="8" font-weight="bold">TP</text></svg></div><div class="pattern-name">Double Top</div><div class="pattern-tag bearish-tag">Bearish</div><div class="pattern-desc">Two similar highs — M shape. Buyers failed twice, sellers taking control.</div></div>\n          <div class="pattern-card"><div class="pattern-chart-wrap bearish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#3a1e1e" stroke-width="1"/><polyline points="8,65 28,12 48,65 68,12 88,65 108,12 128,72" fill="none" stroke="#ff5252" stroke-width="2.5"/><line x1="8" y1="52" x2="128" y2="52" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="5,3"/><circle cx="28" cy="12" r="3" fill="none" stroke="#ff5252" stroke-width="1.5"/><circle cx="68" cy="12" r="3" fill="none" stroke="#ff5252" stroke-width="1.5"/><circle cx="108" cy="12" r="3" fill="none" stroke="#ff5252" stroke-width="1.5"/><text x="118" y="72" fill="#ff5252" font-size="8" font-weight="bold">TP</text></svg></div><div class="pattern-name">Triple Top</div><div class="pattern-tag bearish-tag">Bearish</div><div class="pattern-desc">Three failed attempts at resistance. Very strong reversal signal.</div></div>\n          <div class="pattern-card"><div class="pattern-chart-wrap bearish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#3a1e1e" stroke-width="1"/><polyline points="8,62 22,38 32,50 50,12 62,38 78,50 92,38 108,62" fill="none" stroke="#ff5252" stroke-width="2"/><line x1="22" y1="48" x2="108" y2="48" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="5,3"/><text x="42" y="44" fill="#ff5252" font-size="7" font-weight="bold">Neckline</text><polyline points="108,48 122,72 130,78" fill="none" stroke="#ff5252" stroke-width="2.5"/><text x="8" y="34" fill="#8896a7" font-size="6">LS</text><text x="46" y="10" fill="#8896a7" font-size="6">Head</text><text x="88" y="34" fill="#8896a7" font-size="6">RS</text></svg></div><div class="pattern-name">Head & Shoulders</div><div class="pattern-tag bearish-tag">Bearish</div><div class="pattern-desc">3 peaks with middle highest. Neckline break confirms major bearish reversal.</div></div>\n          <div class="pattern-card"><div class="pattern-chart-wrap bearish"><svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;"><line x1="10" y1="80" x2="130" y2="80" stroke="#3a1e1e" stroke-width="1"/><line x1="10" y1="65" x2="90" y2="18" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/><line x1="10" y1="78" x2="90" y2="38" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/><polyline points="10,65 28,45 44,62 60,35 76,52" fill="none" stroke="#ff5252" stroke-width="2"/><polyline points="76,52 98,75 115,80" fill="none" stroke="#ff5252" stroke-width="2.5"/><polygon points="115,77 123,80 115,83" fill="#ff5252"/><text x="100" y="75" fill="#ff5252" font-size="8" font-weight="bold">TP</text><rect x="58" y="22" width="30" height="10" rx="2" fill="rgba(255,82,82,0.15)"/><text x="61" y="30" fill="#ff5252" font-size="7" font-weight="bold">Entry ▼</text></svg></div><div class="pattern-name">Rising Wedge</div><div class="pattern-tag bearish-tag">Bearish</div><div class="pattern-desc">Upward converging lines losing momentum. Breakdown signals strong bearish reversal.</div></div>\n        </div>\n      </div>\n    </div>';
+
+
+// == PATTERN GUIDE ==
+const PATTERN_SECTIONS = [
+  {id:'pg_bullish_cont', cat:'bullish_cont'},
+  {id:'pg_bullish_rev', cat:'bullish_rev'},
+  {id:'pg_bearish_cont', cat:'bearish_cont'},
+  {id:'pg_bearish_rev', cat:'bearish_rev'},
+];
+function filterPatternGuide(cat, btn) {
+  document.querySelectorAll('.news-cat-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  PATTERN_SECTIONS.forEach(s => {
+    const el = document.getElementById(s.id);
+    if (el) el.style.display = (cat === 'all' || cat === s.cat) ? 'block' : 'none';
+  });
+}
+function renderPatternGuide() {
+  const container = document.getElementById('patternGuideContent');
+  if (!container) return;
+  if (container.innerHTML.trim()) return; // ya renderizado
+  // Insertar el HTML de patrones SVG
+  container.innerHTML = PATTERNS_HTML;
+  filterPatternGuide('all', null);
+}
+
+
+
+// == FAVORITES ==
+function getFavorites() {
+  try { return JSON.parse(localStorage.getItem('favorites') || '[]'); } catch(e) { return []; }
+}
+function saveFavorites(favs) { localStorage.setItem('favorites', JSON.stringify(favs)); }
+function toggleFavorite() {
+  if (!currentTicker) return;
+  const favs = getFavorites();
+  const idx = favs.indexOf(currentTicker);
+  const btn = document.getElementById('favBtn');
+  if (idx === -1) {
+    favs.unshift(currentTicker);
+    btn.style.opacity = '1';
+    showToast(currentTicker + ' added to favorites');
+  } else {
+    favs.splice(idx, 1);
+    btn.style.opacity = '.5';
+    showToast(currentTicker + ' removed from favorites');
+  }
+  saveFavorites(favs);
+}
+function updateFavBtn(ticker) {
+  const btn = document.getElementById('favBtn');
+  if (btn) btn.style.opacity = getFavorites().includes(ticker) ? '1' : '.5';
+}
+function renderFavorites() {
+  const favs = getFavorites();
+  const el = document.getElementById('favoritesList');
+  if (!favs.length) {
+    el.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--muted);"><div style="font-size:40px;margin-bottom:1rem;">⭐</div><div style="font-size:15px;font-weight:600;margin-bottom:.5rem;">No favorites yet</div><div style="font-size:13px;">Analyze a stock and click ⭐ to save it here</div></div>';
+    return;
+  }
+  el.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;">' +
+    favs.map(sym => '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:8px;"><button onclick="analyzeFav(\'' + sym + '\')" style="background:none;border:none;color:#00e676;font-family:Syne,sans-serif;font-size:15px;font-weight:700;cursor:pointer;">' + sym + '</button><button onclick="removeFav(\'' + sym + '\')" style="background:none;border:none;color:#444;font-size:16px;cursor:pointer;">×</button></div>').join('') +
+    '</div>';
+}
+function removeFav(sym) {
+  saveFavorites(getFavorites().filter(f => f !== sym));
+  renderFavorites();
+}
+function analyzeFav(sym) {
+  document.getElementById('tickerInput').value = sym;
+  showSection('analyzer');
+  analyze();
+}
+
+
+
+// == SETTINGS ==
+function loadSettings() {
+  sb.auth.getSession().then(({data:{session}}) => {
+    if (!session) return;
+    document.getElementById('settingsEmail').textContent = session.user.email;
+    document.getElementById('settingsPlanText').textContent = userPlan === 'pro' ? 'Pro Plan Active' : 'Free Plan — 5 analyses/day';
+    if (userPlan === 'pro') {
+      const btn = document.getElementById('settingsUpgradeBtn');
+      btn.textContent = 'Pro Plan Active';
+      btn.style.background = 'var(--bg3)';
+      btn.style.color = '#00e676';
+      btn.style.border = '1px solid #00e676';
+      btn.onclick = null;
+      btn.style.cursor = 'default';
+    }
+  });
+}
+
 
 // ══ INDICADORES — BASE DE DATOS ══
 const INDICATORS = [
@@ -1557,45 +1593,32 @@ const INDICATORS = [
   },
 ];
 
-// ══ LEARN FUNCTIONS ══
+
+
+// == LEARN ==
 function filterLearn(cat) {
   document.querySelectorAll('.learn-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('tab_' + cat).classList.add('active');
+  const tab = document.getElementById('tab_' + cat);
+  if (tab) tab.classList.add('active');
   renderLearn(cat);
 }
-
 function renderLearn(cat) {
   const filtered = cat === 'all' ? INDICATORS : INDICATORS.filter(i => i.category === cat);
   const lang = currentLang || 'en';
   const el = document.getElementById('learnGrid');
+  if (!el) return;
   el.innerHTML = filtered.map(ind => {
     const name = typeof ind.name === 'object' ? (ind.name[lang]||ind.name.en) : ind.name;
     const type = typeof ind.type === 'object' ? (ind.type[lang]||ind.type.en) : ind.type;
     const desc = typeof ind.desc === 'object' ? (ind.desc[lang]||ind.desc.en) : ind.desc;
-    const tip = typeof ind.tip === 'object' ? (ind.tip[lang]||ind.tip.en) : ind.tip;
-    return `
-    <div class="learn-card">
-      <div class="learn-card-header">
-        <div class="learn-icon">${ind.icon}</div>
-        <div>
-          <div class="learn-name">${name}</div>
-          <div class="learn-type">${type}</div>
-        </div>
-      </div>
-      <div class="learn-desc">${desc}</div>
-      <div class="learn-chart">${generateMiniChart(ind.chart)}</div>
-      <div class="learn-signals">
-        ${ind.signals.map(s => {
-          const stitle = typeof s.title === 'object' ? (s.title[lang]||s.title.en) : s.title;
-          const sdesc = typeof s.desc === 'object' ? (s.desc[lang]||s.desc.en) : s.desc;
-          return `<div class="learn-signal ${s.type}">
-            <div class="learn-signal-title">${s.type==='buy'?'▲':'▼'} ${stitle}</div>
-            <div class="learn-signal-desc">${sdesc}</div>
-          </div>`;
-        }).join('')}
-      </div>
-      <div class="learn-tip">${tip}</div>
-    </div>`;
+    const tip  = typeof ind.tip  === 'object' ? (ind.tip[lang] ||ind.tip.en)  : ind.tip;
+    return '<div class="learn-card"><div class="learn-card-header"><div class="learn-icon">' + ind.icon + '</div><div><div class="learn-name">' + name + '</div><div class="learn-type">' + type + '</div></div></div><div class="learn-desc">' + desc + '</div><div class="learn-chart">' + generateMiniChart(ind.chart) + '</div><div class="learn-signals">' +
+      ind.signals.map(s => {
+        const st = typeof s.title === 'object' ? (s.title[lang]||s.title.en) : s.title;
+        const sd = typeof s.desc  === 'object' ? (s.desc[lang] ||s.desc.en)  : s.desc;
+        return '<div class="learn-signal ' + s.type + '"><div class="learn-signal-title">' + (s.type==='buy'?'▲':'▼') + ' ' + st + '</div><div class="learn-signal-desc">' + sd + '</div></div>';
+      }).join('') +
+      '</div><div class="learn-tip">' + tip + '</div></div>';
   }).join('');
 }
 
@@ -1803,307 +1826,11 @@ function generateMiniChart(type) {
   return charts[type] || `<div style="text-align:center;color:var(--muted);padding:1rem;font-size:13px;">Chart illustration</div>`;
 }
 
-let currentTicker = '';
 
-// ══ FAVORITOS ══
-function getFavorites() {
-  try { return JSON.parse(localStorage.getItem('favorites') || '[]'); } catch(e) { return []; }
-}
-function saveFavorites(favs) {
-  localStorage.setItem('favorites', JSON.stringify(favs));
-}
-function toggleFavorite() {
-  if(!currentTicker) return;
-  const favs = getFavorites();
-  const idx = favs.indexOf(currentTicker);
-  const btn = document.getElementById('favBtn');
-  if(idx === -1) {
-    favs.unshift(currentTicker);
-    btn.style.opacity = '1';
-    btn.style.filter = 'none';
-    showToast(`${currentTicker} added to favorites ⭐`);
-  } else {
-    favs.splice(idx, 1);
-    btn.style.opacity = '.5';
-    showToast(`${currentTicker} removed from favorites`);
-  }
-  saveFavorites(favs);
-}
-function updateFavBtn(ticker) {
-  const favs = getFavorites();
-  const btn = document.getElementById('favBtn');
-  if(favs.includes(ticker)) {
-    btn.style.opacity = '1';
-  } else {
-    btn.style.opacity = '.5';
-  }
-}
-function renderFavorites() {
-  const favs = getFavorites();
-  const el = document.getElementById('favoritesList');
-  if(!favs.length) {
-    el.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--muted);">
-      <div style="font-size:40px;margin-bottom:1rem;">⭐</div>
-      <div style="font-size:15px;font-weight:600;margin-bottom:.5rem;">No favorites yet</div>
-      <div style="font-size:13px;">Analyze a stock and click ⭐ to save it here</div>
-    </div>`;
-    return;
-  }
-  el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;">
-    ${favs.map(sym => `
-      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
-        <button onclick="analyzeFavorite('${sym}')" style="background:none;border:none;color:var(--green);font-family:'Syne',sans-serif;font-size:15px;font-weight:700;cursor:pointer;padding:0;">${sym}</button>
-        <button onclick="removeFavorite('${sym}')" style="background:none;border:none;color:#444;font-size:16px;cursor:pointer;padding:0;" title="Remove">×</button>
-      </div>`).join('')}
-  </div>`;
-}
-function removeFavorite(sym) {
-  const favs = getFavorites().filter(f => f !== sym);
-  saveFavorites(favs);
-  renderFavorites();
-}
-function analyzeFavorite(sym) {
-  document.getElementById('tickerInput').value = sym;
-  showSection('analyzer');
-  analyze();
-}
-
-// ══ NOTICIAS DE MERCADO ══
-}
-
-// ══ SETTINGS ══
-function loadSettings() {
-  sb.auth.getSession().then(({data:{session}}) => {
-    if(!session) return;
-    document.getElementById('settingsEmail').textContent = session.user.email;
-    document.getElementById('settingsPlanText').textContent = userPlan === 'pro' ? '⭐ Pro Plan — Active' : '🆓 Free Plan — 5 analyses/day';
-    if(userPlan === 'pro') {
-      const btn = document.getElementById('settingsUpgradeBtn');
-      btn.textContent = '✅ Pro Plan Active';
-      btn.style.background = 'var(--bg2)';
-      btn.style.color = 'var(--green)';
-      btn.style.border = '1px solid var(--green)';
-      btn.onclick = null;
-      btn.style.cursor = 'default';
-    }
-  });
-}
-
-// ══ TOAST NOTIFICATION ══
-function showToast(msg) {
-  const toast = document.createElement('div');
-  toast.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:9999;background:#00e676;color:#000;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;box-shadow:0 4px 20px rgba(0,230,118,.3);animation:modalIn .3s ease;';
-  toast.textContent = msg;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 3000);
-}
-
-// ══════════════════════════════════
-// SISTEMA DE IDIOMAS — DASHBOARD
-// ══════════════════════════════════
-const DASH_TRANSLATIONS = {
-  es: {
-    dash_title: 'Analizador',
-    dash_usage: 'Análisis hoy:',
-    nav_analyzer: 'Analizador',
-    nav_favorites: 'Favoritos',
-    nav_news: 'Gráficos',
-    nav_settings: 'Configuración',
-    nav_learn: 'Aprender',
-    btn_upgrade: '⚡ Actualizar a Pro',
-    btn_logout: 'Cerrar sesión',
-    btn_analyze: 'Analizar',
-    limit_title: 'Límite diario alcanzado',
-    limit_msg: 'Has usado tus 5 análisis gratuitos de hoy. Actualiza al plan Pro para análisis ilimitados, sin publicidad y con todas las funciones avanzadas.',
-    limit_btn: 'Actualizar a Pro — $12/mes',
-    limit_dismiss: 'Volver mañana',
-    learn_title: 'Guía de Indicadores',
-    learn_sub: 'Aprende cómo funciona cada indicador y cómo usarlo para tomar mejores decisiones de trading.',
-    learn_all: 'Todos',
-    learn_momentum: 'Momentum',
-    learn_trend: 'Tendencia',
-    learn_volume: 'Volumen',
-    learn_pattern: 'Patrones',
-    learn_sentiment: 'Sentimiento',
-    panel_news: 'Noticias del día',
-    panel_patterns: '📐 Patrones de gráfico',
-    panel_pcr: '📊 Put/Call Ratio',
-    panel_sm: '💼 Smart Money',
-    panel_candle: 'Patrón de vela',
-    panel_vwap: 'VWAP',
-    score_buy: 'Compra',
-    score_neutral: 'Neutral',
-    score_sell: 'Venta',
-    score_title: 'Puntuación total de señales',
-    entry_price: 'Precio de entrada',
-    stop_loss: 'Stop Loss',
-    news_good: '✅ Noticias positivas',
-    news_bad: '⚠️ Noticias de riesgo',
-    sm_buy_pressure: 'Presión compradora',
-    sm_sell_pressure: 'Presión vendedora',
-    placeholder: 'Ej: AAPL, TSLA, NVDA...',
-    loading_prices: 'Obteniendo precios...',
-    loading_ai: 'Generando análisis con IA...',
-    loading_news: 'Buscando noticias...',
-    buy_signal: '📈 BUY — ',
-    sell_signal: '📉 SELL — ',
-    hold_signal: '⏸ HOLD — ',
-  },
-  en: {
-    dash_title: 'Analyzer',
-    dash_usage: "Today's analyses:",
-    nav_analyzer: 'Analyzer',
-    nav_favorites: 'Favorites',
-    nav_news: 'Charts',
-    nav_settings: 'Settings',
-    nav_learn: 'Learn',
-    btn_upgrade: '⚡ Upgrade to Pro',
-    btn_logout: 'Sign out',
-    btn_analyze: 'Analyze',
-    limit_title: 'Daily limit reached',
-    limit_msg: "You've used your 5 free daily analyses. Upgrade to Pro for unlimited analyses, no ads and all advanced features.",
-    limit_btn: 'Upgrade to Pro — $12/mo',
-    limit_dismiss: 'Come back tomorrow',
-    learn_title: 'Indicator Guide',
-    learn_sub: 'Learn how every indicator works and how to use it to make better trading decisions.',
-    learn_all: 'All',
-    learn_momentum: 'Momentum',
-    learn_trend: 'Trend',
-    learn_volume: 'Volume',
-    learn_pattern: 'Patterns',
-    learn_sentiment: 'Sentiment',
-    panel_news: "Today's news",
-    panel_patterns: '📐 Chart patterns',
-    panel_pcr: '📊 Put/Call Ratio',
-    panel_sm: '💼 Smart Money',
-    panel_candle: 'Current candle',
-    panel_vwap: 'VWAP',
-    score_buy: 'Buy',
-    score_neutral: 'Neutral',
-    score_sell: 'Sell',
-    score_title: 'Total signal score',
-    entry_price: 'Entry price',
-    stop_loss: 'Stop Loss',
-    news_good: '✅ Positive news',
-    news_bad: '⚠️ Risk news',
-    sm_buy_pressure: 'Buying pressure',
-    sm_sell_pressure: 'Selling pressure',
-    placeholder: 'E.g: AAPL, TSLA, NVDA...',
-    loading_prices: 'Getting prices...',
-    loading_ai: 'Generating AI analysis...',
-    loading_news: 'Looking for news...',
-    buy_signal: '📈 BUY — ',
-    sell_signal: '📉 SELL — ',
-    hold_signal: '⏸ HOLD — ',
-  }
-};
-
-let currentLang = localStorage.getItem('lang') || 'en';
-
-function applyDashLang(lang) {
-  const t = DASH_TRANSLATIONS[lang];
-  // Elementos con data-i18n
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    if(t[key]) el.innerHTML = t[key];
-  });
-  // Botón de idioma
-  document.getElementById('langBtn').textContent = lang === 'es' ? '🌐 EN' : '🌐 ES';
-  // Input placeholder y botón analizar
-  document.getElementById('tickerInput').placeholder = t.placeholder;
-  document.getElementById('analyzeBtn').textContent = t.btn_analyze;
-  // Sidebar nav — solo actualizar texto, sin emojis
-  const navAnalyzer = document.getElementById('nav_analyzer');
-  const navFav = document.getElementById('nav_favorites_label');
-  const navNews = document.getElementById('nav_news_label');
-  const navLearn = document.getElementById('nav_learn_label');
-  const navSettings = document.getElementById('nav_settings_label');
-  if(navAnalyzer) navAnalyzer.textContent = t.nav_analyzer;
-  if(navFav) navFav.textContent = t.nav_favorites;
-  if(navNews) navNews.textContent = t.nav_news;
-  if(navLearn) navLearn.textContent = t.nav_learn;
-  if(navSettings) navSettings.textContent = t.nav_settings;
-  // Botones upgrade y logout
-  const upgradeBtn = document.getElementById('btnUpgrade');
-  if(upgradeBtn) upgradeBtn.textContent = t.btn_upgrade;
-  const logoutBtn = document.querySelector('.btn-logout');
-  if(logoutBtn) logoutBtn.textContent = t.btn_logout;
-  // Panel de noticias
-  const panelNews = document.getElementById('panel_news');
-  if(panelNews) panelNews.textContent = t.panel_news;
-  const goodTitle = document.getElementById('news_good_title');
-  const badTitle = document.getElementById('news_bad_title');
-  if(goodTitle) goodTitle.textContent = t.news_good;
-  if(badTitle) badTitle.textContent = t.news_bad;
-  // Score labels
-  document.querySelectorAll('.score-lbl').forEach((el,i) => {
-    if(i===0) el.textContent = t.score_buy;
-    if(i===1) el.textContent = t.score_neutral;
-    if(i===2) el.textContent = t.score_sell;
-  });
-  // Learn section
-  const learnTitle = document.getElementById('learn_title_h');
-  const learnSub = document.getElementById('learn_sub_h');
-  if(learnTitle) learnTitle.textContent = '📚 ' + (t.learn_title || 'Indicator Guide');
-  if(learnSub) learnSub.textContent = t.learn_sub || '';
-  const tabAll = document.getElementById('tab_all');
-  const tabMom = document.getElementById('tab_momentum');
-  const tabTrend = document.getElementById('tab_trend');
-  const tabVol = document.getElementById('tab_volume');
-  const tabPat = document.getElementById('tab_pattern');
-  const tabSent = document.getElementById('tab_sentiment');
-  if(tabAll) tabAll.textContent = t.learn_all || 'All';
-  if(tabMom) tabMom.textContent = t.learn_momentum || 'Momentum';
-  if(tabTrend) tabTrend.textContent = t.learn_trend || 'Trend';
-  if(tabVol) tabVol.textContent = t.learn_volume || 'Volume';
-  if(tabPat) tabPat.textContent = t.learn_pattern || 'Patterns';
-  if(tabSent) tabSent.textContent = t.learn_sentiment || 'Sentiment';
-  const panelPatterns = document.getElementById('panel_patterns');
-  const scoreTitle = document.getElementById('score_title');
-  const pc2 = document.getElementById('panel_candle'); if(pc2) pc2.textContent = t.panel_candle;
-  if(panelPatterns) panelPatterns.textContent = t.panel_patterns;
-  if(scoreTitle) scoreTitle.textContent = t.score_title;
-  // Limit modal
-  const limitTitle = document.querySelector('.limit-modal h3');
-  const limitMsg = document.querySelector('.limit-modal p');
-  const limitBtn = document.getElementById('limit_btn');
-  const limitDismiss = document.querySelector('.btn-dismiss');
-  if(limitTitle) limitTitle.textContent = t.limit_title;
-  if(limitMsg) limitMsg.textContent = t.limit_msg;
-  if(limitBtn) limitBtn.textContent = t.limit_btn;
-  if(limitDismiss) limitDismiss.textContent = t.limit_dismiss;
-  // Target labels
-  const targetLabels = document.querySelectorAll('.target-lbl');
-  if(targetLabels[0]) targetLabels[0].textContent = t.entry_price;
-  if(targetLabels[1]) targetLabels[1].textContent = t.stop_loss;
-  // Usage label
-  const usageLabel = document.querySelector('.usage-label');
-  if(usageLabel) usageLabel.textContent = t.dash_usage;
-  // Smart Money bars
-  const smBars = document.querySelectorAll('.bar-lbl');
-  if(smBars[0]) smBars[0].textContent = t.sm_buy_pressure;
-  if(smBars[1]) smBars[1].textContent = t.sm_sell_pressure;
-
-  localStorage.setItem('lang', lang);
-  currentLang = lang;
-  document.documentElement.lang = lang;
-}
-
-function toggleLang() {
-  const newLang = currentLang === 'es' ? 'en' : 'es';
-  applyDashLang(newLang);
-  // Re-renderizar Learn si está activo
-  if(document.getElementById('learnPanel').style.display !== 'none') {
-    const activeTab = document.querySelector('.learn-tab.active');
-    const cat = activeTab ? activeTab.id.replace('tab_','') : 'all';
-    renderLearn(cat);
-  }
-}
-
-// Aplicar idioma al cargar
-applyDashLang(currentLang);
-// Mostrar analyzer por defecto al cargar
+// == INIT ==
+applyLang(currentLang);
 showSection('analyzer');
 </script>
+
 </body>
 </html>
