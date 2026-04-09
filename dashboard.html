@@ -105,13 +105,17 @@ cursor:pointer;transition:all .2s;margin-top:6px;
 .btn-logout:hover{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.7);}
 
 /* MAIN */
-.main-content{margin-left:220px;flex:1;padding:1.5rem;}
+.main-content{margin-left:220px;flex:1;padding:1.5rem;min-height:100vh;}
 @media(max-width:768px){.main-content{margin-left:0;padding:1rem;}}
 
 /* TOPBAR */
 .topbar{
 display:flex;align-items:center;justify-content:space-between;
 margin-bottom:1.5rem;flex-wrap:wrap;gap:10px;
+position:sticky;top:0;z-index:40;
+background:var(–bg);
+padding:.75rem 0;
+margin-top:-.25rem;
 }
 .topbar-title{font-family:‘Syne’,sans-serif;font-size:20px;font-weight:700;}
 .usage-bar-wrap{
@@ -1581,6 +1585,8 @@ initAuth();
 // ══ NAVEGACIÓN DE SECCIONES ══
 function showSection(section) {
   closeSidebar();
+  document.querySelector('.main-content').scrollTop = 0;
+  window.scrollTo(0, 0);
 
   const panels = ['favoritesPanel','newsMarketPanel','settingsPanel','learnPanel'];
   const analyzerSection = document.getElementById('analyzerSection');
