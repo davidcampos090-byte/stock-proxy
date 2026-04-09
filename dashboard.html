@@ -392,6 +392,24 @@ font-size:13px;cursor:pointer;
 .news-cat-btn{background:var(–card);border:1px solid var(–border);border-radius:99px;padding:6px 16px;font-size:12px;color:var(–muted);cursor:pointer;transition:all .15s;font-weight:500;}
 .news-cat-btn.active{background:var(–green);color:#000;border-color:var(–green);font-weight:700;}
 .news-cat-btn:hover:not(.active){border-color:var(–green);color:var(–green);}
+
+/* PATTERN GUIDE */
+.pattern-section{margin-bottom:2rem;}
+.pattern-section-title{font-family:‘Syne’,sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:8px 14px;border-radius:10px;margin-bottom:1rem;display:inline-block;}
+.pattern-section-title.bullish{background:rgba(0,230,118,.1);color:#00e676;border:1px solid rgba(0,230,118,.2);}
+.pattern-section-title.bearish{background:rgba(255,82,82,.1);color:#ff5252;border:1px solid rgba(255,82,82,.2);}
+.pattern-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;}
+@media(max-width:500px){.pattern-grid{grid-template-columns:1fr 1fr;}}
+.pattern-card{background:var(–bg2);border:1px solid var(–border);border-radius:14px;padding:12px;transition:all .2s;cursor:default;}
+.pattern-card:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.15);box-shadow:0 8px 24px rgba(0,0,0,.3);}
+.pattern-chart-wrap{border-radius:10px;padding:8px;margin-bottom:10px;}
+.pattern-chart-wrap.bullish{background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.15);}
+.pattern-chart-wrap.bearish{background:rgba(255,82,82,.06);border:1px solid rgba(255,82,82,.15);}
+.pattern-name{font-family:‘Syne’,sans-serif;font-size:13px;font-weight:700;margin-bottom:6px;line-height:1.3;}
+.pattern-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:2px 8px;border-radius:99px;display:inline-block;margin-bottom:8px;}
+.bullish-tag{background:rgba(0,230,118,.12);color:#00e676;}
+.bearish-tag{background:rgba(255,82,82,.12);color:#ff5252;}
+.pattern-desc{font-size:11px;color:var(–muted);line-height:1.55;}
 .news-card{background:var(–bg2);border:1px solid var(–border);border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:.75rem;transition:border .2s,transform .15s;cursor:default;}
 .news-card:hover{border-color:rgba(255,255,255,.15);transform:translateY(-1px);}
 .news-card-top{display:flex;align-items:center;gap:10px;margin-bottom:.75rem;}
@@ -497,53 +515,322 @@ font-size:13px;cursor:pointer;
   </div>
 </div>
 
-<!-- ══ NEWS PANEL ══ -->
+<!-- ══ PATTERNS GUIDE PANEL ══ -->
 <div id="newsMarketPanel" style="display:none;">
 
   <!-- Header -->
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:10px;">
-    <div>
-      <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;" id="news_panel_title">Market News</div>
-      <div style="font-size:12px;color:var(--muted);margin-top:3px;" id="news_panel_sub">Top financial stories today, summarized by AI</div>
+  <div style="margin-bottom:1.5rem;">
+    <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;" id="news_panel_title">Chart Patterns Guide</div>
+    <div style="font-size:13px;color:var(--muted);margin-top:4px;" id="news_panel_sub">Visual reference for the most important trading patterns</div>
+  </div>
+
+  <!-- Filter tabs -->
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.5rem;">
+    <button class="news-cat-btn active" onclick="filterPatternGuide('all',this)">All</button>
+    <button class="news-cat-btn" onclick="filterPatternGuide('bullish_cont',this)" style="color:#00e676;border-color:rgba(0,230,118,.3);">▲ Bullish Continuation</button>
+    <button class="news-cat-btn" onclick="filterPatternGuide('bullish_rev',this)" style="color:#69f0ae;border-color:rgba(0,230,118,.2);">▲ Bullish Reversal</button>
+    <button class="news-cat-btn" onclick="filterPatternGuide('bearish_cont',this)" style="color:#ff5252;border-color:rgba(255,82,82,.3);">▼ Bearish Continuation</button>
+    <button class="news-cat-btn" onclick="filterPatternGuide('bearish_rev',this)" style="color:#ff8a80;border-color:rgba(255,82,82,.2);">▼ Bearish Reversal</button>
+  </div>
+
+  <!-- Bullish Continuation -->
+  <div class="pattern-section" id="pg_bullish_cont">
+    <div class="pattern-section-title bullish">▲ Bullish Continuation Patterns</div>
+    <div class="pattern-grid">
+
+      <div class="pattern-card">
+        <div class="pattern-chart-wrap bullish">
+          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
+            <polyline points="10,65 30,55 25,60 45,45 40,50 60,35 55,40 75,25 70,30 90,15" fill="none" stroke="#00e676" stroke-width="2"/>
+            <line x1="90" y1="15" x2="110" y2="15" stroke="#00e676" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <text x="95" y="12" fill="#00e676" font-size="7" font-weight="bold">TP</text>
+            <line x1="10" y1="55" x2="90" y2="55" stroke="#ff5252" stroke-width="1" stroke-dasharray="3,2" opacity=".6"/>
+            <text x="95" y="58" fill="#ff5252" font-size="7">SL</text>
+            <text x="40" y="28" fill="#00e676" font-size="7">Entry</text>
+            <circle cx="60" cy="35" r="3" fill="#00e676"/>
+          </svg>
+        </div>
+        <div class="pattern-name">Ascending Triangle</div>
+        <div class="pattern-tag bullish-tag">Bullish</div>
+        <div class="pattern-desc">Flat resistance + rising lows. Buyers accumulate pressure until breakout.</div>
+      </div>
+
+      <div class="pattern-card">
+        <div class="pattern-chart-wrap bullish">
+          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
+            <polyline points="10,60 30,30" fill="none" stroke="#00e676" stroke-width="2.5"/>
+            <polyline points="30,30 40,38 50,33 60,40 70,34" fill="none" stroke="#00e676" stroke-width="1.5"/>
+            <line x1="30" y1="30" x2="70" y2="30" stroke="#00e676" stroke-width="1" stroke-dasharray="2,2" opacity=".5"/>
+            <line x1="30" y1="42" x2="70" y2="42" stroke="#00e676" stroke-width="1" stroke-dasharray="2,2" opacity=".5"/>
+            <polyline points="70,34 90,10" fill="none" stroke="#00e676" stroke-width="2.5"/>
+            <line x1="90" y1="10" x2="110" y2="10" stroke="#00e676" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <text x="92" y="8" fill="#00e676" font-size="7" font-weight="bold">TP</text>
+            <text x="72" y="28" fill="#00e676" font-size="7">Entry</text>
+            <circle cx="70" cy="34" r="3" fill="#00e676"/>
+          </svg>
+        </div>
+        <div class="pattern-name">Bull Flag</div>
+        <div class="pattern-tag bullish-tag">Bullish</div>
+        <div class="pattern-desc">Sharp pole + tight consolidation. Strong continuation after breakout above flag.</div>
+      </div>
+
+      <div class="pattern-card">
+        <div class="pattern-chart-wrap bullish">
+          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
+            <polyline points="10,65 25,50 20,55 40,35 35,40 55,20 50,28 70,15" fill="none" stroke="#00e676" stroke-width="2"/>
+            <line x1="10" y1="65" x2="70" y2="35" stroke="#00e676" stroke-width="1" stroke-dasharray="3,2" opacity=".4"/>
+            <line x1="10" y1="55" x2="70" y2="25" stroke="#00e676" stroke-width="1" stroke-dasharray="3,2" opacity=".4"/>
+            <polyline points="70,15 90,5 110,5" fill="none" stroke="#00e676" stroke-width="2"/>
+            <text x="92" y="4" fill="#00e676" font-size="7" font-weight="bold">TP</text>
+            <circle cx="70" cy="15" r="3" fill="#00e676"/>
+            <text x="50" y="12" fill="#00e676" font-size="7">Entry</text>
+          </svg>
+        </div>
+        <div class="pattern-name">Rising Wedge (Bull)</div>
+        <div class="pattern-tag bullish-tag">Bullish</div>
+        <div class="pattern-desc">Converging trendlines with upward slope. Breakout signals strong continuation.</div>
+      </div>
+
+      <div class="pattern-card">
+        <div class="pattern-chart-wrap bullish">
+          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
+            <polyline points="10,60 25,45 35,50 50,35 60,42 75,28 85,35" fill="none" stroke="#00e676" stroke-width="2"/>
+            <line x1="10" y1="45" x2="85" y2="28" stroke="#00e676" stroke-width="1" stroke-dasharray="3,2" opacity=".5"/>
+            <line x1="10" y1="60" x2="85" y2="42" stroke="#00e676" stroke-width="1" stroke-dasharray="3,2" opacity=".5"/>
+            <polyline points="85,35 100,20 110,18" fill="none" stroke="#00e676" stroke-width="2"/>
+            <text x="95" y="16" fill="#00e676" font-size="7" font-weight="bold">TP</text>
+            <circle cx="85" cy="35" r="3" fill="#00e676"/>
+            <text x="65" y="25" fill="#00e676" font-size="7">Entry</text>
+          </svg>
+        </div>
+        <div class="pattern-name">Symmetrical Triangle (Bull)</div>
+        <div class="pattern-tag bullish-tag">Bullish</div>
+        <div class="pattern-desc">Converging highs and lows. Explosive breakout when price exits the triangle.</div>
+      </div>
+
     </div>
-    <button onclick="loadAllNews()" id="newsRefreshBtn" style="background:var(--green);color:#000;border:none;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;">
-      <span id="newsRefreshIcon">↻</span> <span id="news_refresh_label">Refresh</span>
-    </button>
   </div>
 
-  <!-- Category tabs -->
-  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem;" id="newsCategoryTabs">
-    <button class="news-cat-btn active" onclick="setNewsCategory('all',this)" id="ncat_all">All</button>
-    <button class="news-cat-btn" onclick="setNewsCategory('market',this)" id="ncat_market">Market</button>
-    <button class="news-cat-btn" onclick="setNewsCategory('tech',this)" id="ncat_tech">Tech</button>
-    <button class="news-cat-btn" onclick="setNewsCategory('economy',this)" id="ncat_economy">Economy</button>
-    <button class="news-cat-btn" onclick="setNewsCategory('earnings',this)" id="ncat_earnings">Earnings</button>
-  </div>
+  <!-- Bullish Reversal -->
+  <div class="pattern-section" id="pg_bullish_rev">
+    <div class="pattern-section-title bullish">▲ Bullish Reversal Patterns</div>
+    <div class="pattern-grid">
 
-  <!-- Loading state -->
-  <div id="newsMarketLoading" style="display:none;text-align:center;padding:3rem;color:var(--muted);">
-    <span class="spinner"></span>
-    <div style="margin-top:1rem;font-size:14px;" id="news_loading_label">Searching latest financial news with AI...</div>
-  </div>
+      <div class="pattern-card">
+        <div class="pattern-chart-wrap bullish">
+          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
+            <polyline points="10,20 30,50 20,40 45,65 35,55 60,70 50,62 75,65 65,58 90,50 100,35 110,20" fill="none" stroke="#00e676" stroke-width="2"/>
+            <line x1="45" y1="40" x2="95" y2="40" stroke="#00e676" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <text x="97" y="38" fill="#00e676" font-size="7" font-weight="bold">Entry</text>
+            <line x1="95" y1="40" x2="110" y2="10" stroke="#00e676" stroke-width="2"/>
+            <text x="95" y="8" fill="#00e676" font-size="7" font-weight="bold">TP</text>
+          </svg>
+        </div>
+        <div class="pattern-name">Inv. Head & Shoulders</div>
+        <div class="pattern-tag bullish-tag">Bullish</div>
+        <div class="pattern-desc">3 lows with middle lowest. Neckline breakout confirms powerful bullish reversal.</div>
+      </div>
 
-  <!-- News grid -->
-  <div id="newsMarketGrid"></div>
+      <div class="pattern-card">
+        <div class="pattern-chart-wrap bullish">
+          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
+            <polyline points="10,20 35,65 60,20 85,65 110,20" fill="none" stroke="#00e676" stroke-width="2"/>
+            <line x1="10" y1="35" x2="110" y2="35" stroke="#00e676" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <text x="55" y="32" fill="#00e676" font-size="7">Neckline — Entry</text>
+            <circle cx="35" cy="65" r="3" fill="#00e676"/>
+            <circle cx="85" cy="65" r="3" fill="#00e676"/>
+            <text x="25" y="75" fill="#00e676" font-size="6">Bottom 1</text>
+            <text x="75" y="75" fill="#00e676" font-size="6">Bottom 2</text>
+          </svg>
+        </div>
+        <div class="pattern-name">Double Bottom</div>
+        <div class="pattern-tag bullish-tag">Bullish</div>
+        <div class="pattern-desc">Two similar lows (W shape). Sellers failed twice — buyers taking control.</div>
+      </div>
 
-  <!-- Stock chips -->
-  <div class="panel" style="margin-top:1rem;">
-    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:.75rem;" id="news_by_stock_label">News by stock</div>
-    <div class="chips" style="margin-bottom:1rem;">
-      <button class="chip" onclick="loadTickerNews('AAPL')">AAPL</button>
-      <button class="chip" onclick="loadTickerNews('TSLA')">TSLA</button>
-      <button class="chip" onclick="loadTickerNews('NVDA')">NVDA</button>
-      <button class="chip" onclick="loadTickerNews('MSFT')">MSFT</button>
-      <button class="chip" onclick="loadTickerNews('SPY')">SPY</button>
-      <button class="chip" onclick="loadTickerNews('AMZN')">AMZN</button>
-      <button class="chip" onclick="loadTickerNews('META')">META</button>
-      <button class="chip" onclick="loadTickerNews('GOOGL')">GOOGL</button>
+      <div class="pattern-card">
+        <div class="pattern-chart-wrap bullish">
+          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
+            <polyline points="10,15 25,55 40,15 55,65 70,15 85,65 100,15 110,8" fill="none" stroke="#00e676" stroke-width="2"/>
+            <line x1="10" y1="30" x2="110" y2="30" stroke="#00e676" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <text x="40" y="27" fill="#00e676" font-size="7">Neckline</text>
+            <circle cx="25" cy="55" r="2.5" fill="#00e676"/>
+            <circle cx="55" cy="65" r="2.5" fill="#00e676"/>
+            <circle cx="85" cy="65" r="2.5" fill="#00e676"/>
+            <text x="75" y="75" fill="#00e676" font-size="6">Triple bottom</text>
+          </svg>
+        </div>
+        <div class="pattern-name">Triple Bottom</div>
+        <div class="pattern-tag bullish-tag">Bullish</div>
+        <div class="pattern-desc">Three tests of support that hold. Very strong reversal when neckline breaks up.</div>
+      </div>
+
+      <div class="pattern-card">
+        <div class="pattern-chart-wrap bullish">
+          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
+            <polyline points="10,15 30,55 50,30 70,55 90,30" fill="none" stroke="#ff5252" stroke-width="1.5" opacity=".5"/>
+            <line x1="10" y1="40" x2="90" y2="65" stroke="#00e676" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <line x1="10" y1="25" x2="90" y2="50" stroke="#00e676" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <polyline points="90,30 105,12 115,8" fill="none" stroke="#00e676" stroke-width="2.5"/>
+            <text x="95" y="10" fill="#00e676" font-size="7" font-weight="bold">TP</text>
+            <circle cx="90" cy="30" r="3" fill="#00e676"/>
+            <text x="70" y="25" fill="#00e676" font-size="7">Entry</text>
+          </svg>
+        </div>
+        <div class="pattern-name">Falling Wedge</div>
+        <div class="pattern-tag bullish-tag">Bullish</div>
+        <div class="pattern-desc">Downward converging lines. Breakout above resistance signals strong bullish reversal.</div>
+      </div>
+
     </div>
-    <div id="newsTickerContent">
-      <div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:13px;" id="news_ticker_placeholder">Select a stock above to load its news</div>
+  </div>
+
+  <!-- Bearish Continuation -->
+  <div class="pattern-section" id="pg_bearish_cont">
+    <div class="pattern-section-title bearish">▼ Bearish Continuation Patterns</div>
+    <div class="pattern-grid">
+
+      <div class="pattern-card">
+        <div class="pattern-chart-wrap bearish">
+          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
+            <polyline points="10,15 30,25 25,20 45,35 40,30 60,45 55,40 75,55 70,50 90,65" fill="none" stroke="#ff5252" stroke-width="2"/>
+            <line x1="10" y1="25" x2="90" y2="55" stroke="#ff5252" stroke-width="1" stroke-dasharray="3,2" opacity=".5"/>
+            <line x1="10" y1="15" x2="90" y2="45" stroke="#ff5252" stroke-width="1" stroke-dasharray="3,2" opacity=".5"/>
+            <line x1="90" y1="65" x2="110" y2="65" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <text x="92" y="62" fill="#ff5252" font-size="7" font-weight="bold">TP</text>
+            <circle cx="90" cy="65" r="3" fill="#ff5252"/>
+          </svg>
+        </div>
+        <div class="pattern-name">Descending Triangle</div>
+        <div class="pattern-tag bearish-tag">Bearish</div>
+        <div class="pattern-desc">Flat support + declining highs. Sellers pushing down — breakdown imminent.</div>
+      </div>
+
+      <div class="pattern-card">
+        <div class="pattern-chart-wrap bearish">
+          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
+            <polyline points="10,20 30,50" fill="none" stroke="#ff5252" stroke-width="2.5"/>
+            <polyline points="30,50 40,42 50,47 60,40 70,46" fill="none" stroke="#ff5252" stroke-width="1.5"/>
+            <line x1="30" y1="38" x2="70" y2="38" stroke="#ff5252" stroke-width="1" stroke-dasharray="2,2" opacity=".5"/>
+            <line x1="30" y1="50" x2="70" y2="50" stroke="#ff5252" stroke-width="1" stroke-dasharray="2,2" opacity=".5"/>
+            <polyline points="70,46 90,70 110,75" fill="none" stroke="#ff5252" stroke-width="2.5"/>
+            <text x="92" y="78" fill="#ff5252" font-size="7" font-weight="bold">TP</text>
+            <circle cx="70" cy="46" r="3" fill="#ff5252"/>
+            <text x="50" y="55" fill="#ff5252" font-size="7">Entry</text>
+          </svg>
+        </div>
+        <div class="pattern-name">Bear Flag</div>
+        <div class="pattern-tag bearish-tag">Bearish</div>
+        <div class="pattern-desc">Sharp drop + weak bounce. Sellers resting before next leg down.</div>
+      </div>
+
+      <div class="pattern-card">
+        <div class="pattern-chart-wrap bearish">
+          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
+            <polyline points="10,15 25,30 20,22 40,45 35,38 55,60 50,52 70,65" fill="none" stroke="#ff5252" stroke-width="2"/>
+            <line x1="10" y1="15" x2="70" y2="45" stroke="#ff5252" stroke-width="1" stroke-dasharray="3,2" opacity=".4"/>
+            <line x1="10" y1="28" x2="70" y2="58" stroke="#ff5252" stroke-width="1" stroke-dasharray="3,2" opacity=".4"/>
+            <polyline points="70,65 90,75 110,78" fill="none" stroke="#ff5252" stroke-width="2"/>
+            <text x="92" y="78" fill="#ff5252" font-size="7" font-weight="bold">TP</text>
+            <circle cx="70" cy="65" r="3" fill="#ff5252"/>
+          </svg>
+        </div>
+        <div class="pattern-name">Falling Wedge (Bear)</div>
+        <div class="pattern-tag bearish-tag">Bearish</div>
+        <div class="pattern-desc">Downward converging channel. Continuation of the downtrend after breakdown.</div>
+      </div>
+
+      <div class="pattern-card">
+        <div class="pattern-chart-wrap bearish">
+          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
+            <polyline points="10,15 25,30 35,22 50,38 60,28 75,42 85,32" fill="none" stroke="#ff5252" stroke-width="2"/>
+            <line x1="10" y1="20" x2="85" y2="35" stroke="#ff5252" stroke-width="1" stroke-dasharray="3,2" opacity=".5"/>
+            <line x1="10" y1="32" x2="85" y2="48" stroke="#ff5252" stroke-width="1" stroke-dasharray="3,2" opacity=".5"/>
+            <polyline points="85,32 100,55 110,65" fill="none" stroke="#ff5252" stroke-width="2"/>
+            <text x="95" y="68" fill="#ff5252" font-size="7" font-weight="bold">TP</text>
+            <circle cx="85" cy="32" r="3" fill="#ff5252"/>
+          </svg>
+        </div>
+        <div class="pattern-name">Symmetrical Triangle (Bear)</div>
+        <div class="pattern-tag bearish-tag">Bearish</div>
+        <div class="pattern-desc">Converging lines in downtrend. Breakdown confirms bearish continuation.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Bearish Reversal -->
+  <div class="pattern-section" id="pg_bearish_rev">
+    <div class="pattern-section-title bearish">▼ Bearish Reversal Patterns</div>
+    <div class="pattern-grid">
+
+      <div class="pattern-card">
+        <div class="pattern-chart-wrap bearish">
+          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
+            <polyline points="10,60 30,30 20,40 45,15 35,25 60,10 50,18 75,15 65,22 90,30 100,45 110,60" fill="none" stroke="#ff5252" stroke-width="2"/>
+            <line x1="30" y1="40" x2="100" y2="40" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <text x="40" y="37" fill="#ff5252" font-size="7">Neckline</text>
+            <polyline points="100,40 110,65" fill="none" stroke="#ff5252" stroke-width="2"/>
+            <text x="97" y="72" fill="#ff5252" font-size="7" font-weight="bold">TP</text>
+            <text x="42" y="8" fill="#ff5252" font-size="7">Head</text>
+          </svg>
+        </div>
+        <div class="pattern-name">Head & Shoulders</div>
+        <div class="pattern-tag bearish-tag">Bearish</div>
+        <div class="pattern-desc">3 peaks with middle highest. Neckline break confirms major bearish reversal.</div>
+      </div>
+
+      <div class="pattern-card">
+        <div class="pattern-chart-wrap bearish">
+          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
+            <polyline points="10,60 35,15 60,60 85,15 110,60" fill="none" stroke="#ff5252" stroke-width="2"/>
+            <line x1="10" y1="45" x2="110" y2="45" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <text x="40" y="42" fill="#ff5252" font-size="7">Neckline — Sell</text>
+            <circle cx="35" cy="15" r="3" fill="#ff5252"/>
+            <circle cx="85" cy="15" r="3" fill="#ff5252"/>
+            <text x="25" y="10" fill="#ff5252" font-size="6">Top 1</text>
+            <text x="78" y="10" fill="#ff5252" font-size="6">Top 2</text>
+          </svg>
+        </div>
+        <div class="pattern-name">Double Top</div>
+        <div class="pattern-tag bearish-tag">Bearish</div>
+        <div class="pattern-desc">Two similar highs (M shape). Buyers failed twice — sellers taking control.</div>
+      </div>
+
+      <div class="pattern-card">
+        <div class="pattern-chart-wrap bearish">
+          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
+            <polyline points="10,65 25,25 40,65 55,15 70,65 85,25 100,65 110,72" fill="none" stroke="#ff5252" stroke-width="2"/>
+            <line x1="10" y1="50" x2="110" y2="50" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <text x="35" y="47" fill="#ff5252" font-size="7">Neckline</text>
+            <circle cx="25" cy="25" r="2.5" fill="#ff5252"/>
+            <circle cx="55" cy="15" r="2.5" fill="#ff5252"/>
+            <circle cx="85" cy="25" r="2.5" fill="#ff5252"/>
+            <text x="42" y="12" fill="#ff5252" font-size="6">Triple top</text>
+          </svg>
+        </div>
+        <div class="pattern-name">Triple Top</div>
+        <div class="pattern-tag bearish-tag">Bearish</div>
+        <div class="pattern-desc">Three failed attempts at resistance. Very strong reversal signal when neckline breaks down.</div>
+      </div>
+
+      <div class="pattern-card">
+        <div class="pattern-chart-wrap bearish">
+          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
+            <polyline points="10,65 30,25 50,50 70,25 90,50" fill="none" stroke="#00e676" stroke-width="1.5" opacity=".5"/>
+            <line x1="10" y1="15" x2="90" y2="40" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <line x1="10" y1="30" x2="90" y2="55" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <polyline points="90,50 105,68 115,72" fill="none" stroke="#ff5252" stroke-width="2.5"/>
+            <text x="95" y="75" fill="#ff5252" font-size="7" font-weight="bold">TP</text>
+            <circle cx="90" cy="50" r="3" fill="#ff5252"/>
+            <text x="68" y="55" fill="#ff5252" font-size="7">Entry</text>
+          </svg>
+        </div>
+        <div class="pattern-name">Rising Wedge (Bear)</div>
+        <div class="pattern-tag bearish-tag">Bearish</div>
+        <div class="pattern-desc">Upward converging lines losing momentum. Breakdown signals strong bearish reversal.</div>
+      </div>
+
     </div>
   </div>
 
@@ -1238,7 +1525,7 @@ function showSection(section) {
     if(btn) btn.classList.add('active');
     if(titleEl) titleEl.textContent = '📰 ' + (t.nav_news || 'News');
     // Auto-cargar noticias si no hay cache
-    if(!newsCache[currentNewsCategory]) loadAllNews();
+    // Pattern guide — no auto-load needed
 
   } else if(section === 'learn') {
     const el = document.getElementById('learnPanel');
@@ -1808,150 +2095,27 @@ function analyzeFavorite(sym) {
   analyze();
 }
 
-// ══ NOTICIAS DE MERCADO ══
-let currentNewsCategory = 'all';
-let newsCache = {};
 
-const CATEGORY_KEYWORDS = {
-  all:      null,
-  market:   ['market','stock','S&P','nasdaq','dow','index','rally','selloff','wall street'],
-  tech:     ['apple','google','microsoft','nvidia','meta','amazon','tesla','tech','AI','chip','semiconductor'],
-  economy:  ['fed','federal reserve','rate','inflation','gdp','jobs','unemployment','economy','recession'],
-  earnings: ['earnings','revenue','profit','quarterly','results','beat','miss','guidance','eps'],
-};
-
-function setNewsCategory(cat, btn) {
-  currentNewsCategory = cat;
+// ══ PATTERN GUIDE ══
+function filterPatternGuide(cat, btn) {
   document.querySelectorAll('.news-cat-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  // Filtrar del cache si existe
-  if(newsCache['all']) {
-    filterAndRenderNews(newsCache['all'], cat);
+  const sections = {
+    bullish_cont: 'pg_bullish_cont',
+    bullish_rev:  'pg_bullish_rev',
+    bearish_cont: 'pg_bearish_cont',
+    bearish_rev:  'pg_bearish_rev',
+  };
+  if(cat === 'all') {
+    Object.values(sections).forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.style.display = 'block';
+    });
   } else {
-    loadAllNews();
-  }
-}
-
-function filterAndRenderNews(articles, cat) {
-  if(cat === 'all') { renderNewsGrid(articles); return; }
-  const keywords = CATEGORY_KEYWORDS[cat] || [];
-  const filtered = articles.filter(a => {
-    const text = (a.headline + ' ' + (a.summary||'')).toLowerCase();
-    return keywords.some(k => text.includes(k.toLowerCase()));
-  });
-  renderNewsGrid(filtered.length ? filtered : articles.slice(0,5));
-}
-
-async function loadAllNews() {
-  const loading = document.getElementById('newsMarketLoading');
-  const grid = document.getElementById('newsMarketGrid');
-  const refreshBtn = document.getElementById('newsRefreshBtn');
-  const refreshIcon = document.getElementById('newsRefreshIcon');
-
-  loading.style.display = 'block';
-  grid.innerHTML = '';
-  refreshIcon.style.animation = 'spin .7s linear infinite';
-  refreshBtn.disabled = true;
-
-  try {
-    // Traer noticias de Finnhub via proxy
-    const r = await fetch(`${PROXY}?type=market_news&category=general`);
-    if(!r.ok) throw new Error('Finnhub error');
-    const data = await r.json();
-    const articles = data.articles || [];
-
-    if(!articles.length) throw new Error('No articles');
-
-    // Guardar en cache y renderizar
-    newsCache['all'] = articles;
-    newsCache = {}; // limpiar cache de categorías
-    newsCache['all'] = articles;
-
-    filterAndRenderNews(articles, currentNewsCategory);
-
-  } catch(e) {
-    grid.innerHTML = `<div class="news-empty"><div class="news-empty-icon">📡</div><div style="font-size:14px;font-weight:600;margin-bottom:.5rem;">Could not load news</div><div style="font-size:13px;">Try refreshing in a moment</div></div>`;
-  } finally {
-    loading.style.display = 'none';
-    refreshIcon.style.animation = '';
-    refreshBtn.disabled = false;
-  }
-}
-
-function renderNewsGrid(articles) {
-  const grid = document.getElementById('newsMarketGrid');
-  if(!articles || !articles.length) {
-    grid.innerHTML = `<div class="news-empty"><div class="news-empty-icon">📰</div><div style="font-size:14px;font-weight:600;">No news found</div></div>`;
-    return;
-  }
-
-  const now = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-  const countBadge = `<div class="news-grid-header">
-    <div style="font-size:13px;font-weight:600;color:var(--text);">${articles.length} stories</div>
-    <div class="news-count-badge">Updated ${now}</div>
-  </div>`;
-
-  grid.innerHTML = countBadge + articles.slice(0,15).map(a => {
-    // Detectar categoría
-    const text = (a.headline + ' ' + (a.summary||'')).toLowerCase();
-    let cat = 'other', catLabel = 'News';
-    if(CATEGORY_KEYWORDS.earnings.some(k=>text.includes(k.toLowerCase()))){cat='earnings';catLabel='Earnings';}
-    else if(CATEGORY_KEYWORDS.economy.some(k=>text.includes(k.toLowerCase()))){cat='economy';catLabel='Economy';}
-    else if(CATEGORY_KEYWORDS.tech.some(k=>text.includes(k.toLowerCase()))){cat='tech';catLabel='Tech';}
-    else if(CATEGORY_KEYWORDS.market.some(k=>text.includes(k.toLowerCase()))){cat='market';catLabel='Market';}
-
-    // Fecha legible
-    const date = a.datetime ? new Date(a.datetime*1000).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : '';
-
-    // Tickers relacionados
-    const tickers = a.related ? a.related.split(',').slice(0,3).filter(t=>t.trim()).map(t=>`<span class="news-card-ticker">${t.trim()}</span>`).join('') : '';
-
-    // Summary truncado
-    const summary = a.summary ? a.summary.slice(0,150) + (a.summary.length>150?'…':'') : '';
-
-    return `
-    <div class="news-card" onclick="window.open('${a.url||'#'}','_blank')" style="cursor:pointer;">
-      <div class="news-card-top">
-        <span class="news-card-category ${cat}">${catLabel}</span>
-        ${tickers}
-        <span style="font-size:11px;color:var(--muted);margin-left:auto;">${date}</span>
-      </div>
-      <div class="news-card-headline">${a.headline||''}</div>
-      ${summary?`<div class="news-card-impact">${summary}</div>`:''}
-      <div class="news-card-footer">
-        <span class="news-card-source">${a.source||''}</span>
-        <span style="font-size:11px;color:var(--green);">Read more →</span>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-async function loadTickerNews(ticker) {
-  const el = document.getElementById('newsTickerContent');
-  el.innerHTML = `<div style="text-align:center;padding:1.5rem;color:var(--muted);"><span class="spinner"></span> Loading ${ticker}...</div>`;
-
-  try {
-    const r = await fetch(`${PROXY}?type=ticker_news&symbol=${ticker}`);
-    const data = await r.json();
-    const articles = data.articles || [];
-
-    if(!articles.length) throw new Error('no news');
-
-    el.innerHTML = articles.slice(0,6).map(a => {
-      const date = a.datetime ? new Date(a.datetime*1000).toLocaleDateString([],{month:'short',day:'numeric'}) : '';
-      const summary = a.summary ? a.summary.slice(0,120)+'…' : '';
-      return `
-      <div class="news-card" onclick="window.open('${a.url||'#'}','_blank')" style="cursor:pointer;margin-bottom:.75rem;">
-        <div class="news-card-headline" style="font-size:13px;">${a.headline||''}</div>
-        ${summary?`<div class="news-card-impact" style="font-size:12px;margin-top:4px;">${summary}</div>`:''}
-        <div class="news-card-footer" style="margin-top:8px;">
-          <span class="news-card-source">${a.source||''}</span>
-          <span style="font-size:11px;color:var(--muted);">${date}</span>
-        </div>
-      </div>`;
-    }).join('');
-  } catch(e) {
-    el.innerHTML = `<div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:13px;">No recent news for ${ticker}.</div>`;
+    Object.entries(sections).forEach(([key, id]) => {
+      const el = document.getElementById(id);
+      if(el) el.style.display = key === cat ? 'block' : 'none';
+    });
   }
 }
 
