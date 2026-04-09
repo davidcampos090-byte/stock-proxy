@@ -460,7 +460,7 @@ font-size:13px;cursor:pointer;
     </a>
     <a class="nav-item active" id="nav_btn_analyzer" onclick="showSection('analyzer')" href="#"><span class="nav-dot" style="width:8px;height:8px;border-radius:50%;background:#00e676;flex-shrink:0;"></span> <span id="nav_analyzer">Analyzer</span></a>
     <a class="nav-item" id="nav_btn_favorites" onclick="showSection('favorites')" href="#"><span class="nav-dot" style="width:8px;height:8px;border-radius:50%;background:#f59e0b;flex-shrink:0;"></span> <span id="nav_favorites_label">Favorites</span></a>
-    <a class="nav-item" id="nav_btn_news" onclick="showSection('news')" href="#"><span class="nav-dot" style="width:8px;height:8px;border-radius:50%;background:#818cf8;flex-shrink:0;"></span> <span id="nav_news_label">News</span></a>
+    <a class="nav-item" id="nav_btn_news" onclick="showSection('news')" href="#"><span class="nav-dot" style="width:8px;height:8px;border-radius:50%;background:#818cf8;flex-shrink:0;"></span> <span id="nav_news_label">Charts</span></a>
     <a class="nav-item" id="nav_btn_learn" onclick="showSection('learn')" href="#"><span class="nav-dot" style="width:8px;height:8px;border-radius:50%;background:#f472b6;flex-shrink:0;"></span> <span id="nav_learn_label">Learn</span></a>
     <a class="nav-item" id="nav_btn_settings" onclick="showSection('settings')" href="#"><span class="nav-dot" style="width:8px;height:8px;border-radius:50%;background:#8896a7;flex-shrink:0;"></span> <span id="nav_settings_label">Settings</span></a>
     <div class="sidebar-bottom">
@@ -516,324 +516,442 @@ font-size:13px;cursor:pointer;
 </div>
 
 <!-- ══ PATTERNS GUIDE PANEL ══ -->
+<!-- ══ PATTERNS GUIDE PANEL ══ -->
 <div id="newsMarketPanel" style="display:none;">
 
   <!-- Header -->
   <div style="margin-bottom:1.5rem;">
-    <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;" id="news_panel_title">Chart Patterns Guide</div>
+    <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;" id="news_panel_title">Chart Patterns</div>
     <div style="font-size:13px;color:var(--muted);margin-top:4px;" id="news_panel_sub">Visual reference for the most important trading patterns</div>
   </div>
 
   <!-- Filter tabs -->
   <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.5rem;">
-    <button class="news-cat-btn active" onclick="filterPatternGuide('all',this)">All</button>
-    <button class="news-cat-btn" onclick="filterPatternGuide('bullish_cont',this)" style="color:#00e676;border-color:rgba(0,230,118,.3);">▲ Bullish Continuation</button>
-    <button class="news-cat-btn" onclick="filterPatternGuide('bullish_rev',this)" style="color:#69f0ae;border-color:rgba(0,230,118,.2);">▲ Bullish Reversal</button>
-    <button class="news-cat-btn" onclick="filterPatternGuide('bearish_cont',this)" style="color:#ff5252;border-color:rgba(255,82,82,.3);">▼ Bearish Continuation</button>
-    <button class="news-cat-btn" onclick="filterPatternGuide('bearish_rev',this)" style="color:#ff8a80;border-color:rgba(255,82,82,.2);">▼ Bearish Reversal</button>
+    <button class="news-cat-btn active" onclick="filterPatternGuide('all',this)" id="pg_tab_all">All</button>
+    <button class="news-cat-btn" onclick="filterPatternGuide('bullish_cont',this)" id="pg_tab_bc">▲ Bull Continuation</button>
+    <button class="news-cat-btn" onclick="filterPatternGuide('bullish_rev',this)" id="pg_tab_br">▲ Bull Reversal</button>
+    <button class="news-cat-btn" onclick="filterPatternGuide('bearish_cont',this)" id="pg_tab_sc">▼ Bear Continuation</button>
+    <button class="news-cat-btn" onclick="filterPatternGuide('bearish_rev',this)" id="pg_tab_sr">▼ Bear Reversal</button>
   </div>
 
-  <!-- Bullish Continuation -->
+  <!-- BULLISH CONTINUATION -->
   <div class="pattern-section" id="pg_bullish_cont">
-    <div class="pattern-section-title bullish">▲ Bullish Continuation Patterns</div>
+    <div class="pattern-section-title bullish" id="pg_title_bc">▲ Bullish Continuation Patterns</div>
     <div class="pattern-grid">
 
       <div class="pattern-card">
         <div class="pattern-chart-wrap bullish">
-          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
-            <polyline points="10,65 30,55 25,60 45,45 40,50 60,35 55,40 75,25 70,30 90,15" fill="none" stroke="#00e676" stroke-width="2"/>
-            <line x1="90" y1="15" x2="110" y2="15" stroke="#00e676" stroke-width="1.5" stroke-dasharray="3,2"/>
-            <text x="95" y="12" fill="#00e676" font-size="7" font-weight="bold">TP</text>
-            <line x1="10" y1="55" x2="90" y2="55" stroke="#ff5252" stroke-width="1" stroke-dasharray="3,2" opacity=".6"/>
-            <text x="95" y="58" fill="#ff5252" font-size="7">SL</text>
-            <text x="40" y="28" fill="#00e676" font-size="7">Entry</text>
-            <circle cx="60" cy="35" r="3" fill="#00e676"/>
+          <svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;">
+            <!-- Grid lines -->
+            <line x1="10" y1="80" x2="130" y2="80" stroke="#1e3a2e" stroke-width="1"/>
+            <line x1="10" y1="55" x2="130" y2="55" stroke="#1e3a2e" stroke-width="1"/>
+            <line x1="10" y1="30" x2="130" y2="30" stroke="#1e3a2e" stroke-width="1"/>
+            <!-- Flat resistance top -->
+            <line x1="30" y1="28" x2="95" y2="28" stroke="#00e676" stroke-width="1.5" stroke-dasharray="4,3" opacity=".7"/>
+            <!-- Rising support bottom -->
+            <line x1="15" y1="75" x2="95" y2="48" stroke="#00e676" stroke-width="1.5" opacity=".7"/>
+            <!-- Price zigzag inside triangle -->
+            <polyline points="15,75 30,28 45,58 60,28 75,45 90,28" fill="none" stroke="#00e676" stroke-width="2" stroke-linejoin="round"/>
+            <!-- Breakout arrow -->
+            <polyline points="90,28 110,10 125,10" fill="none" stroke="#00e676" stroke-width="2.5"/>
+            <polygon points="125,7 133,10 125,13" fill="#00e676"/>
+            <!-- Labels -->
+            <text x="97" y="8" fill="#00e676" font-size="8" font-weight="bold">TP</text>
+            <rect x="55" y="32" width="24" height="12" rx="3" fill="rgba(0,230,118,0.15)"/>
+            <text x="58" y="41" fill="#00e676" font-size="7" font-weight="bold">Entry</text>
+            <rect x="97" y="20" width="14" height="10" rx="2" fill="rgba(255,82,82,0.15)"/>
+            <text x="99" y="28" fill="#ff5252" font-size="7">SL</text>
           </svg>
         </div>
-        <div class="pattern-name">Ascending Triangle</div>
+        <div class="pattern-name" id="pc_asc_tri">Ascending Triangle</div>
         <div class="pattern-tag bullish-tag">Bullish</div>
-        <div class="pattern-desc">Flat resistance + rising lows. Buyers accumulate pressure until breakout.</div>
+        <div class="pattern-desc" id="pc_asc_tri_d">Flat resistance + rising lows. Buyers accumulate until explosive breakout.</div>
       </div>
 
       <div class="pattern-card">
         <div class="pattern-chart-wrap bullish">
-          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
-            <polyline points="10,60 30,30" fill="none" stroke="#00e676" stroke-width="2.5"/>
-            <polyline points="30,30 40,38 50,33 60,40 70,34" fill="none" stroke="#00e676" stroke-width="1.5"/>
-            <line x1="30" y1="30" x2="70" y2="30" stroke="#00e676" stroke-width="1" stroke-dasharray="2,2" opacity=".5"/>
-            <line x1="30" y1="42" x2="70" y2="42" stroke="#00e676" stroke-width="1" stroke-dasharray="2,2" opacity=".5"/>
-            <polyline points="70,34 90,10" fill="none" stroke="#00e676" stroke-width="2.5"/>
-            <line x1="90" y1="10" x2="110" y2="10" stroke="#00e676" stroke-width="1.5" stroke-dasharray="3,2"/>
-            <text x="92" y="8" fill="#00e676" font-size="7" font-weight="bold">TP</text>
-            <text x="72" y="28" fill="#00e676" font-size="7">Entry</text>
-            <circle cx="70" cy="34" r="3" fill="#00e676"/>
+          <svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;">
+            <!-- Grid -->
+            <line x1="10" y1="80" x2="130" y2="80" stroke="#1e3a2e" stroke-width="1"/>
+            <line x1="10" y1="55" x2="130" y2="55" stroke="#1e3a2e" stroke-width="1"/>
+            <!-- Pole -->
+            <line x1="20" y1="75" x2="20" y2="20" stroke="#00e676" stroke-width="2.5"/>
+            <polyline points="20,75 50,20" fill="none" stroke="#00e676" stroke-width="2.5"/>
+            <!-- Flag box -->
+            <rect x="50" y="18" width="45" height="22" rx="3" fill="rgba(0,230,118,0.08)" stroke="#00e676" stroke-width="1" stroke-dasharray="3,2"/>
+            <!-- Price in flag -->
+            <polyline points="50,20 62,30 74,24 86,32 95,26" fill="none" stroke="#00e676" stroke-width="1.5"/>
+            <!-- Breakout -->
+            <polyline points="95,26 115,8 128,8" fill="none" stroke="#00e676" stroke-width="2.5"/>
+            <polygon points="128,5 136,8 128,11" fill="#00e676"/>
+            <!-- Labels -->
+            <text x="57" y="16" fill="#00e676" font-size="7">Flag</text>
+            <text x="115" y="6" fill="#00e676" font-size="8" font-weight="bold">TP</text>
+            <rect x="52" y="34" width="30" height="10" rx="2" fill="rgba(0,230,118,0.15)"/>
+            <text x="55" y="42" fill="#00e676" font-size="7" font-weight="bold">Entry ▲</text>
+            <text x="8" y="48" fill="#8896a7" font-size="7">Pole</text>
           </svg>
         </div>
-        <div class="pattern-name">Bull Flag</div>
+        <div class="pattern-name" id="pc_bull_flag">Bull Flag</div>
         <div class="pattern-tag bullish-tag">Bullish</div>
-        <div class="pattern-desc">Sharp pole + tight consolidation. Strong continuation after breakout above flag.</div>
+        <div class="pattern-desc" id="pc_bull_flag_d">Sharp pole + tight consolidation. Strong continuation on breakout above flag.</div>
       </div>
 
       <div class="pattern-card">
         <div class="pattern-chart-wrap bullish">
-          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
-            <polyline points="10,65 25,50 20,55 40,35 35,40 55,20 50,28 70,15" fill="none" stroke="#00e676" stroke-width="2"/>
-            <line x1="10" y1="65" x2="70" y2="35" stroke="#00e676" stroke-width="1" stroke-dasharray="3,2" opacity=".4"/>
-            <line x1="10" y1="55" x2="70" y2="25" stroke="#00e676" stroke-width="1" stroke-dasharray="3,2" opacity=".4"/>
-            <polyline points="70,15 90,5 110,5" fill="none" stroke="#00e676" stroke-width="2"/>
-            <text x="92" y="4" fill="#00e676" font-size="7" font-weight="bold">TP</text>
-            <circle cx="70" cy="15" r="3" fill="#00e676"/>
-            <text x="50" y="12" fill="#00e676" font-size="7">Entry</text>
+          <svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;">
+            <!-- Grid -->
+            <line x1="10" y1="80" x2="130" y2="80" stroke="#1e3a2e" stroke-width="1"/>
+            <!-- Converging lines upward -->
+            <line x1="10" y1="70" x2="90" y2="22" stroke="#00e676" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/>
+            <line x1="10" y1="55" x2="90" y2="35" stroke="#00e676" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/>
+            <!-- Price bouncing inside -->
+            <polyline points="10,70 25,38 38,52 53,28 67,42 80,25" fill="none" stroke="#00e676" stroke-width="2" stroke-linejoin="round"/>
+            <!-- Breakout up -->
+            <polyline points="80,25 100,8 120,8" fill="none" stroke="#00e676" stroke-width="2.5"/>
+            <polygon points="120,5 128,8 120,11" fill="#00e676"/>
+            <text x="105" y="6" fill="#00e676" font-size="8" font-weight="bold">TP</text>
+            <rect x="62" y="14" width="24" height="10" rx="2" fill="rgba(0,230,118,0.15)"/>
+            <text x="64" y="22" fill="#00e676" font-size="7" font-weight="bold">Entry</text>
           </svg>
         </div>
-        <div class="pattern-name">Rising Wedge (Bull)</div>
+        <div class="pattern-name" id="pc_bull_wedge">Bullish Wedge</div>
         <div class="pattern-tag bullish-tag">Bullish</div>
-        <div class="pattern-desc">Converging trendlines with upward slope. Breakout signals strong continuation.</div>
+        <div class="pattern-desc" id="pc_bull_wedge_d">Converging upward trendlines. Breakout above resistance signals continuation.</div>
       </div>
 
       <div class="pattern-card">
         <div class="pattern-chart-wrap bullish">
-          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
-            <polyline points="10,60 25,45 35,50 50,35 60,42 75,28 85,35" fill="none" stroke="#00e676" stroke-width="2"/>
-            <line x1="10" y1="45" x2="85" y2="28" stroke="#00e676" stroke-width="1" stroke-dasharray="3,2" opacity=".5"/>
-            <line x1="10" y1="60" x2="85" y2="42" stroke="#00e676" stroke-width="1" stroke-dasharray="3,2" opacity=".5"/>
-            <polyline points="85,35 100,20 110,18" fill="none" stroke="#00e676" stroke-width="2"/>
-            <text x="95" y="16" fill="#00e676" font-size="7" font-weight="bold">TP</text>
-            <circle cx="85" cy="35" r="3" fill="#00e676"/>
-            <text x="65" y="25" fill="#00e676" font-size="7">Entry</text>
+          <svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;">
+            <!-- Grid -->
+            <line x1="10" y1="80" x2="130" y2="80" stroke="#1e3a2e" stroke-width="1"/>
+            <!-- Symmetrical converging -->
+            <line x1="10" y1="18" x2="90" y2="38" stroke="#00e676" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/>
+            <line x1="10" y1="68" x2="90" y2="48" stroke="#00e676" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/>
+            <!-- Price inside -->
+            <polyline points="10,20 28,62 46,32 64,58 82,42" fill="none" stroke="#00e676" stroke-width="2" stroke-linejoin="round"/>
+            <!-- Breakout -->
+            <polyline points="82,42 105,20 120,20" fill="none" stroke="#00e676" stroke-width="2.5"/>
+            <polygon points="120,17 128,20 120,23" fill="#00e676"/>
+            <text x="105" y="16" fill="#00e676" font-size="8" font-weight="bold">TP</text>
+            <rect x="65" y="28" width="24" height="10" rx="2" fill="rgba(0,230,118,0.15)"/>
+            <text x="67" y="36" fill="#00e676" font-size="7" font-weight="bold">Entry</text>
           </svg>
         </div>
-        <div class="pattern-name">Symmetrical Triangle (Bull)</div>
+        <div class="pattern-name" id="pc_sym_tri_bull">Symmetrical Triangle</div>
         <div class="pattern-tag bullish-tag">Bullish</div>
-        <div class="pattern-desc">Converging highs and lows. Explosive breakout when price exits the triangle.</div>
+        <div class="pattern-desc" id="pc_sym_tri_bull_d">Converging highs and lows. Explosive breakout when price exits the apex.</div>
       </div>
 
     </div>
   </div>
 
-  <!-- Bullish Reversal -->
+  <!-- BULLISH REVERSAL -->
   <div class="pattern-section" id="pg_bullish_rev">
-    <div class="pattern-section-title bullish">▲ Bullish Reversal Patterns</div>
+    <div class="pattern-section-title bullish" id="pg_title_br">▲ Bullish Reversal Patterns</div>
     <div class="pattern-grid">
 
       <div class="pattern-card">
         <div class="pattern-chart-wrap bullish">
-          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
-            <polyline points="10,20 30,50 20,40 45,65 35,55 60,70 50,62 75,65 65,58 90,50 100,35 110,20" fill="none" stroke="#00e676" stroke-width="2"/>
-            <line x1="45" y1="40" x2="95" y2="40" stroke="#00e676" stroke-width="1.5" stroke-dasharray="3,2"/>
-            <text x="97" y="38" fill="#00e676" font-size="7" font-weight="bold">Entry</text>
-            <line x1="95" y1="40" x2="110" y2="10" stroke="#00e676" stroke-width="2"/>
-            <text x="95" y="8" fill="#00e676" font-size="7" font-weight="bold">TP</text>
+          <svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;">
+            <!-- Grid -->
+            <line x1="10" y1="80" x2="130" y2="80" stroke="#1e3a2e" stroke-width="1"/>
+            <!-- IHS shape -->
+            <polyline points="10,20 25,55 32,38 50,70 58,50 75,70 82,38 97,55 112,20" fill="none" stroke="#00e676" stroke-width="2" stroke-linejoin="round"/>
+            <!-- Neckline -->
+            <line x1="25" y1="42" x2="112" y2="42" stroke="#00e676" stroke-width="1.5" stroke-dasharray="5,3"/>
+            <text x="60" y="39" fill="#00e676" font-size="7">Neckline</text>
+            <!-- Breakout -->
+            <polyline points="112,42 125,15 130,12" fill="none" stroke="#00e676" stroke-width="2.5"/>
+            <polygon points="130,9 138,12 130,15" fill="#00e676"/>
+            <!-- Head label -->
+            <text x="47" y="78" fill="#8896a7" font-size="6">Head</text>
+            <text x="8" y="35" fill="#8896a7" font-size="6">LS</text>
+            <text x="96" y="35" fill="#8896a7" font-size="6">RS</text>
           </svg>
         </div>
-        <div class="pattern-name">Inv. Head & Shoulders</div>
+        <div class="pattern-name" id="pc_ihs">Inv. Head & Shoulders</div>
         <div class="pattern-tag bullish-tag">Bullish</div>
-        <div class="pattern-desc">3 lows with middle lowest. Neckline breakout confirms powerful bullish reversal.</div>
+        <div class="pattern-desc" id="pc_ihs_d">3 lows with middle lowest. Neckline breakout confirms powerful bullish reversal.</div>
       </div>
 
       <div class="pattern-card">
         <div class="pattern-chart-wrap bullish">
-          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
-            <polyline points="10,20 35,65 60,20 85,65 110,20" fill="none" stroke="#00e676" stroke-width="2"/>
-            <line x1="10" y1="35" x2="110" y2="35" stroke="#00e676" stroke-width="1.5" stroke-dasharray="3,2"/>
-            <text x="55" y="32" fill="#00e676" font-size="7">Neckline — Entry</text>
-            <circle cx="35" cy="65" r="3" fill="#00e676"/>
-            <circle cx="85" cy="65" r="3" fill="#00e676"/>
-            <text x="25" y="75" fill="#00e676" font-size="6">Bottom 1</text>
-            <text x="75" y="75" fill="#00e676" font-size="6">Bottom 2</text>
+          <svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;">
+            <!-- Grid -->
+            <line x1="10" y1="80" x2="130" y2="80" stroke="#1e3a2e" stroke-width="1"/>
+            <!-- W shape -->
+            <polyline points="10,20 40,72 70,28 100,72 128,12" fill="none" stroke="#00e676" stroke-width="2.5" stroke-linejoin="round"/>
+            <!-- Neckline -->
+            <line x1="10" y1="30" x2="128" y2="30" stroke="#00e676" stroke-width="1.5" stroke-dasharray="5,3"/>
+            <text x="45" y="27" fill="#00e676" font-size="7" font-weight="bold">Neckline — Entry</text>
+            <!-- Bottom labels -->
+            <circle cx="40" cy="72" r="4" fill="none" stroke="#00e676" stroke-width="1.5"/>
+            <circle cx="100" cy="72" r="4" fill="none" stroke="#00e676" stroke-width="1.5"/>
+            <text x="28" y="82" fill="#8896a7" font-size="6">Bottom 1</text>
+            <text x="88" y="82" fill="#8896a7" font-size="6">Bottom 2</text>
+            <text x="118" y="10" fill="#00e676" font-size="8" font-weight="bold">TP</text>
           </svg>
         </div>
-        <div class="pattern-name">Double Bottom</div>
+        <div class="pattern-name" id="pc_dbl_bot">Double Bottom</div>
         <div class="pattern-tag bullish-tag">Bullish</div>
-        <div class="pattern-desc">Two similar lows (W shape). Sellers failed twice — buyers taking control.</div>
+        <div class="pattern-desc" id="pc_dbl_bot_d">Two similar lows — W shape. Sellers failed twice, buyers taking control.</div>
       </div>
 
       <div class="pattern-card">
         <div class="pattern-chart-wrap bullish">
-          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
-            <polyline points="10,15 25,55 40,15 55,65 70,15 85,65 100,15 110,8" fill="none" stroke="#00e676" stroke-width="2"/>
-            <line x1="10" y1="30" x2="110" y2="30" stroke="#00e676" stroke-width="1.5" stroke-dasharray="3,2"/>
-            <text x="40" y="27" fill="#00e676" font-size="7">Neckline</text>
-            <circle cx="25" cy="55" r="2.5" fill="#00e676"/>
-            <circle cx="55" cy="65" r="2.5" fill="#00e676"/>
-            <circle cx="85" cy="65" r="2.5" fill="#00e676"/>
-            <text x="75" y="75" fill="#00e676" font-size="6">Triple bottom</text>
+          <svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;">
+            <!-- Grid -->
+            <line x1="10" y1="80" x2="130" y2="80" stroke="#1e3a2e" stroke-width="1"/>
+            <!-- Triple bottom W shape -->
+            <polyline points="8,18 28,70 48,25 68,70 88,25 108,70 128,8" fill="none" stroke="#00e676" stroke-width="2.5" stroke-linejoin="round"/>
+            <!-- Neckline -->
+            <line x1="8" y1="28" x2="128" y2="28" stroke="#00e676" stroke-width="1.5" stroke-dasharray="5,3"/>
+            <text x="35" y="25" fill="#00e676" font-size="7" font-weight="bold">Neckline</text>
+            <!-- Circles at bottoms -->
+            <circle cx="28" cy="70" r="4" fill="none" stroke="#00e676" stroke-width="1.5"/>
+            <circle cx="68" cy="70" r="4" fill="none" stroke="#00e676" stroke-width="1.5"/>
+            <circle cx="108" cy="70" r="4" fill="none" stroke="#00e676" stroke-width="1.5"/>
+            <text x="118" y="6" fill="#00e676" font-size="8" font-weight="bold">TP</text>
           </svg>
         </div>
-        <div class="pattern-name">Triple Bottom</div>
+        <div class="pattern-name" id="pc_tri_bot">Triple Bottom</div>
         <div class="pattern-tag bullish-tag">Bullish</div>
-        <div class="pattern-desc">Three tests of support that hold. Very strong reversal when neckline breaks up.</div>
+        <div class="pattern-desc" id="pc_tri_bot_d">Three tests of support that hold. Very strong reversal signal.</div>
       </div>
 
       <div class="pattern-card">
         <div class="pattern-chart-wrap bullish">
-          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
-            <polyline points="10,15 30,55 50,30 70,55 90,30" fill="none" stroke="#ff5252" stroke-width="1.5" opacity=".5"/>
-            <line x1="10" y1="40" x2="90" y2="65" stroke="#00e676" stroke-width="1.5" stroke-dasharray="3,2"/>
-            <line x1="10" y1="25" x2="90" y2="50" stroke="#00e676" stroke-width="1.5" stroke-dasharray="3,2"/>
-            <polyline points="90,30 105,12 115,8" fill="none" stroke="#00e676" stroke-width="2.5"/>
-            <text x="95" y="10" fill="#00e676" font-size="7" font-weight="bold">TP</text>
-            <circle cx="90" cy="30" r="3" fill="#00e676"/>
-            <text x="70" y="25" fill="#00e676" font-size="7">Entry</text>
+          <svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;">
+            <!-- Grid -->
+            <line x1="10" y1="80" x2="130" y2="80" stroke="#1e3a2e" stroke-width="1"/>
+            <!-- Falling wedge — downward converging -->
+            <line x1="10" y1="12" x2="90" y2="55" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="4,3" opacity=".7"/>
+            <line x1="10" y1="28" x2="90" y2="65" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="4,3" opacity=".7"/>
+            <!-- Price inside -->
+            <polyline points="10,12 28,60 45,32 62,62 80,42" fill="none" stroke="#00e676" stroke-width="2" stroke-linejoin="round"/>
+            <!-- Breakout UP -->
+            <polyline points="80,42 102,18 120,18" fill="none" stroke="#00e676" stroke-width="2.5"/>
+            <polygon points="120,15 128,18 120,21" fill="#00e676"/>
+            <text x="105" y="14" fill="#00e676" font-size="8" font-weight="bold">TP</text>
+            <rect x="63" y="28" width="24" height="10" rx="2" fill="rgba(0,230,118,0.15)"/>
+            <text x="65" y="36" fill="#00e676" font-size="7" font-weight="bold">Entry</text>
           </svg>
         </div>
-        <div class="pattern-name">Falling Wedge</div>
+        <div class="pattern-name" id="pc_fall_wedge">Falling Wedge</div>
         <div class="pattern-tag bullish-tag">Bullish</div>
-        <div class="pattern-desc">Downward converging lines. Breakout above resistance signals strong bullish reversal.</div>
+        <div class="pattern-desc" id="pc_fall_wedge_d">Downward converging lines. Breakout above signals strong bullish reversal.</div>
       </div>
 
     </div>
   </div>
 
-  <!-- Bearish Continuation -->
+  <!-- BEARISH CONTINUATION -->
   <div class="pattern-section" id="pg_bearish_cont">
-    <div class="pattern-section-title bearish">▼ Bearish Continuation Patterns</div>
+    <div class="pattern-section-title bearish" id="pg_title_sc">▼ Bearish Continuation Patterns</div>
     <div class="pattern-grid">
 
       <div class="pattern-card">
         <div class="pattern-chart-wrap bearish">
-          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
-            <polyline points="10,15 30,25 25,20 45,35 40,30 60,45 55,40 75,55 70,50 90,65" fill="none" stroke="#ff5252" stroke-width="2"/>
-            <line x1="10" y1="25" x2="90" y2="55" stroke="#ff5252" stroke-width="1" stroke-dasharray="3,2" opacity=".5"/>
-            <line x1="10" y1="15" x2="90" y2="45" stroke="#ff5252" stroke-width="1" stroke-dasharray="3,2" opacity=".5"/>
-            <line x1="90" y1="65" x2="110" y2="65" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="3,2"/>
-            <text x="92" y="62" fill="#ff5252" font-size="7" font-weight="bold">TP</text>
-            <circle cx="90" cy="65" r="3" fill="#ff5252"/>
+          <svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;">
+            <!-- Grid -->
+            <line x1="10" y1="80" x2="130" y2="80" stroke="#3a1e1e" stroke-width="1"/>
+            <line x1="10" y1="55" x2="130" y2="55" stroke="#3a1e1e" stroke-width="1"/>
+            <!-- Flat support bottom -->
+            <line x1="30" y1="62" x2="95" y2="62" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="4,3" opacity=".7"/>
+            <!-- Declining resistance top -->
+            <line x1="15" y1="25" x2="95" y2="52" stroke="#ff5252" stroke-width="1.5" opacity=".7"/>
+            <!-- Price zigzag -->
+            <polyline points="15,25 30,62 45,40 60,62 75,50 90,62" fill="none" stroke="#ff5252" stroke-width="2" stroke-linejoin="round"/>
+            <!-- Breakdown arrow -->
+            <polyline points="90,62 110,80 125,80" fill="none" stroke="#ff5252" stroke-width="2.5"/>
+            <polygon points="125,77 133,80 125,83" fill="#ff5252"/>
+            <text x="97" y="78" fill="#ff5252" font-size="8" font-weight="bold">TP</text>
+            <rect x="50" y="42" width="30" height="10" rx="2" fill="rgba(255,82,82,0.15)"/>
+            <text x="53" y="50" fill="#ff5252" font-size="7" font-weight="bold">Entry ▼</text>
           </svg>
         </div>
-        <div class="pattern-name">Descending Triangle</div>
+        <div class="pattern-name" id="pc_desc_tri">Descending Triangle</div>
         <div class="pattern-tag bearish-tag">Bearish</div>
-        <div class="pattern-desc">Flat support + declining highs. Sellers pushing down — breakdown imminent.</div>
+        <div class="pattern-desc" id="pc_desc_tri_d">Flat support + declining highs. Sellers pushing down — breakdown imminent.</div>
       </div>
 
       <div class="pattern-card">
         <div class="pattern-chart-wrap bearish">
-          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
-            <polyline points="10,20 30,50" fill="none" stroke="#ff5252" stroke-width="2.5"/>
-            <polyline points="30,50 40,42 50,47 60,40 70,46" fill="none" stroke="#ff5252" stroke-width="1.5"/>
-            <line x1="30" y1="38" x2="70" y2="38" stroke="#ff5252" stroke-width="1" stroke-dasharray="2,2" opacity=".5"/>
-            <line x1="30" y1="50" x2="70" y2="50" stroke="#ff5252" stroke-width="1" stroke-dasharray="2,2" opacity=".5"/>
-            <polyline points="70,46 90,70 110,75" fill="none" stroke="#ff5252" stroke-width="2.5"/>
-            <text x="92" y="78" fill="#ff5252" font-size="7" font-weight="bold">TP</text>
-            <circle cx="70" cy="46" r="3" fill="#ff5252"/>
-            <text x="50" y="55" fill="#ff5252" font-size="7">Entry</text>
+          <svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;">
+            <!-- Grid -->
+            <line x1="10" y1="80" x2="130" y2="80" stroke="#3a1e1e" stroke-width="1"/>
+            <!-- Pole down -->
+            <polyline points="20,10 50,60" fill="none" stroke="#ff5252" stroke-width="2.5"/>
+            <!-- Flag box -->
+            <rect x="50" y="45" width="40" height="22" rx="3" fill="rgba(255,82,82,0.08)" stroke="#ff5252" stroke-width="1" stroke-dasharray="3,2"/>
+            <!-- Price in flag -->
+            <polyline points="50,60 62,50 74,56 86,48 90,54" fill="none" stroke="#ff5252" stroke-width="1.5"/>
+            <!-- Breakdown -->
+            <polyline points="90,54 110,78 125,80" fill="none" stroke="#ff5252" stroke-width="2.5"/>
+            <polygon points="125,77 133,80 125,83" fill="#ff5252"/>
+            <text x="57" y="44" fill="#ff5252" font-size="7">Flag</text>
+            <text x="110" y="76" fill="#ff5252" font-size="8" font-weight="bold">TP</text>
+            <rect x="52" y="60" width="30" height="10" rx="2" fill="rgba(255,82,82,0.15)"/>
+            <text x="55" y="68" fill="#ff5252" font-size="7" font-weight="bold">Entry ▼</text>
+            <text x="8" y="38" fill="#8896a7" font-size="7">Pole</text>
           </svg>
         </div>
-        <div class="pattern-name">Bear Flag</div>
+        <div class="pattern-name" id="pc_bear_flag">Bear Flag</div>
         <div class="pattern-tag bearish-tag">Bearish</div>
-        <div class="pattern-desc">Sharp drop + weak bounce. Sellers resting before next leg down.</div>
+        <div class="pattern-desc" id="pc_bear_flag_d">Sharp drop + weak bounce. Sellers resting before next leg down.</div>
       </div>
 
       <div class="pattern-card">
         <div class="pattern-chart-wrap bearish">
-          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
-            <polyline points="10,15 25,30 20,22 40,45 35,38 55,60 50,52 70,65" fill="none" stroke="#ff5252" stroke-width="2"/>
-            <line x1="10" y1="15" x2="70" y2="45" stroke="#ff5252" stroke-width="1" stroke-dasharray="3,2" opacity=".4"/>
-            <line x1="10" y1="28" x2="70" y2="58" stroke="#ff5252" stroke-width="1" stroke-dasharray="3,2" opacity=".4"/>
-            <polyline points="70,65 90,75 110,78" fill="none" stroke="#ff5252" stroke-width="2"/>
-            <text x="92" y="78" fill="#ff5252" font-size="7" font-weight="bold">TP</text>
-            <circle cx="70" cy="65" r="3" fill="#ff5252"/>
+          <svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;">
+            <!-- Grid -->
+            <line x1="10" y1="80" x2="130" y2="80" stroke="#3a1e1e" stroke-width="1"/>
+            <!-- Converging downward -->
+            <line x1="10" y1="12" x2="90" y2="48" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/>
+            <line x1="10" y1="30" x2="90" y2="60" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/>
+            <!-- Price inside -->
+            <polyline points="10,12 28,52 44,28 62,55 78,38" fill="none" stroke="#ff5252" stroke-width="2" stroke-linejoin="round"/>
+            <!-- Breakdown -->
+            <polyline points="78,38 100,68 118,75" fill="none" stroke="#ff5252" stroke-width="2.5"/>
+            <polygon points="118,72 126,75 118,78" fill="#ff5252"/>
+            <text x="104" y="72" fill="#ff5252" font-size="8" font-weight="bold">TP</text>
+            <rect x="62" y="24" width="24" height="10" rx="2" fill="rgba(255,82,82,0.15)"/>
+            <text x="64" y="32" fill="#ff5252" font-size="7" font-weight="bold">Entry</text>
           </svg>
         </div>
-        <div class="pattern-name">Falling Wedge (Bear)</div>
+        <div class="pattern-name" id="pc_bear_wedge">Bear Wedge</div>
         <div class="pattern-tag bearish-tag">Bearish</div>
-        <div class="pattern-desc">Downward converging channel. Continuation of the downtrend after breakdown.</div>
+        <div class="pattern-desc" id="pc_bear_wedge_d">Downward converging channel. Continuation of the downtrend after breakdown.</div>
       </div>
 
       <div class="pattern-card">
         <div class="pattern-chart-wrap bearish">
-          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
-            <polyline points="10,15 25,30 35,22 50,38 60,28 75,42 85,32" fill="none" stroke="#ff5252" stroke-width="2"/>
-            <line x1="10" y1="20" x2="85" y2="35" stroke="#ff5252" stroke-width="1" stroke-dasharray="3,2" opacity=".5"/>
-            <line x1="10" y1="32" x2="85" y2="48" stroke="#ff5252" stroke-width="1" stroke-dasharray="3,2" opacity=".5"/>
-            <polyline points="85,32 100,55 110,65" fill="none" stroke="#ff5252" stroke-width="2"/>
-            <text x="95" y="68" fill="#ff5252" font-size="7" font-weight="bold">TP</text>
-            <circle cx="85" cy="32" r="3" fill="#ff5252"/>
+          <svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;">
+            <!-- Grid -->
+            <line x1="10" y1="80" x2="130" y2="80" stroke="#3a1e1e" stroke-width="1"/>
+            <!-- Symmetrical converging in downtrend -->
+            <line x1="10" y1="18" x2="90" y2="42" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/>
+            <line x1="10" y1="62" x2="90" y2="48" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/>
+            <!-- Price inside -->
+            <polyline points="10,20 28,55 46,30 64,52 80,42" fill="none" stroke="#ff5252" stroke-width="2" stroke-linejoin="round"/>
+            <!-- Breakdown -->
+            <polyline points="80,42 102,68 118,75" fill="none" stroke="#ff5252" stroke-width="2.5"/>
+            <polygon points="118,72 126,75 118,78" fill="#ff5252"/>
+            <text x="104" y="72" fill="#ff5252" font-size="8" font-weight="bold">TP</text>
+            <rect x="63" y="28" width="24" height="10" rx="2" fill="rgba(255,82,82,0.15)"/>
+            <text x="65" y="36" fill="#ff5252" font-size="7" font-weight="bold">Entry</text>
           </svg>
         </div>
-        <div class="pattern-name">Symmetrical Triangle (Bear)</div>
+        <div class="pattern-name" id="pc_sym_tri_bear">Symmetrical Triangle</div>
         <div class="pattern-tag bearish-tag">Bearish</div>
-        <div class="pattern-desc">Converging lines in downtrend. Breakdown confirms bearish continuation.</div>
+        <div class="pattern-desc" id="pc_sym_tri_bear_d">Converging lines in downtrend. Breakdown confirms bearish continuation.</div>
       </div>
 
     </div>
   </div>
 
-  <!-- Bearish Reversal -->
+  <!-- BEARISH REVERSAL -->
   <div class="pattern-section" id="pg_bearish_rev">
-    <div class="pattern-section-title bearish">▼ Bearish Reversal Patterns</div>
+    <div class="pattern-section-title bearish" id="pg_title_sr">▼ Bearish Reversal Patterns</div>
     <div class="pattern-grid">
 
       <div class="pattern-card">
         <div class="pattern-chart-wrap bearish">
-          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
-            <polyline points="10,60 30,30 20,40 45,15 35,25 60,10 50,18 75,15 65,22 90,30 100,45 110,60" fill="none" stroke="#ff5252" stroke-width="2"/>
-            <line x1="30" y1="40" x2="100" y2="40" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="3,2"/>
-            <text x="40" y="37" fill="#ff5252" font-size="7">Neckline</text>
-            <polyline points="100,40 110,65" fill="none" stroke="#ff5252" stroke-width="2"/>
-            <text x="97" y="72" fill="#ff5252" font-size="7" font-weight="bold">TP</text>
-            <text x="42" y="8" fill="#ff5252" font-size="7">Head</text>
+          <svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;">
+            <!-- Grid -->
+            <line x1="10" y1="80" x2="130" y2="80" stroke="#3a1e1e" stroke-width="1"/>
+            <!-- H&S shape -->
+            <polyline points="8,62 22,38 32,50 50,12 62,38 78,50 92,38 108,62" fill="none" stroke="#ff5252" stroke-width="2" stroke-linejoin="round"/>
+            <!-- Neckline -->
+            <line x1="22" y1="48" x2="108" y2="48" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="5,3"/>
+            <text x="42" y="44" fill="#ff5252" font-size="7" font-weight="bold">Neckline</text>
+            <!-- Breakdown -->
+            <polyline points="108,48 122,72 130,78" fill="none" stroke="#ff5252" stroke-width="2.5"/>
+            <polygon points="130,75 138,78 130,81" fill="#ff5252"/>
+            <text x="116" y="72" fill="#ff5252" font-size="8" font-weight="bold">TP</text>
+            <!-- Labels -->
+            <text x="8" y="34" fill="#8896a7" font-size="6">LS</text>
+            <text x="46" y="10" fill="#8896a7" font-size="6">Head</text>
+            <text x="88" y="34" fill="#8896a7" font-size="6">RS</text>
           </svg>
         </div>
-        <div class="pattern-name">Head & Shoulders</div>
+        <div class="pattern-name" id="pc_hns">Head & Shoulders</div>
         <div class="pattern-tag bearish-tag">Bearish</div>
-        <div class="pattern-desc">3 peaks with middle highest. Neckline break confirms major bearish reversal.</div>
+        <div class="pattern-desc" id="pc_hns_d">3 peaks with middle highest. Neckline break confirms major bearish reversal.</div>
       </div>
 
       <div class="pattern-card">
         <div class="pattern-chart-wrap bearish">
-          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
-            <polyline points="10,60 35,15 60,60 85,15 110,60" fill="none" stroke="#ff5252" stroke-width="2"/>
-            <line x1="10" y1="45" x2="110" y2="45" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="3,2"/>
-            <text x="40" y="42" fill="#ff5252" font-size="7">Neckline — Sell</text>
-            <circle cx="35" cy="15" r="3" fill="#ff5252"/>
-            <circle cx="85" cy="15" r="3" fill="#ff5252"/>
-            <text x="25" y="10" fill="#ff5252" font-size="6">Top 1</text>
-            <text x="78" y="10" fill="#ff5252" font-size="6">Top 2</text>
+          <svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;">
+            <!-- Grid -->
+            <line x1="10" y1="80" x2="130" y2="80" stroke="#3a1e1e" stroke-width="1"/>
+            <!-- M shape -->
+            <polyline points="10,62 40,12 70,62 100,12 128,72" fill="none" stroke="#ff5252" stroke-width="2.5" stroke-linejoin="round"/>
+            <!-- Neckline -->
+            <line x1="10" y1="52" x2="128" y2="52" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="5,3"/>
+            <text x="42" y="49" fill="#ff5252" font-size="7" font-weight="bold">Neckline — Sell</text>
+            <!-- Top labels -->
+            <circle cx="40" cy="12" r="4" fill="none" stroke="#ff5252" stroke-width="1.5"/>
+            <circle cx="100" cy="12" r="4" fill="none" stroke="#ff5252" stroke-width="1.5"/>
+            <text x="28" y="8" fill="#8896a7" font-size="6">Top 1</text>
+            <text x="92" y="8" fill="#8896a7" font-size="6">Top 2</text>
+            <text x="120" y="72" fill="#ff5252" font-size="8" font-weight="bold">TP</text>
           </svg>
         </div>
-        <div class="pattern-name">Double Top</div>
+        <div class="pattern-name" id="pc_dbl_top">Double Top</div>
         <div class="pattern-tag bearish-tag">Bearish</div>
-        <div class="pattern-desc">Two similar highs (M shape). Buyers failed twice — sellers taking control.</div>
+        <div class="pattern-desc" id="pc_dbl_top_d">Two similar highs — M shape. Buyers failed twice, sellers taking control.</div>
       </div>
 
       <div class="pattern-card">
         <div class="pattern-chart-wrap bearish">
-          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
-            <polyline points="10,65 25,25 40,65 55,15 70,65 85,25 100,65 110,72" fill="none" stroke="#ff5252" stroke-width="2"/>
-            <line x1="10" y1="50" x2="110" y2="50" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="3,2"/>
-            <text x="35" y="47" fill="#ff5252" font-size="7">Neckline</text>
-            <circle cx="25" cy="25" r="2.5" fill="#ff5252"/>
-            <circle cx="55" cy="15" r="2.5" fill="#ff5252"/>
-            <circle cx="85" cy="25" r="2.5" fill="#ff5252"/>
-            <text x="42" y="12" fill="#ff5252" font-size="6">Triple top</text>
+          <svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;">
+            <!-- Grid -->
+            <line x1="10" y1="80" x2="130" y2="80" stroke="#3a1e1e" stroke-width="1"/>
+            <!-- Triple top -->
+            <polyline points="8,65 28,12 48,65 68,12 88,65 108,12 128,72" fill="none" stroke="#ff5252" stroke-width="2.5" stroke-linejoin="round"/>
+            <!-- Neckline -->
+            <line x1="8" y1="52" x2="128" y2="52" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="5,3"/>
+            <text x="35" y="49" fill="#ff5252" font-size="7" font-weight="bold">Neckline</text>
+            <circle cx="28" cy="12" r="3" fill="none" stroke="#ff5252" stroke-width="1.5"/>
+            <circle cx="68" cy="12" r="3" fill="none" stroke="#ff5252" stroke-width="1.5"/>
+            <circle cx="108" cy="12" r="3" fill="none" stroke="#ff5252" stroke-width="1.5"/>
+            <text x="118" y="72" fill="#ff5252" font-size="8" font-weight="bold">TP</text>
           </svg>
         </div>
-        <div class="pattern-name">Triple Top</div>
+        <div class="pattern-name" id="pc_tri_top">Triple Top</div>
         <div class="pattern-tag bearish-tag">Bearish</div>
-        <div class="pattern-desc">Three failed attempts at resistance. Very strong reversal signal when neckline breaks down.</div>
+        <div class="pattern-desc" id="pc_tri_top_d">Three failed attempts at resistance. Very strong reversal signal.</div>
       </div>
 
       <div class="pattern-card">
         <div class="pattern-chart-wrap bearish">
-          <svg viewBox="0 0 120 80" style="width:100%;height:80px;">
-            <polyline points="10,65 30,25 50,50 70,25 90,50" fill="none" stroke="#00e676" stroke-width="1.5" opacity=".5"/>
-            <line x1="10" y1="15" x2="90" y2="40" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="3,2"/>
-            <line x1="10" y1="30" x2="90" y2="55" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="3,2"/>
-            <polyline points="90,50 105,68 115,72" fill="none" stroke="#ff5252" stroke-width="2.5"/>
-            <text x="95" y="75" fill="#ff5252" font-size="7" font-weight="bold">TP</text>
-            <circle cx="90" cy="50" r="3" fill="#ff5252"/>
-            <text x="68" y="55" fill="#ff5252" font-size="7">Entry</text>
+          <svg viewBox="0 0 140 90" style="width:100%;height:90px;display:block;">
+            <!-- Grid -->
+            <line x1="10" y1="80" x2="130" y2="80" stroke="#3a1e1e" stroke-width="1"/>
+            <!-- Rising wedge going up then breaks down -->
+            <line x1="10" y1="65" x2="90" y2="18" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/>
+            <line x1="10" y1="78" x2="90" y2="38" stroke="#ff5252" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/>
+            <!-- Price inside rising -->
+            <polyline points="10,65 28,45 44,62 60,35 76,52" fill="none" stroke="#ff5252" stroke-width="2" stroke-linejoin="round"/>
+            <!-- Breakdown -->
+            <polyline points="76,52 98,75 115,80" fill="none" stroke="#ff5252" stroke-width="2.5"/>
+            <polygon points="115,77 123,80 115,83" fill="#ff5252"/>
+            <text x="100" y="75" fill="#ff5252" font-size="8" font-weight="bold">TP</text>
+            <rect x="58" y="22" width="30" height="10" rx="2" fill="rgba(255,82,82,0.15)"/>
+            <text x="61" y="30" fill="#ff5252" font-size="7" font-weight="bold">Entry ▼</text>
           </svg>
         </div>
-        <div class="pattern-name">Rising Wedge (Bear)</div>
+        <div class="pattern-name" id="pc_rise_wedge">Rising Wedge</div>
         <div class="pattern-tag bearish-tag">Bearish</div>
-        <div class="pattern-desc">Upward converging lines losing momentum. Breakdown signals strong bearish reversal.</div>
+        <div class="pattern-desc" id="pc_rise_wedge_d">Upward converging lines losing momentum. Breakdown signals strong bearish reversal.</div>
       </div>
 
     </div>
   </div>
 
+</div>
 </div>
 
 <!-- ══ SETTINGS PANEL ══ -->
@@ -1523,7 +1641,7 @@ function showSection(section) {
     if(el) el.style.display = 'block';
     const btn = document.getElementById('nav_btn_news');
     if(btn) btn.classList.add('active');
-    if(titleEl) titleEl.textContent = '📰 ' + (t.nav_news || 'News');
+    if(titleEl) titleEl.textContent = '📐 ' + (t.nav_news || 'Charts');
     // Auto-cargar noticias si no hay cache
     // Pattern guide — no auto-load needed
 
@@ -2155,7 +2273,7 @@ const DASH_TRANSLATIONS = {
     dash_usage: 'Análisis hoy:',
     nav_analyzer: 'Analizador',
     nav_favorites: 'Favoritos',
-    nav_news: 'Noticias',
+    nav_news: 'Gráficos',
     nav_settings: 'Configuración',
     nav_learn: 'Aprender',
     btn_upgrade: '⚡ Actualizar a Pro',
@@ -2196,13 +2314,36 @@ const DASH_TRANSLATIONS = {
     buy_signal: '📈 BUY — ',
     sell_signal: '📉 SELL — ',
     hold_signal: '⏸ HOLD — ',
+    pg_title_bc: '▲ Patrones de Continuación Alcista',
+    pg_title_br: '▲ Patrones de Reversión Alcista',
+    pg_title_sc: '▼ Patrones de Continuación Bajista',
+    pg_title_sr: '▼ Patrones de Reversión Bajista',
+    pg_tab_all: 'Todos', pg_tab_bc: '▲ Cont. Alcista', pg_tab_br: '▲ Rev. Alcista', pg_tab_sc: '▼ Cont. Bajista', pg_tab_sr: '▼ Rev. Bajista',
+    news_panel_title: 'Guía de Patrones',
+    news_panel_sub: 'Referencia visual de los patrones de trading más importantes',
+    pc_asc_tri:'Triángulo Ascendente', pc_asc_tri_d:'Resistencia plana + mínimos crecientes. Compradores acumulan hasta ruptura explosiva.',
+    pc_bull_flag:'Bandera Alcista', pc_bull_flag_d:'Asta fuerte + consolidación. Continuación alcista en ruptura sobre la bandera.',
+    pc_bull_wedge:'Cuña Alcista', pc_bull_wedge_d:'Líneas convergentes hacia arriba. Ruptura señala continuación.',
+    pc_sym_tri_bull:'Triángulo Simétrico', pc_sym_tri_bull_d:'Máximos y mínimos convergentes. Ruptura explosiva al salir del ápice.',
+    pc_ihs:'HCH Invertido', pc_ihs_d:'3 mínimos con el central más bajo. Ruptura del neckline confirma reversión alcista.',
+    pc_dbl_bot:'Doble Suelo', pc_dbl_bot_d:'Dos mínimos similares — forma W. Los vendedores fallaron dos veces.',
+    pc_tri_bot:'Triple Suelo', pc_tri_bot_d:'Tres pruebas de soporte que se mantienen. Señal de reversión muy fuerte.',
+    pc_fall_wedge:'Cuña Descendente', pc_fall_wedge_d:'Líneas convergentes hacia abajo. Ruptura al alza señala reversión alcista.',
+    pc_desc_tri:'Triángulo Descendente', pc_desc_tri_d:'Soporte plano + máximos decrecientes. Los vendedores empujan — ruptura inminente.',
+    pc_bear_flag:'Bandera Bajista', pc_bear_flag_d:'Caída fuerte + rebote débil. Los vendedores descansan antes del siguiente tramo.',
+    pc_bear_wedge:'Cuña Bajista', pc_bear_wedge_d:'Canal convergente descendente. Continuación de la tendencia bajista.',
+    pc_sym_tri_bear:'Triángulo Simétrico', pc_sym_tri_bear_d:'Líneas convergentes en tendencia bajista. Ruptura confirma continuación.',
+    pc_hns:'Hombro-Cabeza-Hombro', pc_hns_d:'3 picos con el central más alto. Ruptura del neckline confirma reversión bajista.',
+    pc_dbl_top:'Doble Techo', pc_dbl_top_d:'Dos máximos similares — forma M. Los compradores fallaron dos veces.',
+    pc_tri_top:'Triple Techo', pc_tri_top_d:'Tres intentos fallidos en resistencia. Señal de reversión muy fuerte.',
+    pc_rise_wedge:'Cuña Ascendente', pc_rise_wedge_d:'Líneas convergentes al alza sin momentum. Ruptura señala reversión bajista.',
   },
   en: {
     dash_title: 'Analyzer',
     dash_usage: "Today's analyses:",
     nav_analyzer: 'Analyzer',
     nav_favorites: 'Favorites',
-    nav_news: 'News',
+    nav_news: 'Charts',
     nav_settings: 'Settings',
     nav_learn: 'Learn',
     btn_upgrade: '⚡ Upgrade to Pro',
@@ -2243,6 +2384,29 @@ const DASH_TRANSLATIONS = {
     buy_signal: '📈 BUY — ',
     sell_signal: '📉 SELL — ',
     hold_signal: '⏸ HOLD — ',
+    pg_title_bc: '▲ Bullish Continuation Patterns',
+    pg_title_br: '▲ Bullish Reversal Patterns',
+    pg_title_sc: '▼ Bearish Continuation Patterns',
+    pg_title_sr: '▼ Bearish Reversal Patterns',
+    pg_tab_all: 'All', pg_tab_bc: '▲ Bull Continuation', pg_tab_br: '▲ Bull Reversal', pg_tab_sc: '▼ Bear Continuation', pg_tab_sr: '▼ Bear Reversal',
+    news_panel_title: 'Chart Patterns',
+    news_panel_sub: 'Visual reference for the most important trading patterns',
+    pc_asc_tri:'Ascending Triangle', pc_asc_tri_d:'Flat resistance + rising lows. Buyers accumulate until explosive breakout.',
+    pc_bull_flag:'Bull Flag', pc_bull_flag_d:'Sharp pole + tight consolidation. Strong continuation on breakout above flag.',
+    pc_bull_wedge:'Bullish Wedge', pc_bull_wedge_d:'Converging upward trendlines. Breakout above resistance signals continuation.',
+    pc_sym_tri_bull:'Symmetrical Triangle', pc_sym_tri_bull_d:'Converging highs and lows. Explosive breakout when price exits the apex.',
+    pc_ihs:'Inv. Head & Shoulders', pc_ihs_d:'3 lows with middle lowest. Neckline breakout confirms powerful bullish reversal.',
+    pc_dbl_bot:'Double Bottom', pc_dbl_bot_d:'Two similar lows — W shape. Sellers failed twice, buyers taking control.',
+    pc_tri_bot:'Triple Bottom', pc_tri_bot_d:'Three tests of support that hold. Very strong reversal signal.',
+    pc_fall_wedge:'Falling Wedge', pc_fall_wedge_d:'Downward converging lines. Breakout above signals strong bullish reversal.',
+    pc_desc_tri:'Descending Triangle', pc_desc_tri_d:'Flat support + declining highs. Sellers pushing down — breakdown imminent.',
+    pc_bear_flag:'Bear Flag', pc_bear_flag_d:'Sharp drop + weak bounce. Sellers resting before next leg down.',
+    pc_bear_wedge:'Bear Wedge', pc_bear_wedge_d:'Downward converging channel. Continuation of the downtrend after breakdown.',
+    pc_sym_tri_bear:'Symmetrical Triangle', pc_sym_tri_bear_d:'Converging lines in downtrend. Breakdown confirms bearish continuation.',
+    pc_hns:'Head & Shoulders', pc_hns_d:'3 peaks with middle highest. Neckline break confirms major bearish reversal.',
+    pc_dbl_top:'Double Top', pc_dbl_top_d:'Two similar highs — M shape. Buyers failed twice, sellers taking control.',
+    pc_tri_top:'Triple Top', pc_tri_top_d:'Three failed attempts at resistance. Very strong reversal signal.',
+    pc_rise_wedge:'Rising Wedge', pc_rise_wedge_d:'Upward converging lines losing momentum. Breakdown signals strong bearish reversal.',
   }
 };
 
@@ -2328,6 +2492,28 @@ function applyDashLang(lang) {
   const smBars = document.querySelectorAll('.bar-lbl');
   if(smBars[0]) smBars[0].textContent = t.sm_buy_pressure;
   if(smBars[1]) smBars[1].textContent = t.sm_sell_pressure;
+
+  // Pattern guide translations
+  const pgIds = ['pg_title_bc','pg_title_br','pg_title_sc','pg_title_sr'];
+  pgIds.forEach(id => { const el=document.getElementById(id); if(el&&t[id]) el.textContent=t[id]; });
+  // Tab buttons
+  ['pg_tab_all','pg_tab_bc','pg_tab_br','pg_tab_sc','pg_tab_sr'].forEach(id=>{
+    const el=document.getElementById(id); if(el&&t[id]) el.textContent=t[id];
+  });
+  // Panel header
+  const npTitle=document.getElementById('news_panel_title');
+  const npSub=document.getElementById('news_panel_sub');
+  if(npTitle&&t.news_panel_title) npTitle.textContent=t.news_panel_title;
+  if(npSub&&t.news_panel_sub) npSub.textContent=t.news_panel_sub;
+  // Pattern names and descriptions
+  const patternKeys=['pc_asc_tri','pc_bull_flag','pc_bull_wedge','pc_sym_tri_bull',
+    'pc_ihs','pc_dbl_bot','pc_tri_bot','pc_fall_wedge',
+    'pc_desc_tri','pc_bear_flag','pc_bear_wedge','pc_sym_tri_bear',
+    'pc_hns','pc_dbl_top','pc_tri_top','pc_rise_wedge'];
+  patternKeys.forEach(k=>{
+    const el=document.getElementById(k); if(el&&t[k]) el.textContent=t[k];
+    const eld=document.getElementById(k+'_d'); if(eld&&t[k+'_d']) eld.textContent=t[k+'_d'];
+  });
 
   localStorage.setItem('lang', lang);
   currentLang = lang;
