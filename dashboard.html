@@ -387,6 +387,34 @@ font-size:13px;cursor:pointer;
 .learn-tip{background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.15);border-radius:10px;padding:10px 14px;font-size:12px;color:#69f0ae;line-height:1.6;}
 .hamburger{display:none;background:none;border:none;color:var(–text);font-size:22px;cursor:pointer;padding:4px;}
 @media(max-width:768px){.hamburger{display:block;}}
+
+/* NEWS PANEL */
+.news-cat-btn{background:var(–card);border:1px solid var(–border);border-radius:99px;padding:6px 16px;font-size:12px;color:var(–muted);cursor:pointer;transition:all .15s;font-weight:500;}
+.news-cat-btn.active{background:var(–green);color:#000;border-color:var(–green);font-weight:700;}
+.news-cat-btn:hover:not(.active){border-color:var(–green);color:var(–green);}
+.news-card{background:var(–bg2);border:1px solid var(–border);border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:.75rem;transition:border .2s,transform .15s;cursor:default;}
+.news-card:hover{border-color:rgba(255,255,255,.15);transform:translateY(-1px);}
+.news-card-top{display:flex;align-items:center;gap:10px;margin-bottom:.75rem;}
+.news-card-category{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:3px 10px;border-radius:99px;}
+.news-card-category.market{background:rgba(129,140,248,.15);color:#818cf8;}
+.news-card-category.tech{background:rgba(0,230,118,.12);color:#00e676;}
+.news-card-category.economy{background:rgba(245,197,24,.12);color:#f5c518;}
+.news-card-category.earnings{background:rgba(244,114,182,.12);color:#f472b6;}
+.news-card-category.other{background:var(–card);color:var(–muted);}
+.news-card-sentiment{font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;margin-left:auto;}
+.news-card-sentiment.positive{background:rgba(0,230,118,.12);color:#00e676;}
+.news-card-sentiment.negative{background:rgba(255,82,82,.12);color:#ff5252;}
+.news-card-sentiment.neutral{background:var(–card);color:var(–muted);}
+.news-card-headline{font-size:14px;font-weight:700;line-height:1.4;margin-bottom:.5rem;color:var(–text);}
+.news-card-impact{font-size:13px;color:var(–muted);line-height:1.6;margin-bottom:.75rem;}
+.news-card-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;}
+.news-card-source{font-size:11px;color:#444;font-weight:500;}
+.news-card-tickers{display:flex;gap:5px;flex-wrap:wrap;}
+.news-card-ticker{font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;background:rgba(0,230,118,.1);color:var(–green);border:1px solid rgba(0,230,118,.2);}
+.news-empty{text-align:center;padding:3rem 1rem;color:var(–muted);}
+.news-empty-icon{font-size:40px;margin-bottom:1rem;}
+.news-grid-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
+.news-count-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;background:var(–card);color:var(–muted);border:1px solid var(–border);}
 </style>
 
 </head>
@@ -471,20 +499,54 @@ font-size:13px;cursor:pointer;
 
 <!-- ══ NEWS PANEL ══ -->
 <div id="newsMarketPanel" style="display:none;">
-  <div class="panel" style="margin-bottom:1rem;">
-    <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:1.5rem;">📰 Market News</div>
-    <div class="chips" style="margin-bottom:1rem;">
-      <button class="chip" onclick="loadMarketNews('AAPL')">AAPL</button>
-      <button class="chip" onclick="loadMarketNews('TSLA')">TSLA</button>
-      <button class="chip" onclick="loadMarketNews('NVDA')">NVDA</button>
-      <button class="chip" onclick="loadMarketNews('MSFT')">MSFT</button>
-      <button class="chip" onclick="loadMarketNews('SPY')">SPY</button>
-      <button class="chip" onclick="loadMarketNews('AMZN')">AMZN</button>
+
+  <!-- Header -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:10px;">
+    <div>
+      <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;" id="news_panel_title">Market News</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:3px;" id="news_panel_sub">Top financial stories today, summarized by AI</div>
     </div>
-    <div id="marketNewsContent">
-      <div style="text-align:center;padding:2rem;color:var(--muted);font-size:14px;">Select a ticker above to load news</div>
+    <button onclick="loadAllNews()" id="newsRefreshBtn" style="background:var(--green);color:#000;border:none;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;">
+      <span id="newsRefreshIcon">↻</span> <span id="news_refresh_label">Refresh</span>
+    </button>
+  </div>
+
+  <!-- Category tabs -->
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem;" id="newsCategoryTabs">
+    <button class="news-cat-btn active" onclick="setNewsCategory('all',this)" id="ncat_all">All</button>
+    <button class="news-cat-btn" onclick="setNewsCategory('market',this)" id="ncat_market">Market</button>
+    <button class="news-cat-btn" onclick="setNewsCategory('tech',this)" id="ncat_tech">Tech</button>
+    <button class="news-cat-btn" onclick="setNewsCategory('economy',this)" id="ncat_economy">Economy</button>
+    <button class="news-cat-btn" onclick="setNewsCategory('earnings',this)" id="ncat_earnings">Earnings</button>
+  </div>
+
+  <!-- Loading state -->
+  <div id="newsMarketLoading" style="display:none;text-align:center;padding:3rem;color:var(--muted);">
+    <span class="spinner"></span>
+    <div style="margin-top:1rem;font-size:14px;" id="news_loading_label">Searching latest financial news with AI...</div>
+  </div>
+
+  <!-- News grid -->
+  <div id="newsMarketGrid"></div>
+
+  <!-- Stock chips -->
+  <div class="panel" style="margin-top:1rem;">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:.75rem;" id="news_by_stock_label">News by stock</div>
+    <div class="chips" style="margin-bottom:1rem;">
+      <button class="chip" onclick="loadTickerNews('AAPL')">AAPL</button>
+      <button class="chip" onclick="loadTickerNews('TSLA')">TSLA</button>
+      <button class="chip" onclick="loadTickerNews('NVDA')">NVDA</button>
+      <button class="chip" onclick="loadTickerNews('MSFT')">MSFT</button>
+      <button class="chip" onclick="loadTickerNews('SPY')">SPY</button>
+      <button class="chip" onclick="loadTickerNews('AMZN')">AMZN</button>
+      <button class="chip" onclick="loadTickerNews('META')">META</button>
+      <button class="chip" onclick="loadTickerNews('GOOGL')">GOOGL</button>
+    </div>
+    <div id="newsTickerContent">
+      <div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:13px;" id="news_ticker_placeholder">Select a stock above to load its news</div>
     </div>
   </div>
+
 </div>
 
 <!-- ══ SETTINGS PANEL ══ -->
@@ -1175,6 +1237,8 @@ function showSection(section) {
     const btn = document.getElementById('nav_btn_news');
     if(btn) btn.classList.add('active');
     if(titleEl) titleEl.textContent = '📰 ' + (t.nav_news || 'News');
+    // Auto-cargar noticias si no hay cache
+    if(!newsCache[currentNewsCategory]) loadAllNews();
 
   } else if(section === 'learn') {
     const el = document.getElementById('learnPanel');
@@ -1745,38 +1809,139 @@ function analyzeFavorite(sym) {
 }
 
 // ══ NOTICIAS DE MERCADO ══
-async function loadMarketNews(ticker) {
-  const el = document.getElementById('marketNewsContent');
-  el.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--muted);"><span class="spinner"></span> Loading news for ${ticker}...</div>`;
+let currentNewsCategory = 'all';
+let newsCache = {};
+
+const NEWS_CATEGORIES = {
+  all:      { label:'All',      prompt:'Search for the top 6 most important financial and stock market news stories today. Include news about major stocks (AAPL, TSLA, NVDA, SPY), the Fed, economy, earnings reports, and market movements.' },
+  market:   { label:'Market',   prompt:'Search for the top 5 most important US stock market news today — index movements, S&P 500, NASDAQ, Dow Jones, major movers and market sentiment.' },
+  tech:     { label:'Tech',     prompt:'Search for the top 5 most important tech stock news today — Apple, Google, Microsoft, Nvidia, Meta, Amazon, Tesla and other major tech companies.' },
+  economy:  { label:'Economy',  prompt:'Search for the top 5 most important economic news today — Federal Reserve, interest rates, inflation, jobs report, GDP, and macroeconomic indicators.' },
+  earnings: { label:'Earnings', prompt:'Search for the top 5 most important earnings reports and financial results announced today or this week by major companies.' },
+};
+
+function setNewsCategory(cat, btn) {
+  currentNewsCategory = cat;
+  document.querySelectorAll('.news-cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if(newsCache[cat]) {
+    renderNewsGrid(newsCache[cat]);
+  } else {
+    loadAllNews();
+  }
+}
+
+async function loadAllNews() {
+  const loading = document.getElementById('newsMarketLoading');
+  const grid = document.getElementById('newsMarketGrid');
+  const refreshBtn = document.getElementById('newsRefreshBtn');
+  const refreshIcon = document.getElementById('newsRefreshIcon');
+
+  loading.style.display = 'block';
+  grid.innerHTML = '';
+  refreshIcon.style.animation = 'spin .7s linear infinite';
+  refreshBtn.disabled = true;
+
+  const cat = currentNewsCategory;
+  const catData = NEWS_CATEGORIES[cat] || NEWS_CATEGORIES.all;
+  const lang = currentLang;
+
+  const prompt = `${catData.prompt}
+
+For each story provide: headline (max 20 words, in English), brief impact on markets/investors (1-2 sentences in ${lang==='es'?'Spanish':'English'}), sentiment (positive/negative/neutral), category (market/tech/economy/earnings/other), source name, and related stock tickers if any.
+
+Respond ONLY with valid JSON no extra text:
+{"stories":[{"headline":"...","impact":"...","sentiment":"positive|negative|neutral","category":"market|tech|economy|earnings|other","source":"...","tickers":["AAPL","TSLA"]},{"headline":"...","impact":"...","sentiment":"...","category":"...","source":"...","tickers":[]}]}`;
 
   try {
-    const prompt = `Search the web for the most recent news this week about ${ticker} stock. Find 2 POSITIVE and 2 NEGATIVE news with specific facts.\n\nONLY JSON:\n{"good":[{"titular":"headline max 18 words","por_que_importa":"price impact","source":"source"},{"titular":"...","por_que_importa":"...","source":"..."}],"bad":[{"titular":"...","por_que_importa":"...","source":"..."},{"titular":"...","por_que_importa":"...","source":"..."}]}`;
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:prompt}]})
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2000,
+        tools: [{type:'web_search_20250305', name:'web_search'}],
+        messages: [{role:'user', content: prompt}]
+      })
     });
     const d = await resp.json();
     const txt = d.content.filter(b=>b.type==='text').map(b=>b.text).join('');
-    const news = JSON.parse(txt.replace(/```json|```/g,'').trim());
+    const data = JSON.parse(txt.replace(/```json|```/g,'').trim());
+    newsCache[cat] = data.stories || [];
+    renderNewsGrid(data.stories || []);
+  } catch(e) {
+    grid.innerHTML = `<div class="news-empty"><div class="news-empty-icon">📡</div><div style="font-size:14px;font-weight:600;margin-bottom:.5rem;">Could not load news</div><div style="font-size:13px;">Try again in a moment</div></div>`;
+  } finally {
+    loading.style.display = 'none';
+    refreshIcon.style.animation = '';
+    refreshBtn.disabled = false;
+  }
+}
 
-    const renderItems = (items, type) => items?.slice(0,2).map(n => `
+function renderNewsGrid(stories) {
+  const grid = document.getElementById('newsMarketGrid');
+  if(!stories.length) {
+    grid.innerHTML = `<div class="news-empty"><div class="news-empty-icon">📰</div><div style="font-size:14px;font-weight:600;">No news found</div></div>`;
+    return;
+  }
+
+  const countBadge = `<div class="news-grid-header">
+    <div style="font-size:13px;font-weight:600;color:var(--text);">${stories.length} stories</div>
+    <div class="news-count-badge">${new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div>
+  </div>`;
+
+  grid.innerHTML = countBadge + stories.map(s => {
+    const sentClass = s.sentiment==='positive'?'positive':s.sentiment==='negative'?'negative':'neutral';
+    const sentLabel = s.sentiment==='positive'?'▲ Bullish':s.sentiment==='negative'?'▼ Bearish':'— Neutral';
+    const catClass = s.category||'other';
+    const catLabel = (NEWS_CATEGORIES[s.category]?.label) || s.category || 'Other';
+    const tickers = (s.tickers||[]).slice(0,4).map(t=>`<span class="news-card-ticker">${t}</span>`).join('');
+    return `
+    <div class="news-card">
+      <div class="news-card-top">
+        <span class="news-card-category ${catClass}">${catLabel}</span>
+        ${tickers}
+        <span class="news-card-sentiment ${sentClass}">${sentLabel}</span>
+      </div>
+      <div class="news-card-headline">${s.headline||''}</div>
+      <div class="news-card-impact">${s.impact||''}</div>
+      <div class="news-card-footer">
+        <span class="news-card-source">${s.source||''}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function loadTickerNews(ticker) {
+  const el = document.getElementById('newsTickerContent');
+  el.innerHTML = `<div style="text-align:center;padding:1.5rem;color:var(--muted);"><span class="spinner"></span> Loading ${ticker}...</div>`;
+
+  try {
+    const r = await fetch(`${PROXY}?type=news`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ticker})
+    });
+    const news = await r.json();
+    if(news.error) throw new Error(news.error);
+
+    const renderItems = (items, type) => (items||[]).slice(0,2).map(n=>`
       <div class="news-item ${type}" style="margin-bottom:8px;">
         <div class="news-icon">${type==='good'?'📈':'📉'}</div>
         <div class="news-body">
           <div class="news-headline">${n.titular||''}</div>
-          <div class="news-why">${n.por_que_importa||''}</div>
+          <div class="news-why">${n.impact||n.por_que_importa||''}</div>
           <div class="news-source">${n.source||''}</div>
         </div>
-      </div>`).join('') || '';
+      </div>`).join('')||'';
 
     el.innerHTML = `
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#00e676;margin-bottom:8px;">✅ Positive news — ${ticker}</div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#00e676;margin-bottom:8px;">✅ Positive — ${ticker}</div>
       ${renderItems(news.good,'good')}
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#ff5252;margin:1rem 0 8px;">⚠️ Risk news — ${ticker}</div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#ff5252;margin:1rem 0 8px;">⚠️ Risk — ${ticker}</div>
       ${renderItems(news.bad,'bad')}`;
   } catch(e) {
-    el.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--muted);">Could not load news for ${ticker}.</div>`;
+    el.innerHTML = `<div style="text-align:center;padding:1.5rem;color:var(--muted);">Could not load news for ${ticker}.</div>`;
   }
 }
 
