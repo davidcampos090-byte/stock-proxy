@@ -1812,23 +1812,34 @@ function analyzeFavorite(sym) {
 let currentNewsCategory = 'all';
 let newsCache = {};
 
-const NEWS_CATEGORIES = {
-  all:      { label:'All',      prompt:'Search for the top 6 most important financial and stock market news stories today. Include news about major stocks (AAPL, TSLA, NVDA, SPY), the Fed, economy, earnings reports, and market movements.' },
-  market:   { label:'Market',   prompt:'Search for the top 5 most important US stock market news today — index movements, S&P 500, NASDAQ, Dow Jones, major movers and market sentiment.' },
-  tech:     { label:'Tech',     prompt:'Search for the top 5 most important tech stock news today — Apple, Google, Microsoft, Nvidia, Meta, Amazon, Tesla and other major tech companies.' },
-  economy:  { label:'Economy',  prompt:'Search for the top 5 most important economic news today — Federal Reserve, interest rates, inflation, jobs report, GDP, and macroeconomic indicators.' },
-  earnings: { label:'Earnings', prompt:'Search for the top 5 most important earnings reports and financial results announced today or this week by major companies.' },
+const CATEGORY_KEYWORDS = {
+  all:      null,
+  market:   ['market','stock','S&P','nasdaq','dow','index','rally','selloff','wall street'],
+  tech:     ['apple','google','microsoft','nvidia','meta','amazon','tesla','tech','AI','chip','semiconductor'],
+  economy:  ['fed','federal reserve','rate','inflation','gdp','jobs','unemployment','economy','recession'],
+  earnings: ['earnings','revenue','profit','quarterly','results','beat','miss','guidance','eps'],
 };
 
 function setNewsCategory(cat, btn) {
   currentNewsCategory = cat;
   document.querySelectorAll('.news-cat-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  if(newsCache[cat]) {
-    renderNewsGrid(newsCache[cat]);
+  // Filtrar del cache si existe
+  if(newsCache['all']) {
+    filterAndRenderNews(newsCache['all'], cat);
   } else {
     loadAllNews();
   }
+}
+
+function filterAndRenderNews(articles, cat) {
+  if(cat === 'all') { renderNewsGrid(articles); return; }
+  const keywords = CATEGORY_KEYWORDS[cat] || [];
+  const filtered = articles.filter(a => {
+    const text = (a.headline + ' ' + (a.summary||'')).toLowerCase();
+    return keywords.some(k => text.includes(k.toLowerCase()));
+  });
+  renderNewsGrid(filtered.length ? filtered : articles.slice(0,5));
 }
 
 async function loadAllNews() {
@@ -1842,35 +1853,24 @@ async function loadAllNews() {
   refreshIcon.style.animation = 'spin .7s linear infinite';
   refreshBtn.disabled = true;
 
-  const cat = currentNewsCategory;
-  const catData = NEWS_CATEGORIES[cat] || NEWS_CATEGORIES.all;
-  const lang = currentLang;
-
-  const prompt = `${catData.prompt}
-
-For each story provide: headline (max 20 words, in English), brief impact on markets/investors (1-2 sentences in ${lang==='es'?'Spanish':'English'}), sentiment (positive/negative/neutral), category (market/tech/economy/earnings/other), source name, and related stock tickers if any.
-
-Respond ONLY with valid JSON no extra text:
-{"stories":[{"headline":"...","impact":"...","sentiment":"positive|negative|neutral","category":"market|tech|economy|earnings|other","source":"...","tickers":["AAPL","TSLA"]},{"headline":"...","impact":"...","sentiment":"...","category":"...","source":"...","tickers":[]}]}`;
-
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 2000,
-        tools: [{type:'web_search_20250305', name:'web_search'}],
-        messages: [{role:'user', content: prompt}]
-      })
-    });
-    const d = await resp.json();
-    const txt = d.content.filter(b=>b.type==='text').map(b=>b.text).join('');
-    const data = JSON.parse(txt.replace(/```json|```/g,'').trim());
-    newsCache[cat] = data.stories || [];
-    renderNewsGrid(data.stories || []);
+    // Traer noticias de Finnhub via proxy
+    const r = await fetch(`${PROXY}?type=market_news&category=general`);
+    if(!r.ok) throw new Error('Finnhub error');
+    const data = await r.json();
+    const articles = data.articles || [];
+
+    if(!articles.length) throw new Error('No articles');
+
+    // Guardar en cache y renderizar
+    newsCache['all'] = articles;
+    newsCache = {}; // limpiar cache de categorías
+    newsCache['all'] = articles;
+
+    filterAndRenderNews(articles, currentNewsCategory);
+
   } catch(e) {
-    grid.innerHTML = `<div class="news-empty"><div class="news-empty-icon">📡</div><div style="font-size:14px;font-weight:600;margin-bottom:.5rem;">Could not load news</div><div style="font-size:13px;">Try again in a moment</div></div>`;
+    grid.innerHTML = `<div class="news-empty"><div class="news-empty-icon">📡</div><div style="font-size:14px;font-weight:600;margin-bottom:.5rem;">Could not load news</div><div style="font-size:13px;">Try refreshing in a moment</div></div>`;
   } finally {
     loading.style.display = 'none';
     refreshIcon.style.animation = '';
@@ -1878,35 +1878,49 @@ Respond ONLY with valid JSON no extra text:
   }
 }
 
-function renderNewsGrid(stories) {
+function renderNewsGrid(articles) {
   const grid = document.getElementById('newsMarketGrid');
-  if(!stories.length) {
+  if(!articles || !articles.length) {
     grid.innerHTML = `<div class="news-empty"><div class="news-empty-icon">📰</div><div style="font-size:14px;font-weight:600;">No news found</div></div>`;
     return;
   }
 
+  const now = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   const countBadge = `<div class="news-grid-header">
-    <div style="font-size:13px;font-weight:600;color:var(--text);">${stories.length} stories</div>
-    <div class="news-count-badge">${new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div>
+    <div style="font-size:13px;font-weight:600;color:var(--text);">${articles.length} stories</div>
+    <div class="news-count-badge">Updated ${now}</div>
   </div>`;
 
-  grid.innerHTML = countBadge + stories.map(s => {
-    const sentClass = s.sentiment==='positive'?'positive':s.sentiment==='negative'?'negative':'neutral';
-    const sentLabel = s.sentiment==='positive'?'▲ Bullish':s.sentiment==='negative'?'▼ Bearish':'— Neutral';
-    const catClass = s.category||'other';
-    const catLabel = (NEWS_CATEGORIES[s.category]?.label) || s.category || 'Other';
-    const tickers = (s.tickers||[]).slice(0,4).map(t=>`<span class="news-card-ticker">${t}</span>`).join('');
+  grid.innerHTML = countBadge + articles.slice(0,15).map(a => {
+    // Detectar categoría
+    const text = (a.headline + ' ' + (a.summary||'')).toLowerCase();
+    let cat = 'other', catLabel = 'News';
+    if(CATEGORY_KEYWORDS.earnings.some(k=>text.includes(k.toLowerCase()))){cat='earnings';catLabel='Earnings';}
+    else if(CATEGORY_KEYWORDS.economy.some(k=>text.includes(k.toLowerCase()))){cat='economy';catLabel='Economy';}
+    else if(CATEGORY_KEYWORDS.tech.some(k=>text.includes(k.toLowerCase()))){cat='tech';catLabel='Tech';}
+    else if(CATEGORY_KEYWORDS.market.some(k=>text.includes(k.toLowerCase()))){cat='market';catLabel='Market';}
+
+    // Fecha legible
+    const date = a.datetime ? new Date(a.datetime*1000).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : '';
+
+    // Tickers relacionados
+    const tickers = a.related ? a.related.split(',').slice(0,3).filter(t=>t.trim()).map(t=>`<span class="news-card-ticker">${t.trim()}</span>`).join('') : '';
+
+    // Summary truncado
+    const summary = a.summary ? a.summary.slice(0,150) + (a.summary.length>150?'…':'') : '';
+
     return `
-    <div class="news-card">
+    <div class="news-card" onclick="window.open('${a.url||'#'}','_blank')" style="cursor:pointer;">
       <div class="news-card-top">
-        <span class="news-card-category ${catClass}">${catLabel}</span>
+        <span class="news-card-category ${cat}">${catLabel}</span>
         ${tickers}
-        <span class="news-card-sentiment ${sentClass}">${sentLabel}</span>
+        <span style="font-size:11px;color:var(--muted);margin-left:auto;">${date}</span>
       </div>
-      <div class="news-card-headline">${s.headline||''}</div>
-      <div class="news-card-impact">${s.impact||''}</div>
+      <div class="news-card-headline">${a.headline||''}</div>
+      ${summary?`<div class="news-card-impact">${summary}</div>`:''}
       <div class="news-card-footer">
-        <span class="news-card-source">${s.source||''}</span>
+        <span class="news-card-source">${a.source||''}</span>
+        <span style="font-size:11px;color:var(--green);">Read more →</span>
       </div>
     </div>`;
   }).join('');
@@ -1917,31 +1931,27 @@ async function loadTickerNews(ticker) {
   el.innerHTML = `<div style="text-align:center;padding:1.5rem;color:var(--muted);"><span class="spinner"></span> Loading ${ticker}...</div>`;
 
   try {
-    const r = await fetch(`${PROXY}?type=news`, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({ticker})
-    });
-    const news = await r.json();
-    if(news.error) throw new Error(news.error);
+    const r = await fetch(`${PROXY}?type=ticker_news&symbol=${ticker}`);
+    const data = await r.json();
+    const articles = data.articles || [];
 
-    const renderItems = (items, type) => (items||[]).slice(0,2).map(n=>`
-      <div class="news-item ${type}" style="margin-bottom:8px;">
-        <div class="news-icon">${type==='good'?'📈':'📉'}</div>
-        <div class="news-body">
-          <div class="news-headline">${n.titular||''}</div>
-          <div class="news-why">${n.impact||n.por_que_importa||''}</div>
-          <div class="news-source">${n.source||''}</div>
+    if(!articles.length) throw new Error('no news');
+
+    el.innerHTML = articles.slice(0,6).map(a => {
+      const date = a.datetime ? new Date(a.datetime*1000).toLocaleDateString([],{month:'short',day:'numeric'}) : '';
+      const summary = a.summary ? a.summary.slice(0,120)+'…' : '';
+      return `
+      <div class="news-card" onclick="window.open('${a.url||'#'}','_blank')" style="cursor:pointer;margin-bottom:.75rem;">
+        <div class="news-card-headline" style="font-size:13px;">${a.headline||''}</div>
+        ${summary?`<div class="news-card-impact" style="font-size:12px;margin-top:4px;">${summary}</div>`:''}
+        <div class="news-card-footer" style="margin-top:8px;">
+          <span class="news-card-source">${a.source||''}</span>
+          <span style="font-size:11px;color:var(--muted);">${date}</span>
         </div>
-      </div>`).join('')||'';
-
-    el.innerHTML = `
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#00e676;margin-bottom:8px;">✅ Positive — ${ticker}</div>
-      ${renderItems(news.good,'good')}
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#ff5252;margin:1rem 0 8px;">⚠️ Risk — ${ticker}</div>
-      ${renderItems(news.bad,'bad')}`;
+      </div>`;
+    }).join('');
   } catch(e) {
-    el.innerHTML = `<div style="text-align:center;padding:1.5rem;color:var(--muted);">Could not load news for ${ticker}.</div>`;
+    el.innerHTML = `<div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:13px;">No recent news for ${ticker}.</div>`;
   }
 }
 
