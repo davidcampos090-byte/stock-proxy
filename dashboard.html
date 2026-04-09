@@ -1173,7 +1173,7 @@ if(panelNews)panelNews.textContent=tal.panel_news||"Today's news";
     {label:'Gráfico',value:patterns.length?patterns[0].name.split(' ')[0]:'Sin patrón',sig:cpSig},
     {label:'Vela',value:pat.name.split(' ')[0],sig:candS},
   ]);
-  renderScores(buys,sells,neutrals,sigs.length);
+  renderScores(buysW,sellsW,neutralsW,totalWeight);
 
   // Noticias removidas del analyzer
 
@@ -1226,13 +1226,13 @@ function toggleTheme() {
     chartInst.options.scales.x.ticks.color = cc.tick;
     chartInst.options.scales.y.ticks.color = cc.tick;
     chartInst.options.scales.y.grid.color = cc.grid;
-    chartInst.update();
+    chartInst.update('none');
   }
   if(pcChartInst) {
     const cc = getChartColors();
     pcChartInst.options.scales.x.ticks.color = cc.tick;
     pcChartInst.options.scales.y.ticks.color = cc.tick;
-    pcChartInst.update();
+    pcChartInst.update('none');
   }
 }
 // Aplicar tema guardado al cargar
@@ -1312,7 +1312,7 @@ function showSection(section) {
     if(panel) panel.style.display = 'block';
     const btn = document.getElementById('nav_btn_news');
     if(btn) btn.classList.add('active');
-    if(titleEl) titleEl.textContent = '📰 ' + (t.nav_news || 'News');
+    if(titleEl) titleEl.textContent = '📊 ' + (t.nav_news || 'Charts');
 
   } else if(section === 'learn') {
     const panel = document.getElementById('learnPanel');
@@ -1872,39 +1872,6 @@ function analyzeFavorite(sym) {
 }
 
 // ══ NOTICIAS DE MERCADO ══
-async function loadMarketNews(ticker) {
-  const el = document.getElementById('marketNewsContent');
-  el.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--muted);"><span class="spinner"></span> Loading news for ${ticker}...</div>`;
-
-  try {
-    const prompt = `Search the web for the most recent news this week about ${ticker} stock. Find 2 POSITIVE and 2 NEGATIVE news with specific facts.\n\nONLY JSON:\n{"good":[{"titular":"headline max 18 words","por_que_importa":"price impact","source":"source"},{"titular":"...","por_que_importa":"...","source":"..."}],"bad":[{"titular":"...","por_que_importa":"...","source":"..."},{"titular":"...","por_que_importa":"...","source":"..."}]}`;
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:prompt}]})
-    });
-    const d = await resp.json();
-    const txt = d.content.filter(b=>b.type==='text').map(b=>b.text).join('');
-    const news = JSON.parse(txt.replace(/```json|```/g,'').trim());
-
-    const renderItems = (items, type) => items?.slice(0,2).map(n => `
-      <div class="news-item ${type}" style="margin-bottom:8px;">
-        <div class="news-icon">${type==='good'?'📈':'📉'}</div>
-        <div class="news-body">
-          <div class="news-headline">${n.titular||''}</div>
-          <div class="news-why">${n.por_que_importa||''}</div>
-          <div class="news-source">${n.source||''}</div>
-        </div>
-      </div>`).join('') || '';
-
-    el.innerHTML = `
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#00e676;margin-bottom:8px;">✅ Positive news — ${ticker}</div>
-      ${renderItems(news.good,'good')}
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#ff5252;margin:1rem 0 8px;">⚠️ Risk news — ${ticker}</div>
-      ${renderItems(news.bad,'bad')}`;
-  } catch(e) {
-    el.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--muted);">Could not load news for ${ticker}.</div>`;
-  }
 }
 
 // ══ SETTINGS ══
@@ -1943,7 +1910,7 @@ const DASH_TRANSLATIONS = {
     dash_usage: 'Análisis hoy:',
     nav_analyzer: 'Analizador',
     nav_favorites: 'Favoritos',
-    nav_news: 'Noticias',
+    nav_news: 'Gráficos',
     nav_settings: 'Configuración',
     nav_learn: 'Aprender',
     btn_upgrade: '⚡ Actualizar a Pro',
@@ -1990,7 +1957,7 @@ const DASH_TRANSLATIONS = {
     dash_usage: "Today's analyses:",
     nav_analyzer: 'Analyzer',
     nav_favorites: 'Favorites',
-    nav_news: 'News',
+    nav_news: 'Charts',
     nav_settings: 'Settings',
     nav_learn: 'Learn',
     btn_upgrade: '⚡ Upgrade to Pro',
