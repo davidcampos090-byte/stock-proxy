@@ -866,8 +866,19 @@ async function fetchTD(ticker) {
   const TD_KEY = 'cbecfbf347f74e9780b89f34b34d2431';
   const sizeMap = {'1M':30,'3M':65,'6M':130,'1Y':260};
   const isI = tfMode === '1D';
+  const CACHE_TTL = 5 * 60 * 1000; // 5 minutos
 
-  // Twelve Data — 800 requests/día gratis
+  // ── CACHE CHECK ──
+  const cacheKey = `td_${ticker}_${tfMode}`;
+  try {
+    const cached = JSON.parse(localStorage.getItem(cacheKey));
+    if (cached && (Date.now() - cached.ts) < CACHE_TTL) {
+      console.log(`Cache hit: ${ticker} ${tfMode}`);
+      return cached.data;
+    }
+  } catch(e) {}
+
+  // ── FETCH REAL ──
   const url = isI
     ? `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(ticker)}&interval=15min&outputsize=32&apikey=${TD_KEY}`
     : `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(ticker)}&interval=1day&outputsize=${sizeMap[tfMode]||30}&apikey=${TD_KEY}`;
@@ -878,9 +889,8 @@ async function fetchTD(ticker) {
   if (j.status === 'error') throw new Error(j.message || 'Ticker no encontrado: ' + ticker);
   if (!j.values?.length) throw new Error(isI ? 'No intraday data. Market may be closed.' : 'No data for ' + ticker);
 
-  // Convertir formato Twelve Data a formato compatible
   const values = [...j.values].reverse();
-  return values.map(v => [
+  const result = values.map(v => [
     v.datetime,
     {
       '1. open': v.open,
@@ -890,6 +900,13 @@ async function fetchTD(ticker) {
       '5. volume': v.volume || '0'
     }
   ]);
+
+  // ── GUARDAR EN CACHE ──
+  try {
+    localStorage.setItem(cacheKey, JSON.stringify({ts: Date.now(), data: result}));
+  } catch(e) {}
+
+  return result;
 }
 
 async function fetchPutCall() {
@@ -967,12 +984,20 @@ function renderCandle(o,h,l,c,pat){
 function renderVWAP(vd,cur){
   document.getElementById('vwapRows').innerHTML=[{l:'Resistance 2',v:'$'+vd.upper2,h:false},{l:'Resistance 1',v:'$'+vd.upper1,h:false},{l:'VWAP',v:'$'+vd.vwap,h:true,pos:cur>=vd.vwap},{l:'Current price',v:'$'+cur.toFixed(2),h:false},{l:'Support 1',v:'$'+vd.lower1,h:false},{l:'Support 2',v:'$'+vd.lower2,h:false}].map(r=>`<div class="vr" style="${r.h?'border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:4px 0;margin:2px 0;':''}"><span class="vrl" style="${r.h?'font-weight:600;color:var(--text);':''}">${r.l}</span><div style="display:flex;align-items:center;gap:7px;"><span class="vrv">${r.v}</span>${r.h?`<span class="badge ${r.pos?'badge-buy':'badge-sell'}">${r.pos?(currentLang==='es'?'Encima':'Above'):(currentLang==='es'?'Debajo':'Below')}</span>`:''}</div></div>`).join('');
 }
+function getChartColors() {
+  const isLight = document.body.classList.contains('light');
+  return {
+    tick: isLight ? '#64748b' : '#8896a7',
+    grid: isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,.04)',
+  };
+}
 function renderChart(dates,closes,vwapVal,bb,isI){
   if(chartInst)chartInst.destroy();
   const trend=closes[closes.length-1]>=closes[0]?'#00e676':'#ff5252';
   const skip=Math.ceil(dates.length/8);
   const labels=dates.map((d,i)=>i%skip===0?(isI?d.slice(11,16):d.slice(5)):'');
-  chartInst=new Chart(document.getElementById('priceChart'),{type:'line',data:{labels,datasets:[{label:'Precio',data:closes,borderColor:trend,backgroundColor:trend+'15',fill:true,tension:.3,pointRadius:0,borderWidth:2.5,order:1},{label:'VWAP',data:closes.map(()=>vwapVal),borderColor:'#818cf8',fill:false,tension:0,pointRadius:0,borderWidth:1.5,borderDash:[5,3],order:2},{label:'BB Sup',data:closes.map(()=>bb.upper),borderColor:'rgba(150,150,150,.25)',fill:false,tension:0,pointRadius:0,borderWidth:1,borderDash:[2,3],order:3},{label:'BB Inf',data:closes.map(()=>bb.lower),borderColor:'rgba(150,150,150,.25)',fill:false,tension:0,pointRadius:0,borderWidth:1,borderDash:[2,3],order:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,callbacks:{label:ctx=>ctx.dataset.label+': $'+ctx.parsed.y.toFixed(2)}}},scales:{x:{ticks:{color:'#8896a7',font:{size:10},maxTicksLimit:8},grid:{display:false}},y:{ticks:{color:'#8896a7',font:{size:10},callback:v=>'$'+v.toFixed(0)},grid:{color:'rgba(255,255,255,.04)'}}}}});
+  const cc = getChartColors();
+  chartInst=new Chart(document.getElementById('priceChart'),{type:'line',data:{labels,datasets:[{label:'Precio',data:closes,borderColor:trend,backgroundColor:trend+'15',fill:true,tension:.3,pointRadius:0,borderWidth:2.5,order:1},{label:'VWAP',data:closes.map(()=>vwapVal),borderColor:'#818cf8',fill:false,tension:0,pointRadius:0,borderWidth:1.5,borderDash:[5,3],order:2},{label:'BB Sup',data:closes.map(()=>bb.upper),borderColor:'rgba(150,150,150,.25)',fill:false,tension:0,pointRadius:0,borderWidth:1,borderDash:[2,3],order:3},{label:'BB Inf',data:closes.map(()=>bb.lower),borderColor:'rgba(150,150,150,.25)',fill:false,tension:0,pointRadius:0,borderWidth:1,borderDash:[2,3],order:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,callbacks:{label:ctx=>ctx.dataset.label+': $'+ctx.parsed.y.toFixed(2)}}},scales:{x:{ticks:{color:cc.tick,font:{size:10},maxTicksLimit:8},grid:{display:false}},y:{ticks:{color:cc.tick,font:{size:10},callback:v=>'$'+v.toFixed(0)},grid:{color:cc.grid}}}}});
 }
 function renderSM(sm){
   const b=document.getElementById('smBadge');b.textContent=sm.lbl;b.className='badge2 '+(sm.sig==='accumulating'?'g':sm.sig==='distributing'?'f':'n');
@@ -1115,10 +1140,28 @@ if(panelNews)panelNews.textContent=tal.panel_news||"Today's news";
   const smS=sm.sig==='accumulating'?'compra':sm.sig==='distributing'?'venta':'neutral';
   const chgS=chg>=0?'compra':'venta';
 
-  const sigs=[rsiS,smaS,macdS,bbS,vwapS,candS,smS,pcSig,cpSig,chgS];
-  const buys=sigs.filter(s=>s==='compra').length;
-  const sells=sigs.filter(s=>s==='venta').length;
-  const neutrals=sigs.filter(s=>s==='neutral').length;
+  // ── SISTEMA DE PESOS ──
+  const weightedSigs = [
+    {sig:rsiS,   w:1.0, label:'RSI'},
+    {sig:macdS,  w:1.0, label:'MACD'},
+    {sig:smaS,   w:1.0, label:'SMA'},
+    {sig:bbS,    w:1.0, label:'BB'},
+    {sig:vwapS,  w:2.0, label:'VWAP'},    // Alta fiabilidad
+    {sig:smS,    w:2.0, label:'SmartMoney'}, // Alta fiabilidad
+    {sig:candS,  w:1.0, label:'Candle'},
+    {sig:pcSig,  w:1.0, label:'PCR'},
+    {sig:cpSig,  w:1.5, label:'Pattern'},
+    {sig:chgS,   w:0.5, label:'Change'},
+  ];
+  const totalWeight = weightedSigs.reduce((a,s)=>a+s.w, 0);
+  const buysW   = weightedSigs.filter(s=>s.sig==='compra').reduce((a,s)=>a+s.w, 0);
+  const sellsW  = weightedSigs.filter(s=>s.sig==='venta').reduce((a,s)=>a+s.w, 0);
+  const neutralsW = totalWeight - buysW - sellsW;
+  // Para compatibilidad con el resto del código
+  const buys    = Math.round(buysW);
+  const sells   = Math.round(sellsW);
+  const neutrals = Math.round(neutralsW);
+  const sigs = weightedSigs.map(s=>s.sig); // array simple para fallback
 
   renderInds([
     {label:'RSI (14)',value:rsi,sig:rsiS},{label:'MACD',value:(macd>0?'+':'')+macd,sig:macdS},
@@ -1140,12 +1183,23 @@ if(panelNews)panelNews.textContent=tal.panel_news||"Today's news";
   const stopLoss=+(support*.97).toFixed(2);
 
   try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':'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','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:`Analyze ${ticker} with real market data. Respond ONLY with valid JSON, no extra text.\nPrice: $${cur.toFixed(2)} (${chg>=0?'+':''}${chgPct.toFixed(2)}%) · RSI: ${rsi}→${rsiS} · MACD: ${macd}→${macdS} · SMA: ${smaS} · BB: ${bbS} · VWAP: $${vd.vwap}→${vwapS} · Candle: ${pat.name}→${candS} · Smart Money: ${sm.lbl} · PCR: ${pcData.pcr}→${pcSig} · Patterns: ${patterns.length?patterns[0].name:'none'}→${cpSig} · Signals: ${buys}Buy/${sells}Sell/${neutrals}Neutral\n{"signal":"BUY or SELL or HOLD","analysis":"3 sentences in English integrating all indicators","tf_comment":"1 sentence in English about signal reliability for ${tfL} timeframe","buy_price":"${support}","buy_reason":"1 sentence in English justifying entry price","stop_loss":"${stopLoss}","stop_reason":"1 sentence in English justifying stop loss"}`}]})});
+    const resp=await fetch(`${PROXY}?type=analyze`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        ticker,price:cur.toFixed(2),chgPct:chgPct.toFixed(2),
+        rsi,rsiS,macd,macdS,smaS,bbS,
+        vwap:vd.vwap,vwapS,candle:pat.name,candS,
+        smLbl:sm.lbl,pcr:pcData.pcr,pcSig,
+        pattern:patterns.length?patterns[0].name:'none',cpSig,
+        buys,sells,neutrals,support,stopLoss,tfL
+      })
+    });
     const data=await resp.json();
-    const result=JSON.parse(data.content.map(b=>b.text||'').join('').replace(/```json|```/g,'').trim());
-    renderBanner(result,ticker);
+    if(data.error) throw new Error(data.error);
+    renderBanner(data,ticker);
   }catch(e){
-    renderBanner({signal:buys>sells?'BUY':sells>buys?'SELL':'HOLD',analysis:`${buys} buy signals vs ${sells} sell signals. ${patterns.length?'Pattern: '+patterns[0].name+'. ':''}Smart Money: ${sm.lbl}.`,tf_comment:`Based on real ${tfL} data.`,buy_price:support.toFixed(2),buy_reason:'Technical support level calculated.',stop_loss:stopLoss.toFixed(2),stop_reason:'3% below technical support.'},ticker);
+    renderBanner({signal:buys>sells?'BUY':sells>buys?'SELL':'HOLD',analysis:`${buys} buy signals vs ${sells} sell signals. ${patterns.length?'Pattern: '+patterns[0].name+'. ':''} Smart Money: ${sm.lbl}.`,tf_comment:`Based on real ${tfL} data.`,buy_price:support.toFixed(2),buy_reason:'Technical support level calculated.',stop_loss:stopLoss.toFixed(2),stop_reason:'3% below technical support.'},ticker);
   }
 
   // Incrementar uso
@@ -1166,6 +1220,20 @@ function toggleTheme() {
   const btn = document.getElementById('themeBtn');
   if(btn) btn.textContent = isLight ? '☀️' : '🌙';
   localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  // Re-renderizar charts con nuevos colores
+  if(chartInst) {
+    const cc = getChartColors();
+    chartInst.options.scales.x.ticks.color = cc.tick;
+    chartInst.options.scales.y.ticks.color = cc.tick;
+    chartInst.options.scales.y.grid.color = cc.grid;
+    chartInst.update();
+  }
+  if(pcChartInst) {
+    const cc = getChartColors();
+    pcChartInst.options.scales.x.ticks.color = cc.tick;
+    pcChartInst.options.scales.y.ticks.color = cc.tick;
+    pcChartInst.update();
+  }
 }
 // Aplicar tema guardado al cargar
 (function applyTheme(){
