@@ -380,6 +380,7 @@ button.primary:disabled { opacity:.4; cursor:not-allowed; transform:none; }
     </div>
     <div class="tf-row">
       <button class="tf-btn intraday active" onclick="setTF(this,'1D')">1D</button>
+      <button class="tf-btn intraday" onclick="setTF(this,'4H')">4H</button>
       <button class="tf-btn" onclick="setTF(this,'1M')">1M</button>
       <button class="tf-btn" onclick="setTF(this,'3M')">3M</button>
       <button class="tf-btn" onclick="setTF(this,'6M')">6M</button>
@@ -700,8 +701,11 @@ async function fetchTD(ticker) {
   } catch(e) {}
 
   // ── FETCH REAL ──
+  const is4H = tfMode === '4H';
   const url = isI
     ? `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(ticker)}&interval=15min&outputsize=32&apikey=${TD_KEY}`
+    : is4H
+    ? `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(ticker)}&interval=4h&outputsize=42&apikey=${TD_KEY}`
     : `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(ticker)}&interval=1day&outputsize=${sizeMap[tfMode]||30}&apikey=${TD_KEY}`;
 
   const r = await fetch(url, {signal: AbortSignal.timeout(15000)});
@@ -900,7 +904,7 @@ async function analyze(){
   document.getElementById('loadingMsg').style.display='block';
   document.getElementById('results').style.display='none';
   document.getElementById('analyzeBtn').disabled=true;
-  const isI=tfMode==='1D';
+  const isI=tfMode==='1D'||tfMode==='4H';
 
   let entries,pcData;
   try{
@@ -1000,7 +1004,7 @@ const _psm=document.getElementById('panel_sm');if(_psm)_psm.textContent=_t.panel
   // Noticias removidas del analyzer
 
   document.getElementById('loadingText').textContent=(T[currentLang]||T.en).loading_ai;
-  const tfL=isI?'intradía 15min':tfMode==='1M'?'1 mes':tfMode==='3M'?'3 meses':tfMode==='6M'?'6 meses':'1 año';
+  const tfL=tfMode==='4H'?'4 horas':tfMode==='1D'?'intradía 15min':tfMode==='1M'?'1 mes':tfMode==='3M'?'3 meses':tfMode==='6M'?'6 meses':'1 año';
   const support=+(Math.min(bb.lower,vd.lower1)*1.001).toFixed(2);
   const stopLoss=+(support*.97).toFixed(2);
 
