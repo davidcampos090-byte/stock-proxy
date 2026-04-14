@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing — SmartStockSignal</title>
+<script src="https://js.stripe.com/v3/"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green:#00e676; --green2:#00c853; --red:#ff5252;
+  --bg:#070b0f; --bg2:#0d1117; --bg3:#131920;
+  --border:rgba(255,255,255,0.07); --text:#f0f4f8; --muted:#8896a7;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+/* BG EFFECTS */
+.bg-glow {position:fixed;inset:0;pointer-events:none;z-index:0;}
+.bg-glow::before {content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:800px;background:radial-gradient(circle,rgba(0,230,118,0.06) 0%,transparent 70%);border-radius:50%;}
+.bg-glow::after {content:'';position:absolute;bottom:-100px;right:-100px;width:500px;height:500px;background:radial-gradient(circle,rgba(129,140,248,0.05) 0%,transparent 70%);border-radius:50%;}
+
+/* NAV */
+nav {position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:1.5rem 2rem;border-bottom:1px solid var(--border);}
+.nav-logo {font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:#fff;text-decoration:none;display:flex;align-items:center;gap:8px;}
+.logo-dot {width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green);animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.nav-links {display:flex;align-items:center;gap:1.5rem;}
+.nav-links a {color:var(--muted);text-decoration:none;font-size:14px;transition:color .2s;}
+.nav-links a:hover {color:#fff;}
+.btn-nav {background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.3);color:var(--green);padding:8px 20px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .2s;}
+.btn-nav:hover {background:rgba(0,230,118,0.2);}
+
+/* HERO */
+.hero {position:relative;z-index:1;text-align:center;padding:5rem 2rem 3rem;}
+.hero-badge {display:inline-flex;align-items:center;gap:8px;background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.2);border-radius:99px;padding:6px 16px;font-size:12px;font-weight:600;color:var(--green);margin-bottom:1.5rem;letter-spacing:.08em;text-transform:uppercase;}
+.hero h1 {font-family:'Syne',sans-serif;font-size:clamp(36px,6vw,72px);font-weight:900;line-height:1.05;margin-bottom:1.25rem;letter-spacing:-1px;}
+.hero h1 span {background:linear-gradient(135deg,#00e676,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero p {font-size:18px;color:var(--muted);max-width:500px;margin:0 auto 2rem;line-height:1.6;}
+
+/* TOGGLE */
+.toggle-wrap {display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:3rem;}
+.toggle-lbl {font-size:14px;color:var(--muted);font-weight:500;}
+.toggle-lbl.active {color:#fff;}
+.toggle {position:relative;width:52px;height:28px;cursor:pointer;}
+.toggle input {opacity:0;width:0;height:0;}
+.toggle-slider {position:absolute;inset:0;background:var(--bg3);border:1px solid var(--border);border-radius:99px;transition:.3s;}
+.toggle-slider:before {content:'';position:absolute;height:20px;width:20px;left:3px;bottom:3px;background:var(--muted);border-radius:50%;transition:.3s;}
+input:checked + .toggle-slider {background:rgba(0,230,118,0.2);border-color:rgba(0,230,118,0.4);}
+input:checked + .toggle-slider:before {transform:translateX(24px);background:var(--green);}
+.save-badge {background:rgba(0,230,118,0.15);color:var(--green);font-size:11px;font-weight:700;padding:3px 8px;border-radius:99px;border:1px solid rgba(0,230,118,0.3);}
+
+/* CARDS */
+.plans {position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:860px;margin:0 auto;padding:0 2rem 5rem;}
+@media(max-width:700px){.plans{grid-template-columns:1fr;}}
+
+.plan-card {background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:2rem;position:relative;overflow:hidden;transition:transform .3s,border-color .3s;}
+.plan-card:hover {transform:translateY(-4px);}
+.plan-card.popular {border-color:rgba(0,230,118,0.4);background:linear-gradient(145deg,rgba(0,230,118,0.04),var(--bg2));}
+.plan-card.popular::before {content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--green),transparent);}
+
+.popular-badge {position:absolute;top:1.25rem;right:1.25rem;background:var(--green);color:#000;font-size:10px;font-weight:800;padding:4px 10px;border-radius:99px;text-transform:uppercase;letter-spacing:.08em;}
+
+.plan-icon {font-size:36px;margin-bottom:1rem;}
+.plan-name {font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:.4rem;}
+.plan-desc {font-size:13px;color:var(--muted);margin-bottom:1.5rem;line-height:1.5;}
+
+.plan-price {display:flex;align-items:baseline;gap:4px;margin-bottom:.3rem;}
+.price-amount {font-family:'Syne',sans-serif;font-size:48px;font-weight:900;letter-spacing:-2px;}
+.price-period {font-size:14px;color:var(--muted);}
+.price-annual {font-size:12px;color:var(--muted);margin-bottom:1.5rem;min-height:18px;}
+.price-annual span {color:var(--green);}
+
+.plan-divider {border:none;border-top:1px solid var(--border);margin:1.5rem 0;}
+
+.features {list-style:none;margin-bottom:2rem;}
+.features li {display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--muted);padding:6px 0;line-height:1.5;}
+.features li.yes {color:var(--text);}
+.features li.no {opacity:.4;}
+.feat-icon {font-size:15px;flex-shrink:0;margin-top:1px;}
+
+.btn-plan {width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;transition:all .25s;border:none;font-family:'DM Sans',sans-serif;}
+.btn-free {background:transparent;border:1px solid var(--border);color:var(--muted);}
+.btn-free:hover {border-color:rgba(255,255,255,.2);color:#fff;}
+.btn-pro {background:linear-gradient(135deg,var(--green),var(--green2));color:#000;box-shadow:0 6px 24px rgba(0,230,118,0.3);}
+.btn-pro:hover {box-shadow:0 8px 32px rgba(0,230,118,0.5);transform:translateY(-1px);}
+.btn-pro:disabled {opacity:.5;cursor:not-allowed;transform:none;}
+
+/* FAQ */
+.faq {position:relative;z-index:1;max-width:640px;margin:0 auto;padding:0 2rem 5rem;}
+.faq h2 {font-family:'Syne',sans-serif;font-size:28px;font-weight:800;text-align:center;margin-bottom:2rem;}
+.faq-item {border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;}
+.faq-q {display:flex;justify-content:space-between;align-items:center;padding:1rem 1.25rem;cursor:pointer;font-size:14px;font-weight:600;transition:background .2s;}
+.faq-q:hover {background:rgba(255,255,255,.03);}
+.faq-icon {font-size:18px;color:var(--muted);transition:transform .3s;}
+.faq-item.open .faq-icon {transform:rotate(45deg);}
+.faq-a {max-height:0;overflow:hidden;transition:max-height .3s ease;font-size:13px;color:var(--muted);line-height:1.7;}
+.faq-item.open .faq-a {max-height:200px;}
+.faq-a-inner {padding:.25rem 1.25rem 1.25rem;}
+
+/* GUARANTEE */
+.guarantee {position:relative;z-index:1;max-width:600px;margin:0 auto 5rem;padding:0 2rem;text-align:center;}
+.guarantee-box {background:rgba(0,230,118,0.04);border:1px solid rgba(0,230,118,0.15);border-radius:16px;padding:2rem;}
+.guarantee-box h3 {font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:.5rem;}
+.guarantee-box p {font-size:13px;color:var(--muted);line-height:1.6;}
+
+/* TOAST */
+.toast {position:fixed;bottom:24px;right:24px;background:var(--green);color:#000;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:700;z-index:999;opacity:0;transform:translateY(10px);transition:all .3s;}
+.toast.show {opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+
+<nav>
+  <a href="index.html" class="nav-logo"><span class="logo-dot"></span>SmartStockSignal</a>
+  <div class="nav-links">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="index.html">Home</a>
+    <a href="dashboard.html" class="btn-nav" id="authBtn">Sign in</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">⚡ Simple, transparent pricing</div>
+  <h1>Invest smarter.<br><span>Pay less.</span></h1>
+  <p>Professional-grade AI stock analysis. No hidden fees, no complicated tiers.</p>
+
+  <div class="toggle-wrap">
+    <span class="toggle-lbl active" id="lbl_monthly">Monthly</span>
+    <label class="toggle"><input type="checkbox" id="billingToggle" onchange="toggleBilling()"><span class="toggle-slider"></span></label>
+    <span class="toggle-lbl" id="lbl_annual">Annual <span class="save-badge">Save 20%</span></span>
+  </div>
+</div>
+
+<div class="plans">
+  <!-- FREE -->
+  <div class="plan-card">
+    <div class="plan-icon">🌱</div>
+    <div class="plan-name">Free</div>
+    <div class="plan-desc">Perfect for exploring AI-powered stock analysis before committing.</div>
+    <div class="plan-price"><span class="price-amount">$0</span><span class="price-period">/mo</span></div>
+    <div class="price-annual">&nbsp;</div>
+    <ul class="features">
+      <li class="yes"><span class="feat-icon">✅</span>5 AI analyses per day</li>
+      <li class="yes"><span class="feat-icon">✅</span>RSI, MACD, VWAP, Bollinger Bands</li>
+      <li class="yes"><span class="feat-icon">✅</span>Smart Money flow detection</li>
+      <li class="yes"><span class="feat-icon">✅</span>Chart pattern recognition</li>
+      <li class="yes"><span class="feat-icon">✅</span>Put/Call ratio sentiment</li>
+      <li class="yes"><span class="feat-icon">✅</span>1D and 4H timeframes</li>
+      <li class="no"><span class="feat-icon">❌</span>Unlimited analyses</li>
+      <li class="no"><span class="feat-icon">❌</span>Priority AI speed</li>
+      <li class="no"><span class="feat-icon">❌</span>Ad-free experience</li>
+    </ul>
+    <button class="btn-plan btn-free" onclick="window.location.href='dashboard.html'">Get started free</button>
+  </div>
+
+  <!-- PRO -->
+  <div class="plan-card popular">
+    <div class="popular-badge">Most Popular</div>
+    <div class="plan-icon">🚀</div>
+    <div class="plan-name">Pro</div>
+    <div class="plan-desc">For active traders who need unlimited access and full analytical power.</div>
+    <div class="plan-price">
+      <span class="price-amount" id="priceAmount">$12</span>
+      <span class="price-period">/mo</span>
+    </div>
+    <div class="price-annual" id="priceAnnual">&nbsp;</div>
+    <ul class="features">
+      <li class="yes"><span class="feat-icon">✅</span><strong>Unlimited</strong> AI analyses</li>
+      <li class="yes"><span class="feat-icon">✅</span>RSI, MACD, VWAP, Bollinger Bands</li>
+      <li class="yes"><span class="feat-icon">✅</span>Smart Money flow detection</li>
+      <li class="yes"><span class="feat-icon">✅</span>Chart pattern recognition</li>
+      <li class="yes"><span class="feat-icon">✅</span>Put/Call ratio sentiment</li>
+      <li class="yes"><span class="feat-icon">✅</span>All timeframes (1D, 4H, 1M–1Y)</li>
+      <li class="yes"><span class="feat-icon">✅</span>Priority AI response speed</li>
+      <li class="yes"><span class="feat-icon">✅</span>Ad-free experience</li>
+      <li class="yes"><span class="feat-icon">✅</span>Early access to new features</li>
+    </ul>
+    <button class="btn-plan btn-pro" id="btnPro" onclick="startCheckout()">Upgrade to Pro</button>
+  </div>
+</div>
+
+<div class="guarantee">
+  <div class="guarantee-box">
+    <h3>🛡️ 7-day money-back guarantee</h3>
+    <p>Not satisfied within the first 7 days? We'll refund you, no questions asked. We're confident you'll love what AI analysis does for your trading.</p>
+  </div>
+</div>
+
+<div class="faq">
+  <h2>Frequently asked questions</h2>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What markets does SmartStockSignal cover?<span class="faq-icon">+</span></div>
+    <div class="faq-a"><div class="faq-a-inner">We support US stocks, ETFs, and major indices available on Twelve Data. This includes NYSE, NASDAQ, and popular ETFs like SPY, QQQ, and more.</div></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">How accurate is the AI analysis?<span class="faq-icon">+</span></div>
+    <div class="faq-a"><div class="faq-a-inner">Our AI combines 10+ technical indicators with weighted scoring (VWAP and Smart Money carry more weight). It's a powerful decision support tool — not financial advice. Always do your own research.</div></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Can I cancel anytime?<span class="faq-icon">+</span></div>
+    <div class="faq-a"><div class="faq-a-inner">Yes, absolutely. Cancel anytime from your account settings. You'll keep Pro access until the end of your billing period.</div></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What payment methods do you accept?<span class="faq-icon">+</span></div>
+    <div class="faq-a"><div class="faq-a-inner">We use Stripe for secure payments. We accept all major credit and debit cards including Visa, Mastercard, and American Express.</div></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Is there an annual plan?<span class="faq-icon">+</span></div>
+    <div class="faq-a"><div class="faq-a-inner">Yes! Toggle to Annual billing and save 20% — that's $9.60/mo billed as $115/year instead of $144.</div></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const { createClient } = supabase;
+const sb = createClient(
+  'https://wnfogptzpqqugjxvwlnb.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InduZm9ncHR6cHFxdWdqeHZ3bG5iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzOTY2MzUsImV4cCI6MjA5MDk3MjYzNX0.qLngiAY9bFvVipEAtKVqQVQAV62QcUPAlElKPkWAqRk'
+);
+const PROXY = 'https://stock-proxy-ruddy.vercel.app/api/quote';
+let isAnnual = false;
+let userSession = null;
+
+// Auth check
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  userSession = session;
+  const btn = document.getElementById('authBtn');
+  if (session) {
+    btn.textContent = 'Dashboard';
+    btn.href = 'dashboard.html';
+    // Check if already pro
+    const { data: profile } = await sb.from('profiles').select('plan').eq('id', session.user.id).single();
+    if (profile?.plan === 'pro') {
+      const btnPro = document.getElementById('btnPro');
+      btnPro.textContent = '✅ Already Pro';
+      btnPro.style.background = 'rgba(0,230,118,0.1)';
+      btnPro.style.color = '#00e676';
+      btnPro.style.border = '1px solid rgba(0,230,118,0.3)';
+      btnPro.style.boxShadow = 'none';
+      btnPro.onclick = () => window.location.href = 'dashboard.html';
+    }
+  }
+})();
+
+function toggleBilling() {
+  isAnnual = document.getElementById('billingToggle').checked;
+  document.getElementById('lbl_monthly').classList.toggle('active', !isAnnual);
+  document.getElementById('lbl_annual').classList.toggle('active', isAnnual);
+  document.getElementById('priceAmount').textContent = isAnnual ? '$9.60' : '$12';
+  document.getElementById('priceAnnual').innerHTML = isAnnual
+    ? '<span>$115/year — save $29</span>'
+    : '&nbsp;';
+}
+
+async function startCheckout() {
+  if (!userSession) { window.location.href = 'index.html'; return; }
+  const btn = document.getElementById('btnPro');
+  btn.textContent = 'Processing...'; btn.disabled = true;
+  try {
+    const r = await fetch(PROXY + '?type=checkout', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ email: userSession.user.email, userId: userSession.user.id })
+    });
+    const d = await r.json();
+    if (d.url) window.location.href = d.url;
+    else throw new Error(d.error || 'Error');
+  } catch(e) {
+    showToast('Error: ' + e.message);
+    btn.textContent = 'Upgrade to Pro'; btn.disabled = false;
+  }
+}
+
+function toggleFaq(el) {
+  const item = el.parentElement;
+  item.classList.toggle('open');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
