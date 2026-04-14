@@ -1,0 +1,32 @@
+{
+  "name": "SmartStockSignal",
+  "short_name": "SmartStock",
+  "description": "AI-powered stock analysis with buy/sell signals",
+  "start_url": "/dashboard.html",
+  "display": "standalone",
+  "background_color": "#070b0f",
+  "theme_color": "#070b0f",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["finance", "business"],
+  "screenshots": [
+    {
+      "src": "/dashboard.html",
+      "sizes": "390x844",
+      "type": "image/png"
+    }
+  ]
+}
