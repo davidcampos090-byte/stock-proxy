@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartStockSignal — AI-Powered Stock Analysis</title>
+<meta name="description" content="Learn technical analysis with AI. RSI, MACD, VWAP, Smart Money, chart patterns — all in one place. Educational platform, not financial advice.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8509604172341454" crossorigin="anonymous"></script>
+<script src="https://js.stripe.com/v3/"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --green:#00e676; --green-dark:#00c853; --green-dim:rgba(0,230,118,0.12);
+  --red:#ff5252; --bg:#0a0f1e; --text:#f0f4f8; --muted:#8896a7;
+  --glass:rgba(255,255,255,0.06); --glass-border:rgba(255,255,255,0.10);
+  --glass-blur:blur(20px);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body {
+  font-family:'DM Sans',sans-serif;
+  background:#0a0f1e;
+  color:var(--text);
+  line-height:1.6;
+  overflow-x:hidden;
+  position:relative;
+}
+
+/* ── ANIMATED BG ── */
+body::before {
+  content:'';
+  position:fixed;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 10%, rgba(0,230,118,0.09) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 85% 80%, rgba(59,130,246,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 50% 50%, rgba(139,92,246,0.04) 0%, transparent 70%);
+  pointer-events:none;
+  animation:bgShift 12s ease-in-out infinite alternate;
+}
+@keyframes bgShift {
+  0%   { opacity:1; transform:scale(1); }
+  100% { opacity:.8; transform:scale(1.05); }
+}
+body::after {
+  content:'';position:fixed;inset:0;z-index:-1;
+  background:linear-gradient(135deg,#0a0f1e 0%,#0d1628 50%,#070d1a 100%);
+}
+
+/* ── NAV ── */
+nav {
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 2rem;
+  background:rgba(10,15,30,0.75);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  border-bottom:1px solid rgba(255,255,255,0.08);
+  box-shadow:0 4px 24px rgba(0,0,0,0.3);
+}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:8px;}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);animation:blink 1.5s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.nav-links{display:flex;align-items:center;gap:1.5rem;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;transition:color .2s;}
+.nav-links a:hover{color:var(--text);}
+.btn-lang {
+  background:var(--glass);
+  backdrop-filter:blur(8px);
+  border:1px solid var(--glass-border);
+  border-radius:8px;padding:6px 12px;
+  color:var(--muted);font-size:13px;cursor:pointer;transition:all .2s;
+}
+.btn-lang:hover{border-color:rgba(0,230,118,0.3);color:var(--green);}
+.btn-nav {
+  background:linear-gradient(135deg,var(--green),var(--green-dark));
+  color:#000;border:none;border-radius:8px;padding:8px 20px;
+  font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;
+  text-decoration:none;box-shadow:0 4px 16px rgba(0,230,118,0.25);
+}
+.btn-nav:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(0,230,118,0.4);}
+
+/* ── HERO ── */
+.hero {
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:7rem 2rem 4rem;
+  position:relative;z-index:1;
+}
+.hero-grid {
+  position:absolute;inset:0;
+  background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:60px 60px;
+  mask-image:radial-gradient(ellipse at center,black 30%,transparent 75%);
+}
+.badge {
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(0,230,118,0.1);
+  backdrop-filter:blur(8px);
+  border:1px solid rgba(0,230,118,0.25);
+  border-radius:99px;padding:6px 16px;
+  font-size:12px;font-weight:600;color:var(--green);
+  margin-bottom:1.5rem;position:relative;z-index:1;
+  box-shadow:0 2px 12px rgba(0,230,118,0.1);
+}
+.hero h1 {
+  font-family:'Syne',sans-serif;
+  font-size:clamp(2.8rem,7vw,5.8rem);
+  font-weight:900;line-height:1.0;
+  letter-spacing:-0.03em;margin-bottom:1.5rem;
+  position:relative;z-index:1;
+}
+.hero h1 span {
+  background:linear-gradient(90deg,var(--green),#34d399);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero p {
+  font-size:clamp(1rem,2vw,1.15rem);color:var(--muted);
+  max-width:580px;margin:0 auto 2.5rem;
+  position:relative;z-index:1;font-weight:300;line-height:1.7;
+}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;position:relative;z-index:1;}
+.btn-primary {
+  background:linear-gradient(135deg,var(--green),var(--green-dark));
+  color:#000;border:none;border-radius:12px;padding:15px 34px;
+  font-size:15px;font-weight:700;cursor:pointer;transition:all .25s;
+  text-decoration:none;display:inline-block;
+  box-shadow:0 6px 24px rgba(0,230,118,0.3);
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 36px rgba(0,230,118,0.45);}
+.btn-secondary {
+  background:var(--glass);backdrop-filter:blur(10px);
+  color:var(--text);border:1px solid var(--glass-border);
+  border-radius:12px;padding:15px 34px;font-size:15px;
+  font-weight:500;cursor:pointer;transition:all .25s;
+  text-decoration:none;display:inline-block;
+}
+.btn-secondary:hover{border-color:rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);}
+
+/* ── TICKER ── */
+.ticker-wrap{
+  width:100%;overflow:hidden;
+  background:rgba(255,255,255,0.03);
+  backdrop-filter:blur(10px);
+  border-top:1px solid var(--glass-border);
+  border-bottom:1px solid var(--glass-border);
+  padding:10px 0;margin-top:4rem;position:relative;z-index:1;
+}
+.ticker-track{display:flex;gap:3rem;animation:ticker 25s linear infinite;white-space:nowrap;width:max-content;}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;}
+.ticker-item .sym{color:var(--muted);}
+.ticker-item .up{color:var(--green);}
+.ticker-item .down{color:var(--red);}
+
+/* ── STATS ── */
+.stats{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:1px;background:rgba(255,255,255,0.05);
+  border-top:1px solid var(--glass-border);
+  border-bottom:1px solid var(--glass-border);
+  position:relative;z-index:1;
+}
+.stat-item{
+  background:rgba(10,15,30,0.8);backdrop-filter:blur(10px);
+  padding:2rem;text-align:center;transition:background .2s;
+}
+.stat-item:hover{background:rgba(255,255,255,0.04);}
+.stat-num{font-family:'Syne',sans-serif;font-size:2.5rem;font-weight:900;color:var(--green);display:block;text-shadow:0 0 20px rgba(0,230,118,0.3);}
+.stat-label{font-size:13px;color:var(--muted);margin-top:4px;}
+
+/* ── SECTIONS ── */
+.section{padding:6rem 2rem;max-width:1100px;margin:0 auto;position:relative;z-index:1;}
+.section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:var(--green);margin-bottom:1rem;}
+.section-title{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,3rem);font-weight:800;line-height:1.15;margin-bottom:1rem;}
+.section-sub{font-size:1.05rem;color:var(--muted);max-width:580px;font-weight:300;line-height:1.7;}
+
+/* ── FEATURES GRID ── */
+.features-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:1px;background:var(--glass-border);
+  border:1px solid var(--glass-border);
+  border-radius:20px;overflow:hidden;margin-top:3rem;
+  backdrop-filter:blur(10px);
+}
+.feature-card{
+  background:var(--glass);backdrop-filter:blur(12px);
+  padding:2rem;transition:background .2s;
+}
+.feature-card:hover{background:rgba(255,255,255,0.09);}
+.feature-icon{font-size:28px;margin-bottom:1rem;}
+.feature-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:8px;}
+.feature-desc{font-size:13px;color:var(--muted);line-height:1.65;}
+
+/* ── INDICATORS ── */
+.indicators-section{
+  padding:4rem 2rem;
+  background:rgba(255,255,255,0.02);
+  backdrop-filter:blur(10px);
+  border-top:1px solid var(--glass-border);
+  border-bottom:1px solid var(--glass-border);
+  position:relative;z-index:1;
+}
+.indicators-inner{max-width:1100px;margin:0 auto;}
+.indicators-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:2rem;}
+.ind-pill{
+  background:var(--glass);backdrop-filter:blur(8px);
+  border:1px solid var(--glass-border);
+  border-radius:99px;padding:7px 16px;
+  font-size:13px;color:var(--muted);transition:all .2s;
+}
+.ind-pill.active,.ind-pill:hover{border-color:rgba(0,230,118,0.4);color:var(--green);background:rgba(0,230,118,0.08);box-shadow:0 2px 12px rgba(0,230,118,0.1);}
+
+/* ── ABOUT / DISCLAIMER ── */
+.about-section{
+  padding:5rem 2rem;position:relative;z-index:1;
+  background:linear-gradient(180deg,transparent,rgba(0,230,118,0.03),transparent);
+}
+.about-inner{max-width:820px;margin:0 auto;}
+.about-card{
+  background:var(--glass);backdrop-filter:var(--glass-blur);
+  border:1px solid var(--glass-border);
+  border-radius:24px;padding:2.5rem;
+  box-shadow:0 8px 32px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.06);
+}
+.about-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.2);
+  border-radius:99px;padding:5px 14px;font-size:11px;font-weight:700;
+  color:var(--green);text-transform:uppercase;letter-spacing:.08em;
+  margin-bottom:1.25rem;
+}
+.about-card h2{font-family:'Syne',sans-serif;font-size:clamp(1.5rem,3vw,2.2rem);font-weight:800;margin-bottom:1.25rem;line-height:1.2;}
+.about-card h2 span{color:var(--green);}
+.about-card p{font-size:14px;color:var(--muted);line-height:1.85;margin-bottom:1rem;}
+.about-card p:last-child{margin-bottom:0;}
+.about-card strong{color:var(--text);}
+.disclaimer-box{
+  margin-top:1.5rem;padding:1rem 1.25rem;
+  background:rgba(255,82,82,0.06);
+  border:1px solid rgba(255,82,82,0.2);
+  border-radius:12px;font-size:13px;
+  color:rgba(255,150,150,0.8);line-height:1.65;
+}
+.disclaimer-box strong{color:#ff8a80;}
+
+/* ── PRICING ── */
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:3rem;}
+.price-card{
+  background:var(--glass);backdrop-filter:var(--glass-blur);
+  border:1px solid var(--glass-border);
+  border-radius:20px;padding:2rem;position:relative;
+  transition:all .25s;
+  box-shadow:0 4px 24px rgba(0,0,0,0.2);
+}
+.price-card:hover{border-color:rgba(255,255,255,0.18);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.35);}
+.price-card.featured{
+  border-color:rgba(0,230,118,0.35);
+  background:linear-gradient(145deg,rgba(0,230,118,0.07),var(--glass));
+  box-shadow:0 8px 32px rgba(0,230,118,0.1);
+}
+.price-card.featured:hover{box-shadow:0 16px 48px rgba(0,230,118,0.18);}
+.featured-tag{
+  position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+  background:linear-gradient(135deg,var(--green),var(--green-dark));
+  color:#000;font-size:11px;font-weight:800;
+  padding:4px 16px;border-radius:99px;white-space:nowrap;
+  box-shadow:0 4px 12px rgba(0,230,118,0.3);
+}
+.price-plan{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:1rem;}
+.price-amount{font-family:'Syne',sans-serif;font-size:3rem;font-weight:900;color:var(--text);line-height:1;margin-bottom:.5rem;}
+.price-amount span{font-size:1rem;font-weight:400;color:var(--muted);}
+.price-desc{font-size:13px;color:var(--muted);margin-bottom:1.5rem;}
+.price-features{list-style:none;margin-bottom:2rem;}
+.price-features li{font-size:13px;color:var(--muted);padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;gap:8px;}
+.price-features li:last-child{border-bottom:none;}
+.check{color:var(--green);font-size:15px;} .x{color:#333;}
+.price-features li.pro-feat{color:var(--text);}
+.btn-plan{width:100%;padding:13px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;transition:all .25s;border:none;}
+.btn-plan.free{background:var(--glass);color:var(--text);border:1px solid var(--glass-border);}
+.btn-plan.free:hover{border-color:rgba(255,255,255,.2);background:rgba(255,255,255,0.1);}
+.btn-plan.pro{background:linear-gradient(135deg,var(--green),var(--green-dark));color:#000;box-shadow:0 4px 16px rgba(0,230,118,0.3);}
+.btn-plan.pro:hover{box-shadow:0 8px 28px rgba(0,230,118,0.45);transform:translateY(-1px);}
+
+/* ── TESTIMONIALS ── */
+.testimonials-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:3rem;}
+.testimonial{
+  background:var(--glass);backdrop-filter:blur(12px);
+  border:1px solid var(--glass-border);
+  border-radius:16px;padding:1.5rem;transition:all .2s;
+}
+.testimonial:hover{border-color:rgba(255,255,255,0.16);transform:translateY(-2px);}
+.testimonial-text{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:1rem;font-style:italic;}
+.testimonial-author{display:flex;align-items:center;gap:10px;}
+.author-avatar{width:36px;height:36px;border-radius:50%;background:rgba(0,230,118,0.12);border:1px solid rgba(0,230,118,0.2);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--green);}
+.author-name{font-size:13px;font-weight:600;}
+.author-role{font-size:11px;color:var(--muted);}
+.stars{color:#fbbf24;font-size:12px;margin-bottom:4px;}
+
+/* ── FAQ ── */
+.faq-list{margin-top:2rem;max-width:720px;}
+.faq-item{
+  background:var(--glass);backdrop-filter:blur(10px);
+  border:1px solid var(--glass-border);
+  border-radius:12px;margin-bottom:8px;overflow:hidden;
+  transition:border-color .2s;
+}
+.faq-item:hover{border-color:rgba(255,255,255,0.16);}
+.faq-q{display:flex;justify-content:space-between;align-items:center;padding:1.1rem 1.25rem;cursor:pointer;font-size:14px;font-weight:600;transition:color .2s;gap:1rem;}
+.faq-q:hover{color:var(--green);}
+.faq-icon{font-size:18px;color:var(--muted);transition:transform .3s;flex-shrink:0;}
+.faq-item.open .faq-icon{transform:rotate(45deg);color:var(--green);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease;font-size:13px;color:var(--muted);line-height:1.7;}
+.faq-item.open .faq-a{max-height:200px;}
+.faq-a-inner{padding:.25rem 1.25rem 1.25rem;}
+
+/* ── CTA ── */
+.cta-section{
+  padding:7rem 2rem;text-align:center;
+  position:relative;z-index:1;
+  background:linear-gradient(180deg,transparent,rgba(0,230,118,0.04),transparent);
+}
+.cta-section h2{font-family:'Syne',sans-serif;font-size:clamp(2rem,5vw,4rem);font-weight:900;margin-bottom:1rem;letter-spacing:-1px;}
+.cta-section p{color:var(--muted);font-size:1.05rem;margin-bottom:2.5rem;}
+
+/* ── FOOTER ── */
+footer{
+  background:rgba(255,255,255,0.02);
+  backdrop-filter:blur(10px);
+  border-top:1px solid var(--glass-border);
+  padding:3rem 2rem;position:relative;z-index:1;
+}
+.footer-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+.footer-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:var(--text);text-decoration:none;}
+.footer-links{display:flex;gap:1.5rem;flex-wrap:wrap;}
+.footer-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s;}
+.footer-links a:hover{color:var(--green);}
+.footer-copy{font-size:12px;color:#444;}
+
+/* ── MODAL GLASS ── */
+.modal-overlay{
+  position:fixed;inset:0;z-index:1000;
+  background:rgba(0,0,0,.75);
+  backdrop-filter:blur(12px);
+  display:none;align-items:center;justify-content:center;padding:1rem;
+}
+.modal-overlay.open{display:flex;}
+.modal{
+  background:rgba(10,15,30,0.92);
+  backdrop-filter:blur(32px);
+  -webkit-backdrop-filter:blur(32px);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:24px;padding:2.5rem;
+  width:100%;max-width:420px;position:relative;
+  animation:modalIn .35s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 32px 80px rgba(0,0,0,0.7),inset 0 1px 0 rgba(255,255,255,0.08);
+}
+@keyframes modalIn{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.modal-close{position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:8px;width:32px;height:32px;color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.modal-close:hover{color:var(--text);background:rgba(255,255,255,0.14);}
+.modal h2{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:.5rem;}
+.modal p{font-size:13px;color:var(--muted);margin-bottom:1.5rem;line-height:1.6;}
+.form-group{margin-bottom:1rem;}
+.form-label{font-size:12px;color:var(--muted);margin-bottom:5px;display:block;font-weight:500;}
+.form-input{
+  width:100%;padding:11px 14px;
+  background:rgba(255,255,255,0.06);
+  backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,0.10);
+  border-radius:10px;color:var(--text);
+  font-size:14px;outline:none;transition:all .2s;
+}
+.form-input:focus{border-color:rgba(0,230,118,0.5);background:rgba(255,255,255,0.09);box-shadow:0 0 0 3px rgba(0,230,118,0.08);}
+.btn-modal{
+  width:100%;padding:13px;
+  background:linear-gradient(135deg,var(--green),var(--green-dark));
+  color:#000;border:none;border-radius:10px;
+  font-size:14px;font-weight:700;cursor:pointer;
+  transition:all .25s;margin-top:.5rem;
+  box-shadow:0 4px 16px rgba(0,230,118,0.25);
+}
+.btn-modal:hover{box-shadow:0 6px 24px rgba(0,230,118,0.4);transform:translateY(-1px);}
+.btn-modal:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.modal-switch{text-align:center;margin-top:1rem;font-size:13px;color:var(--muted);}
+.modal-switch a{color:var(--green);cursor:pointer;text-decoration:none;font-weight:600;}
+.form-error{font-size:12px;color:#ff8a80;margin-top:.5rem;display:none;padding:8px 12px;background:rgba(255,82,82,0.08);border:1px solid rgba(255,82,82,0.2);border-radius:8px;}
+.modal-success-view{text-align:center;padding:1rem 0;}
+.modal-success-icon{font-size:56px;margin-bottom:1rem;}
+.modal-success-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:.5rem;color:var(--green);}
+.modal-success-body{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:1.5rem;}
+.modal-success-btn{display:inline-block;background:linear-gradient(135deg,var(--green),var(--green-dark));color:#000;border:none;border-radius:10px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;transition:all .2s;box-shadow:0 4px 16px rgba(0,230,118,0.3);}
+.modal-success-btn:hover{box-shadow:0 8px 24px rgba(0,230,118,0.45);}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:rgba(255,255,255,0.02);}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:99px;}
+::-webkit-scrollbar-thumb:hover{background:rgba(0,230,118,0.4);}
+
+@media(max-width:768px){
+  nav{padding:.75rem 1rem;}
+  .nav-links{display:none;}
+  .section{padding:4rem 1rem;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo"><span class="logo-dot"></span>SmartStockSignal</a>
+  <div class="nav-links">
+    <a href="#features" id="nav_features">Features</a>
+    <a href="#about" id="nav_about">About</a>
+    <a href="#pricing" id="nav_pricing">Pricing</a>
+    <a href="#faq">FAQ</a>
+    <a href="#" onclick="openModal('login')" id="nav_login">Sign in</a>
+  </div>
+  <div class="nav-right">
+    <button class="btn-lang" onclick="toggleLang()" id="langBtn">🌐 ES</button>
+    <a href="#" class="btn-nav" onclick="openModal('register')" id="nav_cta">Start free</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="badge"><span class="logo-dot"></span><span id="hero_badge">AI-powered technical analysis</span></div>
+  <h1 id="hero_h1">Learn smarter.<br><span>Trade with confidence.</span></h1>
+  <p id="hero_p">Master the most powerful technical indicators with AI. RSI, MACD, VWAP, Smart Money, chart patterns — all analyzed in seconds, explained in plain language.</p>
+  <div class="hero-btns" id="heroBtnsGuest">
+    <a href="#" class="btn-primary" onclick="openModal('register')" id="hero_cta1">Start for free →</a>
+    <a href="#" class="btn-secondary" onclick="openModal('login')" id="hero_login_btn">Sign in</a>
+  </div>
+  <div class="hero-btns" id="heroBtnsUser" style="display:none;">
+    <a href="dashboard.html" class="btn-primary" id="hero_dashboard_btn">Go to Dashboard →</a>
+    <a href="#pricing" class="btn-secondary" id="hero_upgrade_btn">Upgrade to Pro</a>
+  </div>
+  <div id="heroWelcome" style="display:none;margin-bottom:1.5rem;font-size:14px;color:var(--muted);">
+    Welcome back, <span id="heroUserEmail" style="color:var(--green);font-weight:600;"></span>
+  </div>
+  <div class="ticker-wrap">
+    <div class="ticker-track" id="tickerTrack"></div>
+  </div>
+</section>
+
+<div class="stats">
+  <div class="stat-item"><span class="stat-num">12+</span><span class="stat-label" id="stat1">Technical indicators</span></div>
+  <div class="stat-item"><span class="stat-num">15</span><span class="stat-label" id="stat2">Chart patterns</span></div>
+  <div class="stat-item"><span class="stat-num">Real</span><span class="stat-label" id="stat3">Market data</span></div>
+  <div class="stat-item"><span class="stat-num">AI</span><span class="stat-label" id="stat4">Claude AI analysis</span></div>
+</div>
+
+<section class="section" id="features">
+  <div class="section-label" id="feat_label">Features</div>
+  <h2 class="section-title" id="feat_title">Everything you need<br>to understand the market</h2>
+  <p class="section-sub" id="feat_sub">Stop juggling 10 different tabs. Every indicator, every pattern, every signal — in one clean dashboard, explained by AI.</p>
+  <div class="features-grid">
+    <div class="feature-card"><div class="feature-icon">📈</div><div class="feature-name" id="f1_name">AI Signal Analysis</div><div class="feature-desc" id="f1_desc">The AI analyzes RSI, MACD, VWAP, Smart Money and 8 more indicators simultaneously — giving you a clear BUY, SELL or HOLD signal with entry price and stop loss.</div></div>
+    <div class="feature-card"><div class="feature-icon">📐</div><div class="feature-name" id="f2_name">15 Chart Patterns</div><div class="feature-desc" id="f2_desc">Visual guide to the most important patterns in trading: double tops, H&S, wedges, flags, triangles — with real chart images and pro-level explanations.</div></div>
+    <div class="feature-card"><div class="feature-icon">💼</div><div class="feature-name" id="f3_name">Smart Money Flow</div><div class="feature-desc" id="f3_desc">OBV, CMF and MFI reveal what institutional money is doing — accumulating or distributing — before price moves significantly.</div></div>
+    <div class="feature-card"><div class="feature-icon">🔍</div><div class="feature-name" id="f4_name">Stock Screener</div><div class="feature-desc" id="f4_desc">Scan 20+ stocks simultaneously across Mega Cap, Tech, ETFs, Energy, Healthcare and more. Find BUY signals in seconds across entire market sectors.</div></div>
+    <div class="feature-card"><div class="feature-icon">📊</div><div class="feature-name" id="f5_name">Compare & Watchlist</div><div class="feature-desc" id="f5_desc">Compare two stocks side by side with full technical analysis. Track your favorites in a live watchlist that auto-updates every 3 minutes.</div></div>
+    <div class="feature-card"><div class="feature-icon">⚡</div><div class="feature-name" id="f6_name">1D · 4H · 1M · 1Y</div><div class="feature-desc" id="f6_desc">Intraday 15-minute candles for day trading, 4-hour for swing traders, daily for investors. Full multi-timeframe analysis in one click.</div></div>
+  </div>
+</section>
+
+<div class="indicators-section">
+  <div class="indicators-inner">
+    <div class="section-label" id="ind_label">Indicators included</div>
+    <h2 class="section-title" style="font-size:1.8rem;" id="ind_title">All indicators in a single analysis</h2>
+    <div class="indicators-grid">
+      <div class="ind-pill active">RSI (14)</div><div class="ind-pill active">MACD</div><div class="ind-pill active">SMA 20/50</div>
+      <div class="ind-pill active">Bollinger Bands</div><div class="ind-pill active">VWAP</div><div class="ind-pill active">OBV</div>
+      <div class="ind-pill active">CMF (Chaikin)</div><div class="ind-pill active">MFI</div><div class="ind-pill active">Put/Call Ratio</div>
+      <div class="ind-pill active">Candlestick Pattern</div><div class="ind-pill active">Bull/Bear Flag</div><div class="ind-pill active">Double Top/Bottom</div>
+      <div class="ind-pill active">Triple Top/Bottom</div><div class="ind-pill active">H&S / Inv H&S</div><div class="ind-pill active">Triangles</div>
+      <div class="ind-pill active">Falling/Rising Wedge</div><div class="ind-pill active">Smart Money Flow</div><div class="ind-pill active">Weighted Score</div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT / EDUCATIONAL DISCLAIMER -->
+<section class="about-section" id="about">
+  <div class="about-inner">
+    <div class="about-card">
+      <div class="about-badge">📚 Educational Platform</div>
+      <h2 id="about_title">We teach you <span>how the pros read the market</span> — not what to buy.</h2>
+      <p id="about_p1">SmartStockSignal was built with one goal: to make professional-grade technical analysis accessible to everyone. Whether you're just starting out or have been trading for years, understanding indicators like RSI, MACD, VWAP and Smart Money flow is what separates informed decisions from guesswork.</p>
+      <p id="about_p2">Our AI doesn't just give you a signal — it explains <strong>why</strong>. Every analysis includes the reasoning behind the score, which indicators are bullish or bearish, what pattern has been detected, and where institutional money appears to be flowing. This is how you develop real market intuition over time.</p>
+      <p id="about_p3">We use real market data from Twelve Data, AI analysis powered by Claude (Anthropic), and a weighted scoring system that gives more importance to the most reliable indicators — VWAP and Smart Money carry double weight compared to standard oscillators, because the data shows they're more predictive.</p>
+      <p id="about_p4">The platform includes a full <strong>Indicator Guide</strong> with visual charts showing exactly how each indicator works, a <strong>Chart Pattern library</strong> with 15 real trading patterns and professional explanations, a <strong>Signal Accuracy tracker</strong> so you can see how past signals performed, and a <strong>Stock Screener</strong> that scans entire sectors for opportunities simultaneously.</p>
+      <div class="disclaimer-box">
+        <strong>⚠️ Important disclaimer:</strong> SmartStockSignal is an <strong>educational and analytical tool</strong>. The signals, scores and AI commentary are generated for informational and learning purposes only. They do not constitute financial advice, investment recommendations, or any form of professional guidance. Past signal performance does not guarantee future results. Always do your own research and consult a qualified financial advisor before making any investment decisions. Trading involves risk, including possible loss of principal.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="pricing">
+  <div class="section-label" id="price_label">Pricing</div>
+  <h2 class="section-title" id="price_title">Simple and transparent</h2>
+  <p class="section-sub" id="price_sub">Start free. Upgrade when you need more.</p>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="price-plan" id="plan1_name">Free</div>
+      <div class="price-amount">$0<span id="per_month">/mo</span></div>
+      <div class="price-desc" id="plan1_desc">Perfect for learning and exploring</div>
+      <ul class="price-features">
+        <li class="pro-feat"><span class="check">✓</span><span id="f_analyses">5 AI analyses per day</span></li>
+        <li class="pro-feat"><span class="check">✓</span><span id="f_indicators">All 12 technical indicators</span></li>
+        <li class="pro-feat"><span class="check">✓</span><span id="f_patterns">3 chart patterns preview</span></li>
+        <li class="pro-feat"><span class="check">✓</span><span id="f_wl">Watchlist (3 tickers)</span></li>
+        <li class="pro-feat"><span class="check">✓</span><span id="f_history">Analysis history</span></li>
+        <li class="pro-feat"><span class="check">✓</span><span id="f_compare">Compare 2 stocks</span></li>
+        <li><span class="x">✗</span><span id="f_screener" style="color:#444">Stock Screener</span></li>
+        <li><span class="x">✗</span><span id="f_accuracy" style="color:#444">Signal Accuracy tracker</span></li>
+        <li><span class="x">✗</span><span id="f_ads" style="color:#444">Ad-free experience</span></li>
+      </ul>
+      <button class="btn-plan free" onclick="openModal('register')" id="plan1_btn">Start for free</button>
+    </div>
+    <div class="price-card featured">
+      <div class="featured-tag" id="popular_tag">⭐ Most popular</div>
+      <div class="price-plan" id="plan2_name">Pro</div>
+      <div class="price-amount">$12<span>/mo</span></div>
+      <div class="price-desc" id="plan2_desc">For serious traders and analysts</div>
+      <ul class="price-features">
+        <li class="pro-feat"><span class="check">✓</span><span id="f_unlimited"><strong>Unlimited</strong> AI analyses</span></li>
+        <li class="pro-feat"><span class="check">✓</span><span id="f_all_ind">All 12 technical indicators</span></li>
+        <li class="pro-feat"><span class="check">✓</span><span id="f_all_pat"><strong>All 15</strong> chart patterns</span></li>
+        <li class="pro-feat"><span class="check">✓</span><span id="f_wl_pro">Watchlist (<strong>12 tickers</strong>)</span></li>
+        <li class="pro-feat"><span class="check">✓</span><span id="f_history_pro">Full analysis history</span></li>
+        <li class="pro-feat"><span class="check">✓</span><span id="f_compare_pro">Compare stocks</span></li>
+        <li class="pro-feat"><span class="check">✓</span><span id="f_screener_pro"><strong>Stock Screener</strong> (8 categories)</span></li>
+        <li class="pro-feat"><span class="check">✓</span><span id="f_accuracy_pro"><strong>Signal Accuracy</strong> tracker</span></li>
+        <li class="pro-feat"><span class="check">✓</span><span id="f_no_ads">Ad-free experience</span></li>
+      </ul>
+      <button class="btn-plan pro" onclick="startCheckout()" id="plan2_btn">Subscribe — $12/mo</button>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-label" id="test_label">Testimonials</div>
+  <h2 class="section-title" id="test_title">What traders are saying</h2>
+  <div class="testimonials-grid">
+    <div class="testimonial"><div class="stars">★★★★★</div><div class="testimonial-text" id="test1">"Finally a tool that combines everything. I used to use 5 different apps — now I only need SmartStockSignal."</div><div class="testimonial-author"><div class="author-avatar">MR</div><div><div class="author-name">Miguel R.</div><div class="author-role" id="role1">Trader, Mexico</div></div></div></div>
+    <div class="testimonial"><div class="stars">★★★★★</div><div class="testimonial-text" id="test2">"The Smart Money analysis helped me spot institutional accumulation in NVDA before the move. Game changing."</div><div class="testimonial-author"><div class="author-avatar">SC</div><div><div class="author-name">Sofia C.</div><div class="author-role" id="role2">Investor, Colombia</div></div></div></div>
+    <div class="testimonial"><div class="stars">★★★★★</div><div class="testimonial-text" id="test3">"The indicator guide taught me more in a week than months of YouTube videos. The AI explains everything clearly."</div><div class="testimonial-author"><div class="author-avatar">JP</div><div><div class="author-name">Juan P.</div><div class="author-role" id="role3">Student trader, Argentina</div></div></div></div>
+  </div>
+</section>
+
+<section class="section" id="faq">
+  <div class="section-label" id="faq_label">FAQ</div>
+  <h2 class="section-title" id="faq_title">Frequently asked questions</h2>
+  <div class="faq-list">
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span id="faq1_q">Is this financial advice?</span><span class="faq-icon">+</span></div><div class="faq-a"><div class="faq-a-inner" id="faq1_a">No. SmartStockSignal is an educational technical analysis platform. All signals and AI commentary are for informational purposes only and do not constitute financial advice. Always consult a qualified financial advisor before investing.</div></div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span id="faq2_q">Are the prices real-time?</span><span class="faq-icon">+</span></div><div class="faq-a"><div class="faq-a-inner" id="faq2_a">Yes. We use Twelve Data for real market data. The free plan includes 15-minute delayed intraday data. The Pro plan includes real-time data across all timeframes.</div></div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span id="faq3_q">What stocks can I analyze?</span><span class="faq-icon">+</span></div><div class="faq-a"><div class="faq-a-inner" id="faq3_a">Any NYSE and NASDAQ listed stock — Apple, Tesla, NVIDIA, Amazon, and thousands more. Also major ETFs like SPY, QQQ, GLD and sector funds.</div></div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span id="faq4_q">Can I cancel anytime?</span><span class="faq-icon">+</span></div><div class="faq-a"><div class="faq-a-inner" id="faq4_a">Yes, cancel your Pro subscription anytime from your account settings. No contracts, no penalties. You keep access until the end of your billing period.</div></div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span id="faq5_q">How does the weighted score work?</span><span class="faq-icon">+</span></div><div class="faq-a"><div class="faq-a-inner" id="faq5_a">We assign different weights to each indicator based on reliability. VWAP and Smart Money carry 2x weight, chart patterns 1.5x, and standard oscillators 1x. This means the final signal reflects what institutional-grade analysis prioritizes.</div></div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span id="faq6_q">Does it work on mobile?</span><span class="faq-icon">+</span></div><div class="faq-a"><div class="faq-a-inner" id="faq6_a">Yes, SmartStockSignal is fully responsive and works on any device. You can also install it as a PWA (Progressive Web App) on your iPhone or Android for a native app experience.</div></div></div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <h2 id="cta_title">Ready to learn smarter?</h2>
+  <p id="cta_sub">Join thousands of traders using AI to understand the market better. Free to start.</p>
+  <a href="#" class="btn-primary" onclick="openModal('register')" id="cta_btn">Create free account →</a>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <a href="/" class="footer-logo">SmartStockSignal</a>
+    <div class="footer-links">
+      <a href="terms.html" id="footer_terms">Terms</a>
+      <a href="privacy.html" id="footer_privacy">Privacy</a>
+      <a href="pricing.html" id="footer_pricing_link">Pricing</a>
+    </div>
+    <div class="footer-copy" id="footer_copy">© 2025 SmartStockSignal. Not financial advice.</div>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <!-- REGISTER -->
+    <div id="registerForm">
+      <h2 id="modal_reg_title">Create free account</h2>
+      <p id="modal_reg_sub">Start analyzing stocks with AI right now.</p>
+      <div class="form-group"><label class="form-label" id="label_email">Email</label><input type="email" class="form-input" id="regEmail" placeholder="your@email.com"></div>
+      <div class="form-group"><label class="form-label" id="label_pass">Password</label><input type="password" class="form-input" id="regPassword" placeholder="Min. 6 characters"></div>
+      <div class="form-error" id="regError"></div>
+      <button class="btn-modal" onclick="handleRegister()" id="btn_register">Create free account</button>
+      <div class="modal-switch"><span id="switch_login_text">Already have an account?</span> <a onclick="switchModal('login')" id="switch_login_link">Sign in</a></div>
+    </div>
+    <!-- REGISTER SUCCESS -->
+    <div id="registerSuccess" style="display:none;">
+      <div class="modal-success-view">
+        <div class="modal-success-icon">🎉</div>
+        <div class="modal-success-title" id="reg_success_title">Account created!</div>
+        <div class="modal-success-body" id="reg_success_body">Welcome! We sent a confirmation email. You can start using the app right now.</div>
+        <a href="dashboard.html" class="modal-success-btn" id="reg_success_btn">Go to Dashboard →</a>
+      </div>
+    </div>
+    <!-- LOGIN -->
+    <div id="loginForm" style="display:none;">
+      <h2 id="modal_login_title">Welcome back</h2>
+      <p id="modal_login_sub">Sign in to your account to continue.</p>
+      <div class="form-group"><label class="form-label" id="label_email2">Email</label><input type="email" class="form-input" id="loginEmail" placeholder="your@email.com"></div>
+      <div class="form-group"><label class="form-label" id="label_pass2">Password</label><input type="password" class="form-input" id="loginPassword" placeholder="Your password"></div>
+      <div class="form-error" id="loginError"></div>
+      <button class="btn-modal" onclick="handleLogin()" id="btn_login">Sign in</button>
+      <div class="modal-switch"><span id="switch_reg_text">Don't have an account?</span> <a onclick="switchModal('register')" id="switch_reg_link">Sign up for free</a></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const { createClient } = supabase;
+const sb = createClient(
+  'https://wnfogptzpqqugjxvwlnb.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InduZm9ncHR6cHFxdWdqeHZ3bG5iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzOTY2MzUsImV4cCI6MjA5MDk3MjYzNX0.qLngiAY9bFvVipEAtKVqQVQAV62QcUPAlElKPkWAqRk'
+);
+
+// ── MODAL ──
+function openModal(type) { document.getElementById('modalOverlay').classList.add('open'); switchModal(type); }
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+function closeModalOutside(e) { if(e.target===document.getElementById('modalOverlay')) closeModal(); }
+function switchModal(type) {
+  document.getElementById('registerForm').style.display   = type==='register' ? 'block' : 'none';
+  document.getElementById('registerSuccess').style.display = 'none';
+  document.getElementById('loginForm').style.display      = type==='login'    ? 'block' : 'none';
+  // Focus automático
+  setTimeout(() => {
+    if (type === 'login') document.getElementById('loginEmail').focus();
+    else document.getElementById('regEmail').focus();
+  }, 100);
+}
+
+// ── ENTER KEY en login y register ──
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const overlay = document.getElementById('modalOverlay');
+  if (!overlay.classList.contains('open')) return;
+  if (document.getElementById('loginForm').style.display !== 'none') handleLogin();
+  else if (document.getElementById('registerForm').style.display !== 'none') handleRegister();
+});
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+
+// ── REGISTER ──
+async function handleRegister() {
+  const email = document.getElementById('regEmail').value.trim();
+  const password = document.getElementById('regPassword').value;
+  const err = document.getElementById('regError');
+  const btn = document.getElementById('btn_register');
+  err.style.display = 'none';
+  const t = currentLang === 'es';
+  if (!email || !password) { err.textContent = t ? 'Completa todos los campos.' : 'Please fill in all fields.'; err.style.display='block'; return; }
+  if (password.length < 6) { err.textContent = t ? 'La contraseña debe tener al menos 6 caracteres.' : 'Password must be at least 6 characters.'; err.style.display='block'; return; }
+  btn.textContent = t ? 'Creando cuenta...' : 'Creating account...'; btn.disabled = true;
+  const { error } = await sb.auth.signUp({ email, password });
+  if (error) {
+    let msg = error.message;
+    if (msg.includes('already')) msg = t ? 'Este email ya tiene cuenta. ¿Quieres iniciar sesión?' : 'This email already has an account.';
+    err.textContent = msg; err.style.display='block';
+    btn.textContent = t ? 'Crear cuenta gratis' : 'Create free account'; btn.disabled=false; return;
+  }
+  document.getElementById('registerForm').style.display = 'none';
+  document.getElementById('registerSuccess').style.display = 'block';
+  const titleEl = document.getElementById('reg_success_title');
+  const bodyEl = document.getElementById('reg_success_body');
+  const btnEl = document.getElementById('reg_success_btn');
+  if(titleEl) titleEl.textContent = t ? '¡Cuenta creada! 🎉' : 'Account created! 🎉';
+  if(bodyEl) bodyEl.innerHTML = t ? 'Bienvenido a SmartStockSignal. Te enviamos un email de confirmación.<br><br>Ya puedes empezar a usar la app.' : 'Welcome to SmartStockSignal! We sent a confirmation email.<br><br>You can start using the app right now.';
+  if(btnEl) btnEl.textContent = t ? 'Ir al Dashboard →' : 'Go to Dashboard →';
+  setTimeout(() => { window.location.href = 'dashboard.html'; }, 3000);
+}
+
+// ── LOGIN ──
+async function handleLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const err = document.getElementById('loginError');
+  const btn = document.getElementById('btn_login');
+  err.style.display = 'none';
+  const t = currentLang === 'es';
+  if (!email || !password) { err.textContent = t ? 'Completa todos los campos.' : 'Please fill in all fields.'; err.style.display='block'; return; }
+  btn.textContent = t ? 'Entrando...' : 'Signing in...'; btn.disabled = true;
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) {
+    let msg = t ? 'Email o contraseña incorrectos.' : 'Incorrect email or password.';
+    if (error.message.includes('Email not confirmed')) msg = t ? 'Confirma tu email antes de iniciar sesión.' : 'Please confirm your email before signing in.';
+    err.textContent = msg; err.style.display='block';
+    btn.textContent = t ? 'Iniciar sesión' : 'Sign in'; btn.disabled=false; return;
+  }
+  closeModal(); window.location.href = 'dashboard.html';
+}
+
+// ── SESSION ──
+sb.auth.getSession().then(async ({ data: { session } }) => {
+  if (!session) return;
+  const email = session.user.email;
+  const short = email.length > 20 ? email.slice(0,18)+'…' : email;
+  const navLogin = document.getElementById('nav_login');
+  const navCta = document.getElementById('nav_cta');
+  if(navLogin) navLogin.style.display='none';
+  if(navCta) { navCta.textContent = currentLang==='es' ? 'Mi Dashboard →' : 'My Dashboard →'; navCta.href='dashboard.html'; navCta.onclick=null; }
+  document.getElementById('heroBtnsGuest').style.display='none';
+  document.getElementById('heroBtnsUser').style.display='flex';
+  document.getElementById('heroWelcome').style.display='block';
+  document.getElementById('heroUserEmail').textContent=short;
+  try {
+    const { data: profile } = await sb.from('profiles').select('plan').eq('id', session.user.id).single();
+    if(profile?.plan==='pro') { const b=document.getElementById('hero_upgrade_btn'); if(b) b.style.display='none'; }
+  } catch(e) {}
+});
+
+// ── CHECKOUT ──
+async function startCheckout() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { openModal('register'); return; }
+  const btn = document.getElementById('plan2_btn');
+  btn.textContent='⏳ Processing...'; btn.disabled=true;
+  try {
+    const r = await fetch('https://stock-proxy-ruddy.vercel.app/api/quote?type=checkout', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ email:session.user.email, userId:session.user.id })
+    });
+    const d = await r.json();
+    if(d.url) window.location.href=d.url;
+    else throw new Error(d.error||'Error');
+  } catch(e) {
+    alert('Error: '+e.message);
+    btn.textContent='Subscribe — $12/mo'; btn.disabled=false;
+  }
+}
+
+// ── FAQ ──
+function toggleFaq(el) {
+  const item = el.parentElement;
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if(!isOpen) item.classList.add('open');
+}
+
+// ── TICKER ──
+const TD_KEY='cbecfbf347f74e9780b89f34b34d2431';
+const SYMBOLS=['AAPL','TSLA','NVDA','MSFT','AMZN','GOOGL','META','SPY'];
+async function loadTicker() {
+  try {
+    const r = await fetch('https://api.twelvedata.com/quote?symbol='+SYMBOLS.join(',')+'&apikey='+TD_KEY, {signal:AbortSignal.timeout(8000)});
+    if(!r.ok) throw new Error();
+    const data = await r.json();
+    const items = SYMBOLS.map(sym => {
+      const q=data[sym]; if(!q||q.status==='error') return null;
+      const price=parseFloat(q.close||0), change=parseFloat(q.percent_change||0);
+      if(!price) return null;
+      return '<div class="ticker-item"><span class="sym">'+sym+'</span><span>$'+price.toFixed(2)+'</span><span class="'+(change>=0?'up':'down')+'">'+(change>=0?'+':'')+change.toFixed(2)+'%</span></div>';
+    }).filter(Boolean);
+    if(!items.length) throw new Error();
+    document.getElementById('tickerTrack').innerHTML=[...items,...items].join('');
+  } catch(e) {
+    const fb=[{s:'AAPL',p:213,c:.8},{s:'TSLA',p:248,c:-.5},{s:'NVDA',p:875,c:2.1},{s:'MSFT',p:418,c:.4},{s:'AMZN',p:192,c:1},{s:'GOOGL',p:172,c:-.2},{s:'META',p:524,c:1.5},{s:'SPY',p:524,c:.3}];
+    document.getElementById('tickerTrack').innerHTML=[...fb,...fb].map(f=>'<div class="ticker-item"><span class="sym">'+f.s+'</span><span>$'+f.p+'</span><span class="'+(f.c>=0?'up':'down')+'">'+(f.c>=0?'+':'')+f.c+'%</span></div>').join('');
+  }
+}
+loadTicker();
+setInterval(loadTicker, 5*60*1000);
+
+// ── IDIOMAS ──
+const T = {
+  en:{
+    nav_features:'Features',nav_about:'About',nav_pricing:'Pricing',nav_login:'Sign in',nav_cta:'Start free',langBtn:'🌐 ES',
+    hero_badge:'AI-powered technical analysis',
+    hero_h1:'Learn smarter.<br><span>Trade with confidence.</span>',
+    hero_p:'Master the most powerful technical indicators with AI. RSI, MACD, VWAP, Smart Money, chart patterns — all analyzed in seconds, explained in plain language.',
+    hero_cta1:'Start for free →',
+    stat1:'Technical indicators',stat2:'Chart patterns',stat3:'Market data',stat4:'Claude AI analysis',
+    feat_label:'Features',feat_title:'Everything you need<br>to understand the market',feat_sub:'Stop juggling 10 different tabs. Every indicator, every pattern, every signal — in one clean dashboard, explained by AI.',
+    f1_name:'AI Signal Analysis',f1_desc:'The AI analyzes RSI, MACD, VWAP, Smart Money and 8 more indicators simultaneously — giving you a clear BUY, SELL or HOLD signal with entry price and stop loss.',
+    f2_name:'15 Chart Patterns',f2_desc:'Visual guide to the most important patterns: double tops, H&S, wedges, flags, triangles — with real chart images and pro-level explanations.',
+    f3_name:'Smart Money Flow',f3_desc:'OBV, CMF and MFI reveal what institutional money is doing before price moves significantly.',
+    f4_name:'Stock Screener',f4_desc:'Scan 20+ stocks simultaneously across Mega Cap, Tech, ETFs, Energy, Healthcare and more.',
+    f5_name:'Compare & Watchlist',f5_desc:'Compare two stocks side by side with full technical analysis. Track favorites in a live watchlist.',
+    f6_name:'1D · 4H · 1M · 1Y',f6_desc:'Intraday 15-min candles for day trading, 4H for swing traders, daily for investors.',
+    ind_label:'Indicators included',ind_title:'All indicators in a single analysis',
+    about_title:'We teach you <span>how the pros read the market</span> — not what to buy.',
+    about_p1:'SmartStockSignal was built with one goal: to make professional-grade technical analysis accessible to everyone. Understanding RSI, MACD, VWAP and Smart Money flow is what separates informed decisions from guesswork.',
+    about_p2:'Our AI explains <strong>why</strong> — which indicators are bullish or bearish, what pattern has been detected, and where institutional money is flowing. This is how you develop real market intuition.',
+    about_p3:'We use real market data from Twelve Data, AI analysis by Claude (Anthropic), and a weighted scoring system that gives more importance to the most reliable indicators.',
+    about_p4:'The platform includes an Indicator Guide, Chart Pattern library, Signal Accuracy tracker, Stock Screener, Watchlist and more — all designed to help you learn, not just trade.',
+    price_label:'Pricing',price_title:'Simple and transparent',price_sub:'Start free. Upgrade when you need more.',
+    plan1_name:'Free',plan1_desc:'Perfect for learning and exploring',plan1_btn:'Start for free',
+    plan2_name:'Pro',plan2_desc:'For serious traders and analysts',plan2_btn:'Subscribe — $12/mo',
+    popular_tag:'⭐ Most popular',per_month:'/mo',
+    f_analyses:'5 AI analyses per day',f_indicators:'All 12 technical indicators',f_patterns:'3 chart patterns preview',
+    f_wl:'Watchlist (3 tickers)',f_history:'Analysis history',f_compare:'Compare 2 stocks',
+    f_screener:'Stock Screener',f_accuracy:'Signal Accuracy tracker',f_ads:'Ad-free experience',
+    f_unlimited:'Unlimited AI analyses',f_all_ind:'All 12 technical indicators',f_all_pat:'All 15 chart patterns',
+    f_wl_pro:'Watchlist (12 tickers)',f_history_pro:'Full analysis history',f_compare_pro:'Compare stocks',
+    f_screener_pro:'Stock Screener (8 categories)',f_accuracy_pro:'Signal Accuracy tracker',f_no_ads:'Ad-free experience',
+    test_label:'Testimonials',test_title:'What traders are saying',
+    test1:'"Finally a tool that combines everything. I used to use 5 different apps — now I only need SmartStockSignal."',
+    test2:'"The Smart Money analysis helped me spot institutional accumulation in NVDA before the move."',
+    test3:'"The indicator guide taught me more in a week than months of YouTube videos."',
+    role1:'Trader, Mexico',role2:'Investor, Colombia',role3:'Student trader, Argentina',
+    faq_label:'FAQ',faq_title:'Frequently asked questions',
+    faq1_q:'Is this financial advice?',faq1_a:'No. SmartStockSignal is an educational technical analysis platform. All signals are for informational purposes only. Always consult a qualified financial advisor.',
+    faq2_q:'Are the prices real-time?',faq2_a:'Yes. We use Twelve Data. Free plan has 15-min delayed intraday data. Pro plan is real-time across all timeframes.',
+    faq3_q:'What stocks can I analyze?',faq3_a:'Any NYSE and NASDAQ listed stock — Apple, Tesla, NVIDIA, Amazon, and thousands more. Also major ETFs.',
+    faq4_q:'Can I cancel anytime?',faq4_a:'Yes, cancel anytime from your account settings. No contracts, no penalties.',
+    faq5_q:'How does the weighted score work?',faq5_a:'VWAP and Smart Money carry 2x weight, chart patterns 1.5x, standard oscillators 1x — reflecting what institutional-grade analysis prioritizes.',
+    faq6_q:'Does it work on mobile?',faq6_a:'Yes, fully responsive. You can also install it as a PWA on your iPhone or Android for a native app experience.',
+    cta_title:'Ready to learn smarter?',cta_sub:'Join thousands of traders using AI to understand the market. Free to start.',cta_btn:'Create free account →',
+    footer_terms:'Terms',footer_privacy:'Privacy',footer_pricing_link:'Pricing',footer_copy:'© 2025 SmartStockSignal. Not financial advice.',
+    modal_reg_title:'Create free account',modal_reg_sub:'Start analyzing stocks with AI right now.',
+    modal_login_title:'Welcome back',modal_login_sub:'Sign in to your account to continue.',
+    label_email:'Email',label_pass:'Password',label_email2:'Email',label_pass2:'Password',
+    btn_register:'Create free account',btn_login:'Sign in',
+    switch_login_text:'Already have an account?',switch_login_link:'Sign in',
+    switch_reg_text:"Don't have an account?",switch_reg_link:'Sign up for free',
+  },
+  es:{
+    nav_features:'Funciones',nav_about:'Nosotros',nav_pricing:'Precios',nav_login:'Iniciar sesión',nav_cta:'Empezar gratis',langBtn:'🌐 EN',
+    hero_badge:'Análisis técnico con IA',
+    hero_h1:'Aprende mejor.<br><span>Opera con confianza.</span>',
+    hero_p:'Domina los indicadores técnicos más poderosos con IA. RSI, MACD, VWAP, Smart Money, patrones de gráfico — analizados en segundos, explicados en lenguaje claro.',
+    hero_cta1:'Comenzar gratis →',
+    stat1:'Indicadores técnicos',stat2:'Patrones de gráfico',stat3:'Datos de mercado',stat4:'Análisis con Claude AI',
+    feat_label:'Funciones',feat_title:'Todo lo que necesitas<br>para entender el mercado',feat_sub:'No más abrir 10 pestañas. Cada indicador, cada patrón, cada señal — en un solo dashboard, explicado por IA.',
+    f1_name:'Análisis de señales con IA',f1_desc:'La IA analiza RSI, MACD, VWAP, Smart Money y 8 indicadores más simultáneamente — dándote una señal clara de COMPRAR, VENDER o MANTENER.',
+    f2_name:'15 Patrones de gráfico',f2_desc:'Guía visual de los patrones más importantes: dobles techos, HCH, cuñas, banderas, triángulos — con imágenes reales y explicaciones profesionales.',
+    f3_name:'Flujo de Smart Money',f3_desc:'OBV, CMF y MFI revelan qué está haciendo el dinero institucional antes de que el precio se mueva.',
+    f4_name:'Screener de acciones',f4_desc:'Escanea 20+ acciones simultáneamente en Mega Cap, Tech, ETFs, Energía, Salud y más.',
+    f5_name:'Comparar y Watchlist',f5_desc:'Compara dos acciones lado a lado con análisis técnico completo. Sigue tus favoritas en una watchlist en vivo.',
+    f6_name:'1D · 4H · 1M · 1Y',f6_desc:'Velas de 15 min para day trading, 4H para swing traders, diarias para inversores.',
+    ind_label:'Indicadores incluidos',ind_title:'Todos los indicadores en un solo análisis',
+    about_title:'Te enseñamos <span>cómo los pros leen el mercado</span> — no qué comprar.',
+    about_p1:'SmartStockSignal fue creado con un objetivo: hacer el análisis técnico profesional accesible para todos. Entender RSI, MACD, VWAP y el flujo de Smart Money es lo que separa las decisiones informadas de las suposiciones.',
+    about_p2:'Nuestra IA explica el <strong>porqué</strong> — qué indicadores son alcistas o bajistas, qué patrón fue detectado, y dónde parece estar fluyendo el dinero institucional. Así desarrollas intuición real de mercado.',
+    about_p3:'Usamos datos reales de Twelve Data, análisis de IA con Claude (Anthropic), y un sistema de puntuación ponderada que da más importancia a los indicadores más confiables.',
+    about_p4:'La plataforma incluye una Guía de Indicadores, biblioteca de Patrones, rastreador de Precisión de señales, Screener, Watchlist y más — todo diseñado para que aprendas, no solo operes.',
+    price_label:'Precios',price_title:'Simple y transparente',price_sub:'Empieza gratis. Actualiza cuando necesites más.',
+    plan1_name:'Gratis',plan1_desc:'Perfecto para aprender y explorar',plan1_btn:'Empezar gratis',
+    plan2_name:'Pro',plan2_desc:'Para traders serios y analistas',plan2_btn:'Suscribirse — $12/mes',
+    popular_tag:'⭐ Más popular',per_month:'/mes',
+    f_analyses:'5 análisis de IA por día',f_indicators:'12 indicadores técnicos',f_patterns:'3 patrones de gráfico',
+    f_wl:'Watchlist (3 tickers)',f_history:'Historial de análisis',f_compare:'Comparar 2 acciones',
+    f_screener:'Screener de acciones',f_accuracy:'Precisión de señales',f_ads:'Sin publicidad',
+    f_unlimited:'Análisis ilimitados',f_all_ind:'12 indicadores técnicos',f_all_pat:'Los 15 patrones completos',
+    f_wl_pro:'Watchlist (12 tickers)',f_history_pro:'Historial completo',f_compare_pro:'Comparar acciones',
+    f_screener_pro:'Screener (8 categorías)',f_accuracy_pro:'Precisión de señales',f_no_ads:'Sin publicidad',
+    test_label:'Testimonios',test_title:'Lo que dicen los traders',
+    test1:'"Finalmente una herramienta que combina todo. Antes usaba 5 apps diferentes — ahora solo necesito SmartStockSignal."',
+    test2:'"El análisis de Smart Money me ayudó a detectar acumulación institucional en NVDA antes del movimiento."',
+    test3:'"La guía de indicadores me enseñó más en una semana que meses de videos de YouTube."',
+    role1:'Trader, México',role2:'Inversionista, Colombia',role3:'Trader estudiante, Argentina',
+    faq_label:'FAQ',faq_title:'Preguntas frecuentes',
+    faq1_q:'¿Esto es asesoramiento financiero?',faq1_a:'No. SmartStockSignal es una plataforma educativa de análisis técnico. Todas las señales son solo informativas. Consulta siempre a un asesor financiero calificado.',
+    faq2_q:'¿Los precios son en tiempo real?',faq2_a:'Sí, usamos Twelve Data. El plan gratuito tiene datos intradía con 15 min de delay. El plan Pro es en tiempo real en todas las temporalidades.',
+    faq3_q:'¿Qué acciones puedo analizar?',faq3_a:'Cualquier acción del NYSE y NASDAQ — Apple, Tesla, NVIDIA, Amazon, y miles más. También los principales ETFs.',
+    faq4_q:'¿Puedo cancelar en cualquier momento?',faq4_a:'Sí, cancela cuando quieras desde tu configuración. Sin contratos ni penalizaciones.',
+    faq5_q:'¿Cómo funciona el score ponderado?',faq5_a:'VWAP y Smart Money tienen peso 2x, los patrones 1.5x, los osciladores estándar 1x — reflejando lo que prioriza el análisis institucional.',
+    faq6_q:'¿Funciona en celular?',faq6_a:'Sí, completamente responsivo. También puedes instalarlo como PWA en tu iPhone o Android para una experiencia de app nativa.',
+    cta_title:'¿Listo para aprender mejor?',cta_sub:'Únete a miles de traders usando IA para entender el mercado. Gratis para empezar.',cta_btn:'Crear cuenta gratis →',
+    footer_terms:'Términos',footer_privacy:'Privacidad',footer_pricing_link:'Precios',footer_copy:'© 2025 SmartStockSignal. No es asesoramiento financiero.',
+    modal_reg_title:'Crear cuenta gratis',modal_reg_sub:'Empieza a analizar acciones con IA ahora mismo.',
+    modal_login_title:'Bienvenido de vuelta',modal_login_sub:'Ingresa a tu cuenta para continuar.',
+    label_email:'Email',label_pass:'Contraseña',label_email2:'Email',label_pass2:'Contraseña',
+    btn_register:'Crear cuenta gratis',btn_login:'Iniciar sesión',
+    switch_login_text:'¿Ya tienes cuenta?',switch_login_link:'Inicia sesión',
+    switch_reg_text:'¿No tienes cuenta?',switch_reg_link:'Regístrate gratis',
+  }
+};
+
+const IDS = ['nav_features','nav_about','nav_pricing','nav_login','nav_cta','langBtn',
+  'hero_badge','hero_h1','hero_p','hero_cta1',
+  'stat1','stat2','stat3','stat4',
+  'feat_label','feat_title','feat_sub',
+  'f1_name','f1_desc','f2_name','f2_desc','f3_name','f3_desc','f4_name','f4_desc','f5_name','f5_desc','f6_name','f6_desc',
+  'ind_label','ind_title',
+  'about_title','about_p1','about_p2','about_p3','about_p4',
+  'price_label','price_title','price_sub',
+  'plan1_name','plan1_desc','plan1_btn','plan2_name','plan2_desc','plan2_btn','popular_tag','per_month',
+  'f_analyses','f_indicators','f_patterns','f_wl','f_history','f_compare','f_screener','f_accuracy','f_ads',
+  'f_unlimited','f_all_ind','f_all_pat','f_wl_pro','f_history_pro','f_compare_pro','f_screener_pro','f_accuracy_pro','f_no_ads',
+  'test_label','test_title','test1','test2','test3','role1','role2','role3',
+  'faq_label','faq_title','faq1_q','faq1_a','faq2_q','faq2_a','faq3_q','faq3_a','faq4_q','faq4_a','faq5_q','faq5_a','faq6_q','faq6_a',
+  'cta_title','cta_sub','cta_btn',
+  'footer_terms','footer_privacy','footer_pricing_link','footer_copy',
+  'modal_reg_title','modal_reg_sub','modal_login_title','modal_login_sub',
+  'label_email','label_pass','label_email2','label_pass2',
+  'btn_register','btn_login','switch_login_text','switch_login_link','switch_reg_text','switch_reg_link'];
+
+let currentLang = localStorage.getItem('lang') || 'en';
+function applyLang(lang) {
+  const t = T[lang];
+  IDS.forEach(id => { const el=document.getElementById(id); if(el && t[id]!==undefined) el.innerHTML=t[id]; });
+  document.documentElement.lang = lang;
+  localStorage.setItem('lang', lang);
+  currentLang = lang;
+}
+function toggleLang() { applyLang(currentLang==='en'?'es':'en'); }
+applyLang(currentLang);
+</script>
+</body>
+</html>
