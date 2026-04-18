@@ -2781,7 +2781,9 @@ function toggleLang() {
 
 
 // == NAVIGATION ==
-function showSection(section) {
+function showSection(section, e) {
+  if(e) e.preventDefault();
+  closeSidebar();
   closeSidebar();
   const panels = ['analyzerSection','referralPanel','screenerPanel','scorePanel','historyPanel','watchlistPanel','comparePanel','alertsPanel','chartsPanel','learnPanel','settingsPanel'];
   panels.forEach(id => {
