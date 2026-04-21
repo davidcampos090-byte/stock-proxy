@@ -11,6 +11,7 @@ export default async function handler(req, res) {
   const FINNHUB_KEY = process.env.FINNHUB_KEY;
   const SUPABASE_URL = 'https://wnfogptzpqqugjxvwlnb.supabase.co';
   const SUPABASE_KEY = process.env.SUPABASE_KEY;
+  const TD_KEY = process.env.TD_KEY;
 
   const readBody = (r) => new Promise((resolve) => {
     let data = '';
