@@ -62,7 +62,6 @@ Price: $${price} (${chgPct}%) · RSI: ${rsi}(${rsiS}) · MACD: ${macd}(${macdS})
       const text = aiData.content.filter(b => b.type === 'text').map(b => b.text).join('');
       try {
         const parsed = JSON.parse(text.replace(/```json|```/g, '').trim());
-        // Normalizar signal para que funcione con renderBanner
         if (isEs) {
           if (parsed.signal === 'COMPRAR') parsed.signal = 'BUY';
           else if (parsed.signal === 'VENDER') parsed.signal = 'SELL';
@@ -72,6 +71,27 @@ Price: $${price} (${chgPct}%) · RSI: ${rsi}(${rsiS}) · MACD: ${macd}(${macdS})
       } catch(e) {
         return res.status(500).json({ error: 'Parse error' });
       }
+    }
+
+    // ── TWELVE DATA — TIME SERIES ──
+    if (type === 'td_series' && req.method === 'GET') {
+      const { symbol, interval, outputsize } = req.query;
+      if (!symbol) return res.status(400).json({ error: 'symbol required' });
+      if (!TD_KEY) return res.status(500).json({ error: 'TD_KEY not configured' });
+      const url = `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(symbol)}&interval=${interval||'1day'}&outputsize=${outputsize||30}&apikey=${TD_KEY}`;
+      const r = await fetch(url);
+      const data = await r.json();
+      return res.status(200).json(data);
+    }
+
+    // ── TWELVE DATA — PRICE ──
+    if (type === 'td_price' && req.method === 'GET') {
+      const { symbol } = req.query;
+      if (!symbol) return res.status(400).json({ error: 'symbol required' });
+      if (!TD_KEY) return res.status(500).json({ error: 'TD_KEY not configured' });
+      const r = await fetch(`https://api.twelvedata.com/price?symbol=${encodeURIComponent(symbol)}&apikey=${TD_KEY}`, {signal: AbortSignal.timeout(8000)});
+      const data = await r.json();
+      return res.status(200).json(data);
     }
 
     // ── CHECKOUT ──
