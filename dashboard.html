@@ -1473,6 +1473,8 @@ body.light .onboarding-modal {
           <button class="primary" id="analyzeBtn" onclick="analyze()">Analyze</button>
         </div>
         <div class="tf-row">
+          <button class="tf-btn intraday" onclick="setTF(this,'15M')">15m</button>
+          <button class="tf-btn intraday" onclick="setTF(this,'1H')">1H</button>
           <button class="tf-btn intraday active" onclick="setTF(this,'1D')">1D</button>
           <button class="tf-btn intraday" onclick="setTF(this,'4H')">4H</button>
           <button class="tf-btn" onclick="setTF(this,'1M')">1M</button>
@@ -2024,6 +2026,9 @@ function showToast(msg) {
 async function fetchTD(ticker) {
   const sizeMap = {'1M':30,'3M':65,'6M':130,'1Y':260};
   const isI = tfMode === '1D';
+  const is15M = tfMode === '15M';
+  const is1H = tfMode === '1H';
+  const is4H = tfMode === '4H';
   const CACHE_TTL = 5 * 60 * 1000; // 5 minutos
 
   // ── CACHE CHECK ──
@@ -2037,9 +2042,8 @@ async function fetchTD(ticker) {
   } catch(e) {}
 
   // ── FETCH VIA PROXY ──
-  const is4H = tfMode === '4H';
-  const interval = isI ? '15min' : is4H ? '4h' : '1day';
-  const outputsize = isI ? 32 : is4H ? 42 : (sizeMap[tfMode]||30);
+  const interval = is15M ? '15min' : is1H ? '1h' : isI ? '15min' : is4H ? '4h' : '1day';
+  const outputsize = is15M ? 20 : is1H ? 24 : isI ? 32 : is4H ? 42 : (sizeMap[tfMode]||30);
   const url = `${PROXY}?type=td_series&symbol=${encodeURIComponent(ticker)}&interval=${interval}&outputsize=${outputsize}`;
 
   const r = await fetch(url, {signal: AbortSignal.timeout(15000)});
@@ -2244,7 +2248,7 @@ async function analyze(){
   document.getElementById('loadingMsg').style.display='block';
   document.getElementById('results').style.display='none';
   document.getElementById('analyzeBtn').disabled=true;
-  const isI=tfMode==='1D'||tfMode==='4H';
+  const isI=tfMode==='1D'||tfMode==='4H'||tfMode==='1H'||tfMode==='15M';
 
   let entries,pcData;
   try{
@@ -2344,7 +2348,7 @@ const _psm=document.getElementById('panel_sm');if(_psm)_psm.textContent=_t.panel
   // Noticias removidas del analyzer
 
   document.getElementById('loadingText').textContent=(T[currentLang]||T.en).loading_ai;
-  const tfL=tfMode==='4H'?'4 horas':tfMode==='1D'?'intradía 15min':tfMode==='1M'?'1 mes':tfMode==='3M'?'3 meses':tfMode==='6M'?'6 meses':'1 año';
+  const tfL=tfMode==='15M'?'15 minutos':tfMode==='1H'?'1 hora':tfMode==='4H'?'4 horas':tfMode==='1D'?'intradía 15min':tfMode==='1M'?'1 mes':tfMode==='3M'?'3 meses':tfMode==='6M'?'6 meses':'1 año';
   const support=+(Math.min(bb.lower,vd.lower1)*1.001).toFixed(2);
   const stopLoss=+(support*.97).toFixed(2);
 
