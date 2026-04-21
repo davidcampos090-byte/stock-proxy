@@ -2022,7 +2022,6 @@ function showToast(msg) {
 
 
 async function fetchTD(ticker) {
-  const TD_KEY = 'cbecfbf347f74e9780b89f34b34d2431';
   const sizeMap = {'1M':30,'3M':65,'6M':130,'1Y':260};
   const isI = tfMode === '1D';
   const CACHE_TTL = 5 * 60 * 1000; // 5 minutos
@@ -2037,13 +2036,11 @@ async function fetchTD(ticker) {
     }
   } catch(e) {}
 
-  // ── FETCH REAL ──
+  // ── FETCH VIA PROXY ──
   const is4H = tfMode === '4H';
-  const url = isI
-    ? `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(ticker)}&interval=15min&outputsize=32&apikey=${TD_KEY}`
-    : is4H
-    ? `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(ticker)}&interval=4h&outputsize=42&apikey=${TD_KEY}`
-    : `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(ticker)}&interval=1day&outputsize=${sizeMap[tfMode]||30}&apikey=${TD_KEY}`;
+  const interval = isI ? '15min' : is4H ? '4h' : '1day';
+  const outputsize = isI ? 32 : is4H ? 42 : (sizeMap[tfMode]||30);
+  const url = `${PROXY}?type=td_series&symbol=${encodeURIComponent(ticker)}&interval=${interval}&outputsize=${outputsize}`;
 
   const r = await fetch(url, {signal: AbortSignal.timeout(15000)});
   if (!r.ok) throw new Error('HTTP ' + r.status);
@@ -3843,8 +3840,6 @@ async function runScreener() {
   document.getElementById('screenerSummary').style.display = 'none';
   document.getElementById('screenerGrid').innerHTML = '';
 
-  const TD_KEY = 'cbecfbf347f74e9780b89f34b34d2431';
-
   for (let i = 0; i < tickers.length; i++) {
     if (screenerAbort) break;
     const ticker = tickers[i];
@@ -3866,8 +3861,8 @@ async function runScreener() {
       } catch(e) {}
 
       if (!entries) {
-        const r = await fetch('https://api.twelvedata.com/time_series?symbol=' +
-          encodeURIComponent(ticker) + '&interval=15min&outputsize=32&apikey=' + TD_KEY,
+        const r = await fetch(PROXY + '?type=td_series&symbol=' +
+          encodeURIComponent(ticker) + '&interval=15min&outputsize=32',
           {signal: AbortSignal.timeout(12000)});
         if (!r.ok) continue;
         const j = await r.json();
@@ -4030,7 +4025,6 @@ async function loadScorePanel() {
     (lang==='es' ? 'Calculando precisión...' : 'Calculating accuracy...') + '</div>';
 
   // Obtener precios actuales para los tickers del historial
-  const TD_KEY = 'cbecfbf347f74e9780b89f34b34d2431';
   const tickers = [...new Set(history.map(h => h.ticker))];
   const currentPrices = {};
 
@@ -4046,7 +4040,7 @@ async function loadScorePanel() {
         }
       } catch(e) {}
       if (!price) {
-        const r = await fetch('https://api.twelvedata.com/price?symbol=' + encodeURIComponent(ticker) + '&apikey=' + TD_KEY, {signal: AbortSignal.timeout(8000)});
+        const r = await fetch(PROXY + '?type=td_price&symbol=' + encodeURIComponent(ticker), {signal: AbortSignal.timeout(8000)});
         if (r.ok) { const d = await r.json(); price = parseFloat(d.price); }
       }
       if (price) currentPrices[ticker] = price;
@@ -4369,7 +4363,6 @@ function setWlCache(ticker, data) {
 async function refreshWatchlist() {
   const list = getWatchlist();
   if (!list.length) return;
-  const TD_KEY = 'cbecfbf347f74e9780b89f34b34d2431';
 
   // Update status dot
   const dot = document.getElementById('wlStatusDot');
@@ -4387,7 +4380,7 @@ async function refreshWatchlist() {
       } catch(e) {}
 
       if (!entries) {
-        const r = await fetch('https://api.twelvedata.com/time_series?symbol=' + encodeURIComponent(ticker) + '&interval=15min&outputsize=20&apikey=' + TD_KEY, {signal:AbortSignal.timeout(10000)});
+        const r = await fetch(PROXY + '?type=td_series&symbol=' + encodeURIComponent(ticker) + '&interval=15min&outputsize=20', {signal:AbortSignal.timeout(10000)});
         if (!r.ok) continue;
         const j = await r.json();
         if (j.status === 'error' || !j.values?.length) continue;
@@ -4509,7 +4502,6 @@ async function runCompare() {
 }
 
 async function fetchCompareData(ticker) {
-  const TD_KEY = 'cbecfbf347f74e9780b89f34b34d2431';
   const isI = cmpTFMode === '1D';
   const sizeMap = {'1M':30,'3M':65};
   const cacheKey = 'td_' + ticker + '_' + cmpTFMode;
@@ -4518,9 +4510,9 @@ async function fetchCompareData(ticker) {
     if (cached && (Date.now() - cached.ts) < 5*60*1000) return cached.data;
   } catch(e) {}
 
-  const url = isI
-    ? 'https://api.twelvedata.com/time_series?symbol=' + encodeURIComponent(ticker) + '&interval=15min&outputsize=32&apikey=' + TD_KEY
-    : 'https://api.twelvedata.com/time_series?symbol=' + encodeURIComponent(ticker) + '&interval=1day&outputsize=' + (sizeMap[cmpTFMode]||30) + '&apikey=' + TD_KEY;
+  const interval = isI ? '15min' : '1day';
+  const outputsize = isI ? 32 : (sizeMap[cmpTFMode]||30);
+  const url = PROXY + '?type=td_series&symbol=' + encodeURIComponent(ticker) + '&interval=' + interval + '&outputsize=' + outputsize;
 
   const r = await fetch(url, {signal: AbortSignal.timeout(15000)});
   if (!r.ok) throw new Error('HTTP ' + r.status);
@@ -4699,8 +4691,7 @@ async function checkAlerts() {
         }
       } catch(e) {}
       if (!price) {
-        const TD_KEY = 'cbecfbf347f74e9780b89f34b34d2431';
-        const r = await fetch('https://api.twelvedata.com/price?symbol=' + encodeURIComponent(ticker) + '&apikey=' + TD_KEY);
+        const r = await fetch(PROXY + '?type=td_price&symbol=' + encodeURIComponent(ticker));
         if (r.ok) { const d = await r.json(); price = parseFloat(d.price); }
       }
       if (!price) continue;
